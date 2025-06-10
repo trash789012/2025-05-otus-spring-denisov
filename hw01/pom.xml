@@ -16,6 +16,7 @@
         <spring.version>6.2.3</spring.version>
         <opencsv.version>5.9</opencsv.version>
         <junit.version>5.10.2</junit.version>
+        <shade.verion>3.3.0</shade.verion>
         <mockito.version>5.10.0</mockito.version>
         <assertj.version>3.25.2</assertj.version>
         <lombok.version>1.18.32</lombok.version>
@@ -102,7 +103,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${shade.verion}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -113,7 +114,20 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>ru.otus.hw.Application</mainClass>
+                                    <manifestEntries>
+                                        <Main-Class>ru.otus.hw.Application</Main-Class>
+                                        <Build-Number>001</Build-Number>
+                                    </manifestEntries>
+                                </transformer>
+
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
                                 </transformer>
                             </transformers>
                         </configuration>

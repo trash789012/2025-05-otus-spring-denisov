@@ -24,7 +24,7 @@ public class CsvQuestionDao implements QuestionDao {
 
     private static final String ERROR_READING = "Error Reading File";
 
-    private static final String ERROR_PARSING = "Error Pasring File";
+    private static final String ERROR_PARSING = "Error Parsing File";
 
     private static final String EMPTY_QUESTION_LIST = "Empty Question List";
 
@@ -43,6 +43,7 @@ public class CsvQuestionDao implements QuestionDao {
                     .withSeparator(SEPARATOR)
                     .withSkipLines(SKIP_ROW_COUNT)
                     .withType(QuestionDto.class)
+                    .withOrderedResults(true)
                     .build();
 
             List<QuestionDto> questionDtoList = csvToBean.stream().toList();
