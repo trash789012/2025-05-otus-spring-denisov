@@ -21,7 +21,8 @@
     </bean>
 
     <bean id="testService" class="ru.otus.hw.service.TestServiceImpl">
-        <constructor-arg ref="ioService"/>
+        <constructor-arg name="ioService" ref="ioService"/>
+        <constructor-arg name="questionDao" ref="questionDao"/>
     </bean>
 
     <bean id="testRunner" class="ru.otus.hw.service.TestRunnerServiceImpl">
