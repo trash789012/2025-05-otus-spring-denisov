@@ -6,9 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.otus.hw.config.TestFileNameProvider;
+import ru.otus.hw.dao.CsvQuestionDao;
 import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
+import ru.otus.hw.exceptions.QuestionReadException;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,8 @@ class TestServiceImplTest {
 
     private static final String ANSWER_FORMAT = "      %s) %s";
 
+    private static final String ERROR_READING = "Error Reading File";
+
     @Mock
     private IOService ioService;
 
@@ -36,6 +41,23 @@ class TestServiceImplTest {
 
     @InjectMocks
     TestServiceImpl testService;
+
+    @InjectMocks
+    CsvQuestionDao csvQuestionDao;
+
+    @Mock
+    TestFileNameProvider fileNameProvider;
+
+    @Test
+    @DisplayName("Должен вернуть ошибку, если что-то не так с файлом при его чтении")
+    void shouldReturnExceptionWhenFileRead() {
+        given(fileNameProvider.getTestFileName()).willReturn(null);
+
+        var exception = assertThrows(QuestionReadException.class, () -> {
+            csvQuestionDao.findAll();
+        });
+        assert(exception.getMessage().contains(ERROR_READING));
+    }
 
     @Test
     @DisplayName("Должен вернуть ошибку, если DAO вернул Null")
