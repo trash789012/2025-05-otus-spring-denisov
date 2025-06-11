@@ -61,7 +61,7 @@ public class CsvQuestionDao implements QuestionDao {
 
     private InputStream getInputStream() throws IOException {
         var path = fileNameProvider.getTestFileName();
-        if (path.isEmpty() || !path.endsWith(".csv") || path == null) {
+        if (path == null) {
             throw new IOException(FILE_NOT_FOUND);
         }
 

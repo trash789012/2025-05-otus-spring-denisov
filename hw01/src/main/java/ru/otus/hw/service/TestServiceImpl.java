@@ -35,7 +35,6 @@ public class TestServiceImpl implements TestService {
         }
 
         showQuestionsAndAnswers(questions);
-
     }
 
     private void showQuestionsAndAnswers(List<Question> questions) {
