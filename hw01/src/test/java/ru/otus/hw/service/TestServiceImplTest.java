@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -63,13 +62,31 @@ class TestServiceImplTest {
     }
 
     @Test
-    @DisplayName("Проверка вопросов и ответов")
+    @DisplayName("Проверка формата вопросов и ответов")
     void shouldExecuteTest() {
+
+        final String QUESTION1 = "Which keyword is used to define a constant variable in Java ?";
+
+        final String QUESTION2 = "Which method is used to start a thread executions in Java?";
+
+        final String ANSWER_1_1 = "var";
+
+        final String ANSWER_1_2 = "final";
+
+        final String ANSWER_2_1 = "start()";
+
+        final String ANSWER_2_2 = "execute()";
+
         List<Question> questions = List.of(
-                new Question("Which keyword is used to define a constant variable in Java ?",
+                new Question(QUESTION1,
                         List.of(
-                                new Answer("var", false),
-                                new Answer("final", true)
+                                new Answer(ANSWER_1_1, false),
+                                new Answer(ANSWER_1_2, true)
+                        )),
+                new Question(QUESTION2,
+                        List.of(
+                                new Answer(ANSWER_2_1, true),
+                                new Answer(ANSWER_2_2, false)
                         ))
         );
 
@@ -77,11 +94,36 @@ class TestServiceImplTest {
 
         testService.executeTest();
 
+        //проверяем, что findAll вызывался
         verify(questionDao, times(1)).findAll();
 
-        verify(ioService, times(1)).printFormattedLine("Please answer the questions below%n");
-        verify(ioService, times(1)).printFormattedLine(QUESTION_FORMAT,
-                1, "Which keyword is used to define a constant variable in Java ?");
-        verify(ioService, times(1)).printFormattedLine(ANSWER_FORMAT, "1.1", "var");
+        //проверяем ответы от сервиса
+        //вступительная фраза
+        verify(ioService, times(1))
+                .printFormattedLine("Please answer the questions below%n");
+
+        //форматирование между вопросами
+        verify(ioService, times(3)).printLine("");
+
+        //первый вопрос (из мок данных)
+        verify(ioService, times(1))
+                .printFormattedLine(QUESTION_FORMAT, 1, QUESTION1);
+        //первый вариант ответа
+        verify(ioService, times(1))
+                .printFormattedLine(ANSWER_FORMAT, "1.1", ANSWER_1_1);
+        //второй вариант ответа
+        verify(ioService, times(1))
+                .printFormattedLine(ANSWER_FORMAT, "1.2", ANSWER_1_2);
+
+        //второй вопрос (из мок данных)
+        verify(ioService, times(1))
+                .printFormattedLine(QUESTION_FORMAT, 2, QUESTION2);
+        //первый вариант ответа (2 вопрос)
+        verify(ioService, times(1))
+                .printFormattedLine(ANSWER_FORMAT, "2.1", ANSWER_2_1);
+        //второй вариант ответа (2 вопрос)
+        verify(ioService, times(1))
+                .printFormattedLine(ANSWER_FORMAT, "2.2", ANSWER_2_2);
+
     }
 }
