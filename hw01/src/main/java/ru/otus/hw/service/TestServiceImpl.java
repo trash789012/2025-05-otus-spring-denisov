@@ -8,7 +8,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
-    private static final String NO_QUESTIONS_FOUND = "Questions is null";
 
     private static final String QUESTION_FORMAT = "%2d. %s";
 
@@ -25,7 +24,7 @@ public class TestServiceImpl implements TestService {
 
         var questions = questionDao.findAll();
         if (questions == null || questions.isEmpty()) {
-            throw new RuntimeException(NO_QUESTIONS_FOUND);
+            throw new RuntimeException("Questions is null");
         }
 
         showQuestionsWithAnswers(questions);

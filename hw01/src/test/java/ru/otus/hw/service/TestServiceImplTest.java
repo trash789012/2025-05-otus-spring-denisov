@@ -24,13 +24,9 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class TestServiceImplTest {
 
-    private static final String NO_QUESTIONS_FOUND = "Questions is null";
-
     private static final String QUESTION_FORMAT = "%2d. %s";
 
     private static final String ANSWER_FORMAT = "      %s) %s";
-
-    private static final String ERROR_READING = "Error Reading File";
 
     @Mock
     private IOService ioService;
@@ -55,7 +51,7 @@ class TestServiceImplTest {
         var exception = assertThrows(QuestionReadException.class, () -> {
             csvQuestionDao.findAll();
         });
-        assert(exception.getMessage().contains(ERROR_READING));
+        assert(exception.getMessage().contains("Error Reading File"));
     }
 
     @Test
@@ -67,7 +63,7 @@ class TestServiceImplTest {
            testService.executeTest();
         });
 
-        assertTrue(exception.getMessage().contains(NO_QUESTIONS_FOUND));
+        assertTrue(exception.getMessage().contains("Questions is null"));
     }
 
     @Test
