@@ -28,10 +28,10 @@ public class TestServiceImpl implements TestService {
             throw new RuntimeException(NO_QUESTIONS_FOUND);
         }
 
-        showQuestionsAndAnswers(questions);
+        showQuestionsWithAnswers(questions);
     }
 
-    private void showQuestionsAndAnswers(List<Question> questions) {
+    private void showQuestionsWithAnswers(List<Question> questions) {
         int questionNumber = 0;
         int answerNumber;
         for (var question : questions) {
