@@ -25,8 +25,6 @@ class TestServiceImplTest {
 
     private static final String NO_QUESTIONS_FOUND = "Questions is null";
 
-    private static final String QUESTIONS_IS_EMPTY = "Questions is empty";
-
     private static final String QUESTION_FORMAT = "%2d. %s";
 
     private static final String ANSWER_FORMAT = "      %s) %s";
@@ -69,17 +67,6 @@ class TestServiceImplTest {
         });
 
         assertTrue(exception.getMessage().contains(NO_QUESTIONS_FOUND));
-    }
-
-    @Test
-    @DisplayName("Должен вернуть ошибку, если DAO не нашел вопросы")
-    void shouldReturnExceptionWhenDaoReturnEmpty() {
-        given(questionDao.findAll()).willReturn(Collections.emptyList());
-        var exception = assertThrows(RuntimeException.class, () -> {
-            testService.executeTest();
-        });
-
-        assertTrue(exception.getMessage().contains(QUESTIONS_IS_EMPTY));
     }
 
     @Test

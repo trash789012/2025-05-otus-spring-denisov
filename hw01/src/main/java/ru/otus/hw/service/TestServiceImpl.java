@@ -10,8 +10,6 @@ import java.util.List;
 public class TestServiceImpl implements TestService {
     private static final String NO_QUESTIONS_FOUND = "Questions is null";
 
-    private static final String QUESTIONS_IS_EMPTY = "Questions is empty";
-
     private static final String QUESTION_FORMAT = "%2d. %s";
 
     private static final String ANSWER_FORMAT = "      %s) %s";
@@ -26,12 +24,8 @@ public class TestServiceImpl implements TestService {
         ioService.printFormattedLine("Please answer the questions below%n");
 
         var questions = questionDao.findAll();
-        if (questions == null) {
+        if (questions == null || questions.isEmpty()) {
             throw new RuntimeException(NO_QUESTIONS_FOUND);
-        }
-
-        if (questions.isEmpty()) {
-            throw new RuntimeException(QUESTIONS_IS_EMPTY);
         }
 
         showQuestionsAndAnswers(questions);
