@@ -16,17 +16,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class CsvQuestionDao implements QuestionDao {
-    private static final String FILE_NOT_FOUND = "File Not Found";
-
-    private static final String INCORRECT_EXTENSION = "Extension not csv";
-
-    private static final String FILE_NOT_LOADED = "File Not Loaded";
-
-    private static final String ERROR_READING = "Error Reading File";
-
-    private static final String ERROR_PARSING = "Error Parsing File";
-
-    private static final String EMPTY_QUESTION_LIST = "Empty Question List";
 
     private static final int SKIP_ROW_COUNT = 1;
 
@@ -48,30 +37,30 @@ public class CsvQuestionDao implements QuestionDao {
 
             List<QuestionDto> questionDtoList = csvToBean.stream().toList();
             if (questionDtoList.isEmpty()) {
-                throw new QuestionReadException(EMPTY_QUESTION_LIST);
+                throw new QuestionReadException("Empty Question List");
             }
 
             return questionDtoList.stream().map(QuestionDto::toDomainObject).toList();
         } catch (IOException e) {
-            throw new QuestionReadException(ERROR_READING, e);
+            throw new QuestionReadException("Error Reading File", e);
         } catch (RuntimeException e) {
-            throw new QuestionReadException(ERROR_PARSING, e);
+            throw new QuestionReadException("Error Parsing File", e);
         }
     }
 
     private InputStream getInputStream() throws IOException {
         var path = fileNameProvider.getTestFileName();
         if (path == null) {
-            throw new IOException(FILE_NOT_FOUND);
+            throw new IOException("File Not Found");
         }
 
         if (!path.endsWith(".csv")) {
-            throw new IOException(INCORRECT_EXTENSION);
+            throw new IOException("Extension not csv");
         }
 
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
         if (inputStream == null) {
-            throw new IOException(FILE_NOT_LOADED + path);
+            throw new IOException("File Not Loaded" + path);
         }
 
         return inputStream;
