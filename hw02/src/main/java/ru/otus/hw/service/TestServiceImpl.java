@@ -43,28 +43,31 @@ public class TestServiceImpl implements TestService {
     private void showQuestionsWithAnswers(List<Question> questions, TestResult testResult) {
         int questionNumber = 1;
         for (var question : questions) {
-            processReadingAnswers(question, questionNumber); //запрос ответа
-            checkCorrectAndApplyAnswer(testResult, question, questionNumber); //проверка ответа
+            var userAnswer = processReadingAnswers(question, questionNumber); //запрос ответа
+            checkCorrectAndApplyAnswer(testResult, question, questionNumber, userAnswer); //проверка ответа
 
             questionNumber++;
         }
     }
 
-    private static void checkCorrectAndApplyAnswer(TestResult testResult, Question question, int questionNumber) {
-        var isAnswerValid = question.answers().get(questionNumber - MIN_NUMBER_OF_ANSWERS).isCorrect();
+    private static void checkCorrectAndApplyAnswer(TestResult testResult, Question question, int questionNumber,
+                                                   int userAnswer) {
+        var isAnswerValid = question.answers().get(userAnswer - MIN_NUMBER_OF_ANSWERS).isCorrect();
 
         testResult.applyAnswer(question, isAnswerValid);
     }
 
-    private void processReadingAnswers(Question question, int questionNumber) {
-            ioService.printLine(questionConverter.convertToString(question, questionNumber));
+    private int processReadingAnswers(Question question, int questionNumber) {
+        ioService.printLine(questionConverter.convertToString(question, questionNumber));
 
-        ioService.readIntForRange(
+        var userAnswer = ioService.readIntForRange(
                 MIN_NUMBER_OF_ANSWERS,
                 question.answers().size(),
                 "Not Valid Answer Number"
         );
 
         ioService.printLine("");
+
+        return userAnswer;
     }
 }
