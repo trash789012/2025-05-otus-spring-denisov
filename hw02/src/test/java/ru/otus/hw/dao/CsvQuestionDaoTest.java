@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.hw.config.AppProperties;
 import ru.otus.hw.config.TestFileNameProvider;
 import ru.otus.hw.domain.Student;
 import ru.otus.hw.exceptions.QuestionReadException;
@@ -46,6 +45,30 @@ public class CsvQuestionDaoTest {
         });
 
         assert (exception.getMessage().contains("Error Reading File"));
+    }
+
+    @Test
+    @DisplayName("Должен вернуть ошибку, если список вопросов пустой")
+    void shouldReturnExceptionWhenQuestionsIsEmpty() {
+        given(fileNameProvider.getTestFileName()).willReturn("questions-empty.csv");
+
+        var exception = assertThrows(QuestionReadException.class, () -> {
+            csvQuestionDao.findAll();
+        });
+
+        assert (exception.getCause().getMessage().contains("Empty Question List"));
+    }
+
+    @Test
+    @DisplayName("Должен вернуть ошибку, если формат не csv")
+    void shouldReturnExceptionWhenNotValidFormat() {
+        given(fileNameProvider.getTestFileName()).willReturn("questions-format.css");
+
+        var exception = assertThrows(QuestionReadException.class, () -> {
+            csvQuestionDao.findAll();
+        });
+
+        assert (exception.getCause().getMessage().contains("Extension not csv"));
     }
 
     @Test
