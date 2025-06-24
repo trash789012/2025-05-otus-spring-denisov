@@ -5,19 +5,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import ru.otus.hw.config.TestFileNameProvider;
-import ru.otus.hw.dao.CsvQuestionDao;
 import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.domain.Student;
-import ru.otus.hw.exceptions.QuestionReadException;
 
 import java.util.List;
 
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import ru.otus.hw.service.converter.QuestionConverter;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -25,111 +24,100 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class TestServiceImplTest {
 
-    private static final String QUESTION_FORMAT = "%2d. %s";
-
-    private static final String ANSWER_FORMAT = "      %s) %s";
-
     @Mock
     private IOService ioService;
 
     @Mock
     private QuestionDao questionDao;
 
+    @Mock
+    QuestionConverter questionConverter;
+
     @InjectMocks
     TestServiceImpl testService;
 
-    @InjectMocks
-    CsvQuestionDao csvQuestionDao;
-
-    @Mock
-    TestFileNameProvider fileNameProvider;
-
     @Test
-    @DisplayName("Должен вернуть ошибку, если что-то не так с файлом при его чтении")
-    void shouldReturnExceptionWhenFileRead() {
-        given(fileNameProvider.getTestFileName()).willReturn(null);
+    @DisplayName("Должен вернуть корректные ответы на тестирование")
+    void shouldReturnIsCorrectAnswers() {
+        List<Question> questions = List.of(
+                new Question("Which keyword is used to prevent a method from being overridden in Java?",
+                        List.of(
+                                new Answer("static", false),
+                                new Answer("final", true),
+                                new Answer("private", false),
+                                new Answer("protected", false)
+                        )),
+                new Question("What does the super() keyword refer to in Java?",
+                        List.of(
+                                new Answer("The current class instance", false),
+                                new Answer("A static method in the same class", false),
+                                new Answer("A reserved keyword with no use", false),
+                                new Answer("The immediate parent class constructor", true)
+                        ))
+        );
 
-        var exception = assertThrows(QuestionReadException.class, () -> {
-            csvQuestionDao.findAll();
-        });
-        assert(exception.getMessage().contains("Error Reading File"));
+        //Настраиваем, что возвращает дао для вопросов
+        given(questionDao.findAll()).willReturn(questions);
+        //Чтобы ответы не были пустыми, задаем поведение, как если бы отвечал человек
+        given(ioService.readIntForRange(anyInt(), anyInt(), anyString()))
+                .willReturn(2)
+                .willReturn(4);
+
+        //Сравнение
+        var testResult = testService.executeTestFor(new Student("Denis", "Sokolov"));
+
+        assertThat(testResult).isNotNull();
+        assertThat(testResult.getRightAnswersCount()).isEqualTo(2);
+
+        //проверка, что API вызывался нужное количество раз
+        verify(questionDao, times(1)).findAll();
+        verify(ioService, times(2)).readIntForRange(anyInt(), anyInt(), anyString());
+        verify(questionConverter, times(2)).convertToString(any(Question.class), anyInt());
     }
 
-//    @Test
-//    @DisplayName("Должен вернуть ошибку, если DAO вернул Null")
-//    void shouldReturnExceptionWhenDaoReturnNull() {
-//        given(questionDao.findAll()).willReturn(null);
-//
-//        var exception = assertThrows(RuntimeException.class, () -> {
-//            testService.executeTestFor(new Student("1","2"));
-//        });
-//
-//        assertTrue(exception.getMessage().contains("Questions is null"));
-//    }
+    @Test
+    @DisplayName("Проверка формата вопросов и ответов")
+    void shouldExecuteTest() {
 
-//    @Test
-//    @DisplayName("Проверка формата вопросов и ответов")
-//    void shouldExecuteTest() {
-//
-//        final String QUESTION1 = "Which keyword is used to define a constant variable in Java ?";
-//
-//        final String QUESTION2 = "Which method is used to start a thread executions in Java?";
-//
-//        final String ANSWER_1_1 = "var";
-//
-//        final String ANSWER_1_2 = "final";
-//
-//        final String ANSWER_2_1 = "start()";
-//
-//        final String ANSWER_2_2 = "execute()";
-//
-//        List<Question> questions = List.of(
-//                new Question(QUESTION1,
-//                        List.of(
-//                                new Answer(ANSWER_1_1, false),
-//                                new Answer(ANSWER_1_2, true)
-//                        )),
-//                new Question(QUESTION2,
-//                        List.of(
-//                                new Answer(ANSWER_2_1, true),
-//                                new Answer(ANSWER_2_2, false)
-//                        ))
-//        );
-//
-//        given(questionDao.findAll()).willReturn(questions);
-//
-//        testService.executeTestFor(new Student("1","2"));
-//
-//        //проверяем, что findAll вызывался
-//        verify(questionDao, times(1)).findAll();
-//
-//        //проверяем ответы от сервиса
-//        //вступительная фраза
-//        verify(ioService, times(1))
-//                .printFormattedLine("Please answer the questions below%n");
-//
-//        //форматирование между вопросами
-//        verify(ioService, times(3)).printLine("");
-//
-//        //первый вопрос (из мок данных)
-//        verify(ioService, times(1))
-//                .printFormattedLine(QUESTION_FORMAT, 1, QUESTION1);
-//        //первый вариант ответа
-//        verify(ioService, times(1))
-//                .printFormattedLine(ANSWER_FORMAT, "1.1", ANSWER_1_1);
-//        //второй вариант ответа
-//        verify(ioService, times(1))
-//                .printFormattedLine(ANSWER_FORMAT, "1.2", ANSWER_1_2);
-//
-//        //второй вопрос (из мок данных)
-//        verify(ioService, times(1))
-//                .printFormattedLine(QUESTION_FORMAT, 2, QUESTION2);
-//        //первый вариант ответа (2 вопрос)
-//        verify(ioService, times(1))
-//                .printFormattedLine(ANSWER_FORMAT, "2.1", ANSWER_2_1);
-//        //второй вариант ответа (2 вопрос)
-//        verify(ioService, times(1))
-//                .printFormattedLine(ANSWER_FORMAT, "2.2", ANSWER_2_2);
-//
-//    }
+        final String QUESTION_TEXT = "Some question text...";
+
+        List<Question> questions = List.of(
+                new Question("QUESTION1",
+                        List.of(
+                                new Answer("ANSWER1", false),
+                                new Answer("ANSWER2", true)
+                        )),
+                new Question("QUESTION2",
+                        List.of(
+                                new Answer("ANSWER1", true),
+                                new Answer("ANSWER2", false)
+                        ))
+        );
+
+        given(questionDao.findAll()).willReturn(questions);
+
+        given(questionConverter.convertToString(any(Question.class), anyInt())).willReturn(QUESTION_TEXT);
+
+        //Чтобы ответы не были пустыми, задаем поведение, как если бы отвечал человек
+        given(ioService.readIntForRange(anyInt(), anyInt(), anyString()))
+                .willReturn(2)
+                .willReturn(1);
+
+        testService.executeTestFor(new Student("Denis", "Ivanov"));
+
+        //проверяем, что findAll вызывался
+        verify(questionDao, times(1)).findAll();
+
+        //проверяем ответы от сервиса
+        //вступительная фраза
+        verify(ioService, times(1))
+                .printFormattedLine("Please answer the questions below%n");
+
+        //форматирование между вопросами
+        verify(ioService, times(3)).printLine("");
+
+        //вопрос целиком
+        verify(ioService, times(2))
+                .printLine(QUESTION_TEXT);
+    }
 }
