@@ -58,12 +58,12 @@ public class TestServiceImpl implements TestService {
     }
 
     private int processReadingAnswers(Question question, int questionNumber) {
-        ioService.printLineLocalized(questionConverter.convertToString(question, questionNumber));
+        ioService.printLine(questionConverter.convertToString(question, questionNumber));
 
         var userAnswer = ioService.readIntForRangeLocalized(
                 MIN_NUMBER_OF_ANSWERS,
                 question.answers().size(),
-                "Not Valid Answer Number"
+                "TestService.error.no.valid.answer.number"
         );
 
         ioService.printLine("");
