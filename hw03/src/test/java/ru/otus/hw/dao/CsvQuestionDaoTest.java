@@ -10,6 +10,7 @@ import ru.otus.hw.config.TestFileNameProvider;
 import ru.otus.hw.domain.Student;
 import ru.otus.hw.exceptions.QuestionReadException;
 import ru.otus.hw.service.IOService;
+import ru.otus.hw.service.LocalizedIOService;
 import ru.otus.hw.service.TestServiceImpl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -20,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class CsvQuestionDaoTest {
     @Mock
-    IOService ioService;
+    LocalizedIOService ioService;
 
     @Mock
     TestFileNameProvider fileNameProvider;

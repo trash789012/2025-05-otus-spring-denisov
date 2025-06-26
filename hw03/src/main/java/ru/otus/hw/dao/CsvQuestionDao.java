@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class CsvQuestionDao implements QuestionDao {
     @Override
     public List<Question> findAll() {
         try (var inputStream = getInputStream();
-             var reader = new BufferedReader(new InputStreamReader(inputStream))) {
+             var reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
             CsvToBean<QuestionDto> csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
                     .withSeparator(SEPARATOR)
