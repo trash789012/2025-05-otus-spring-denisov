@@ -14,19 +14,19 @@ public class ApplicationCommands {
 
     @ShellMethod(value = "Start testing", key = {"start", "s"})
     @ShellMethodAvailability("isStartTestingAvailable")
-    public void runTesting(){
+    public void runTesting() {
         commandHandler.runTesting();
     }
 
     @ShellMethod(value = "LogIn", key = {"login", "l"})
     @ShellMethodAvailability("isLogInAvailable")
-    public String logIn(){
+    public String logIn() {
         return commandHandler.logIn();
     }
 
     @ShellMethod(value = "LogOut", key = {"logout", "lo"})
     @ShellMethodAvailability("isLogOutAvailable")
-    public String logOut(){
+    public String logOut() {
         return commandHandler.logOut();
     }
 

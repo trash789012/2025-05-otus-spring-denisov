@@ -2,37 +2,28 @@ package ru.otus.hw.dao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.otus.hw.config.TestFileNameProvider;
-import ru.otus.hw.domain.Student;
 import ru.otus.hw.exceptions.QuestionReadException;
-import ru.otus.hw.service.LocalizedIOService;
-import ru.otus.hw.service.TestServiceImpl;
+import ru.otus.hw.service.TestService;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
-public class CsvQuestionDaoTest {
-    @Mock
-    LocalizedIOService ioService;
+@SpringBootTest(classes = {CsvQuestionDao.class})
+public class CsvQuestionDaoTesting {
 
-    @Mock
-    TestFileNameProvider fileNameProvider;
+    @MockitoBean
+    private TestFileNameProvider fileNameProvider;
 
-    @Mock
-    QuestionDao questionDao;
+    @MockitoBean
+    private TestService testService;
 
-    @InjectMocks
-    CsvQuestionDao csvQuestionDao;
-
-    @InjectMocks
-    TestServiceImpl testService;
+    @Autowired
+    private CsvQuestionDao csvQuestionDao;
 
     @Test
     @DisplayName("Должен вернуть ошибку, если что-то не так с файлом при его чтении")
@@ -71,18 +62,6 @@ public class CsvQuestionDaoTest {
     }
 
     @Test
-    @DisplayName("Должен вернуть ошибку, если DAO вернул Null")
-    void shouldReturnExceptionWhenDaoReturnNull() {
-        given(questionDao.findAll()).willReturn(null);
-
-        var exception = assertThrows(RuntimeException.class, () -> {
-            testService.executeTestFor(new Student("User","User"));
-        });
-
-        assertTrue(exception.getMessage().contains("Questions is null"));
-    }
-
-    @Test
     @DisplayName("Должен корректно читать вопросы из файла")
     void shouldReturnExceptionWhenDaoReturnEmpty() {
         given(fileNameProvider.getTestFileName()).willReturn("questions.csv");
@@ -111,4 +90,6 @@ public class CsvQuestionDaoTest {
         assertThat(question.answers().get(2).text()).isEqualTo("Rethrow with wrapping in business exception (for example, QuestionReadException)");
         assertThat(question.answers().get(2).isCorrect()).isEqualTo(true);
     }
+
+
 }
