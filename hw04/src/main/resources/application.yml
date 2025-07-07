@@ -10,6 +10,11 @@ spring:
   output:
     ansi:
       enabled: always
+  shell:
+    interactive:
+      enabled: true
+  main:
+    allow-circular-references: true
 test:
   rightAnswersCountToPass: 3
   locale: ru-RU
