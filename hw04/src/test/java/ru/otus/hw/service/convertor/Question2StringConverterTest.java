@@ -2,21 +2,22 @@ package ru.otus.hw.service.convertor;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.service.converter.Question2StringConverter;
+import ru.otus.hw.service.converter.QuestionConverter;
 
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {Question2StringConverter.class})
 public class Question2StringConverterTest {
-    @InjectMocks
-    private Question2StringConverter question2StringConverter;
+    @Autowired
+    private QuestionConverter question2StringConverter;
 
     @Test
     @DisplayName("Должен корректно работать, если нет списка ответов")
