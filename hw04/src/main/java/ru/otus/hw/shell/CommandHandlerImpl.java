@@ -1,6 +1,7 @@
 package ru.otus.hw.shell;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.shell.Availability;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.service.LocalizedIOService;
 import ru.otus.hw.service.StudentService;
@@ -31,5 +32,26 @@ public class CommandHandlerImpl implements CommandHandler {
     public String logOut() {
         studentService.logOut();
         return localizedIOService.getMessage("CommandHandler.log.out.success");
+    }
+
+    @Override
+    public Availability isStartTestingAvailable() {
+        return studentService.getStudent() != null
+                ? Availability.available()
+                : Availability.unavailable(localizedIOService.getMessage("CommandHandler.login.start.failed"));
+    }
+
+    @Override
+    public Availability isLogInAvailable() {
+        return studentService.getStudent() == null
+                ? Availability.available()
+                : Availability.unavailable(localizedIOService.getMessage("CommandHandler.login.failed"));
+    }
+
+    @Override
+    public Availability isLogOutAvailable() {
+        return studentService.getStudent() != null
+                ? Availability.available()
+                : Availability.unavailable(localizedIOService.getMessage("CommandHandler.logout.failed"));
     }
 }
