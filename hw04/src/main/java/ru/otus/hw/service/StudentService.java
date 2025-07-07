@@ -4,5 +4,10 @@ import ru.otus.hw.domain.Student;
 
 public interface StudentService {
 
-    Student determineCurrentStudent();
+    void logIn();
+
+    void logOut();
+
+    Student getStudent();
+
 }

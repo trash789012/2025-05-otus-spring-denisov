@@ -8,8 +8,21 @@ import org.springframework.shell.standard.ShellMethod;
 @RequiredArgsConstructor
 public class ApplicationCommands {
 
-    @ShellMethod(value = "test command", key = "test")
-    public String hello(){
-        return "Hello World!";
+    private final CommandHandler commandHandler;
+
+    @ShellMethod(value = "Start testing", key = {"start", "s"})
+    public void runTesting(){
+        commandHandler.runTesting();
     }
+
+    @ShellMethod(value = "LogIn", key = {"login", "l"})
+    public String logIn(){
+        return commandHandler.logIn();
+    }
+
+    @ShellMethod(value = "LogOut", key = {"logout", "lo"})
+    public String logOut(){
+        return commandHandler.logOut();
+    }
+
 }

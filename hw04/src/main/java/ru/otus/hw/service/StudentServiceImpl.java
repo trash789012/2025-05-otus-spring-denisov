@@ -10,10 +10,22 @@ public class StudentServiceImpl implements StudentService {
 
     private final LocalizedIOService ioService;
 
+    private Student student;
+
     @Override
-    public Student determineCurrentStudent() {
+    public void logIn() {
         var firstName = ioService.readStringWithPromptLocalized("StudentService.input.first.name");
         var lastName = ioService.readStringWithPromptLocalized("StudentService.input.last.name");
-        return new Student(firstName, lastName);
+        student = new Student(firstName, lastName);
+    }
+
+    @Override
+    public void logOut() {
+        student = null;
+    }
+
+    @Override
+    public Student getStudent() {
+        return student;
     }
 }
