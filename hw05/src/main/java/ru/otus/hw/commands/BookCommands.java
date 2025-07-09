@@ -51,4 +51,9 @@ public class BookCommands {
     public void deleteBook(long id) {
         bookService.deleteById(id);
     }
+
+    @ShellMethod(value = "Books without genres", key="bwg")
+    public String booksWithoutGenres() {
+        return "";
+    }
 }
