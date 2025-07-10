@@ -51,7 +51,7 @@ databaseChangeLog:
   - changeSet:
       id: 2025-07-10-books_genres-data
       author: denisov
-      context: text
+      context: test
       changes:
         - loadData:
             tableName: books_genres
