@@ -3,6 +3,7 @@ databaseChangeLog:
       id: 2025-07-10-authors-data
       author: denisov
       context: test
+      runOnChange: true
       changes:
         - loadData:
             tableName: authors
@@ -19,6 +20,7 @@ databaseChangeLog:
       id: 2025-07-10-genres-data
       author: denisov
       context: test
+      runOnChange: true
       changes:
         - loadData:
             tableName: genres
@@ -35,6 +37,7 @@ databaseChangeLog:
       id: 2025-07-10-books-data
       author: denisov
       context: test
+      runOnChange: true
       changes:
         - loadData:
             tableName: books
@@ -52,6 +55,7 @@ databaseChangeLog:
       id: 2025-07-10-books_genres-data
       author: denisov
       context: test
+      runOnChange: true
       changes:
         - loadData:
             tableName: books_genres
