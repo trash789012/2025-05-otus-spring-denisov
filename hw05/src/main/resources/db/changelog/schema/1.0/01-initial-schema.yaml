@@ -85,7 +85,7 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_books_genres_books
+                    foreignKeyName: fk_books_genres_genres
                     references: genres(id)
                     deleteCascade: true
                     primaryKey: true
