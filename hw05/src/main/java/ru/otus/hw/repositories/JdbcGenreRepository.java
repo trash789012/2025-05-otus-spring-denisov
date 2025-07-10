@@ -32,7 +32,7 @@ public class JdbcGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> findAllByIds(Set<Long> ids) {
-        if (ids.isEmpty()){
+        if (ids.isEmpty()) {
             return List.of();
         }
 

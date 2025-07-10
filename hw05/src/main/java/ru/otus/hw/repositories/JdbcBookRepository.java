@@ -15,7 +15,12 @@ import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,6 +52,14 @@ public class JdbcBookRepository implements BookRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue(BOOK_ID, id);
 
+        String sql = getStatementForFindById();
+
+        Book book = jdbcOperations.query(sql, params, new BookResultSetExtractor());
+
+        return Optional.ofNullable(book);
+    }
+
+    private String getStatementForFindById() {
         //language=sql
         String sql = """
                 SELECT 
@@ -66,10 +79,7 @@ public class JdbcBookRepository implements BookRepository {
                   WHERE books.id = :book_id
                   ORDER BY books.id, genres.id
                 """;
-
-        Book book = jdbcOperations.query(sql, params, new BookResultSetExtractor());
-
-        return Optional.ofNullable(book);
+        return sql;
     }
 
     @Override
@@ -151,6 +161,12 @@ public class JdbcBookRepository implements BookRepository {
                         Collectors.mapping(BookGenreRelation::genreId, Collectors.toList())
                 ));
 
+        fillGenresForBooks(bookIdToGenreIds, bookMap, genreMap);
+    }
+
+    private void fillGenresForBooks(Map<Long, List<Long>> bookIdToGenreIds,
+                                    Map<Long, Book> bookMap,
+                                    Map<Long, Genre> genreMap) {
         bookIdToGenreIds.forEach((bookId, genreIds) -> {
             //взяли book
             Book book = bookMap.get(bookId);
@@ -215,7 +231,6 @@ public class JdbcBookRepository implements BookRepository {
             //жанров нет, делать ничего не нужно
             return;
         }
-
         //готовим batch параметры для batchUpdate
         var batchParams = genres.stream()
                 .filter(Objects::nonNull)
@@ -224,18 +239,15 @@ public class JdbcBookRepository implements BookRepository {
                         .addValue(GENRE_ID, genre.getId()))
                 .toArray(MapSqlParameterSource[]::new);
 
-        if (batchParams.length == 0){
+        if (batchParams.length == 0) {
             //значит нет подходящих жанров (отфильтровались)
             return;
         }
-
         //language=sql
         String sql = """
                 INSERT INTO books_genres (book_id, genre_id)
                   VALUES (:book_id, :genre_id)
                 """;
-
-        //вызываем батч
         jdbcOperations.batchUpdate(sql, batchParams);
     }
 
@@ -283,25 +295,33 @@ public class JdbcBookRepository implements BookRepository {
                     book.setId(rs.getLong(BOOK_ID));
                     book.setTitle(rs.getString(BOOK_TITLE));
 
-                    if (rs.getObject(AUTHOR_ID) != null) {
-                        book.setAuthor(new Author(
-                                rs.getLong(AUTHOR_ID),
-                                rs.getString(AUTHOR_NAME)
-                        ));
-                    }
+                    setAuthorInExtract(rs, book);
 
                     book.setGenres(new ArrayList<>());
                 }
 
-                if (rs.getObject(GENRE_ID) != null) {
-                    Genre genre = new Genre();
-                    genre.setId(rs.getLong(GENRE_ID));
-                    genre.setName(rs.getString("genre_name"));
-                    book.getGenres().add(genre);
-                }
+                setGenreInExtract(rs, book);
             }
 
             return book;
+        }
+    }
+
+    private static void setGenreInExtract(ResultSet rs, Book book) throws SQLException {
+        if (rs.getObject(GENRE_ID) != null) {
+            Genre genre = new Genre();
+            genre.setId(rs.getLong(GENRE_ID));
+            genre.setName(rs.getString("genre_name"));
+            book.getGenres().add(genre);
+        }
+    }
+
+    private static void setAuthorInExtract(ResultSet rs, Book book) throws SQLException {
+        if (rs.getObject(AUTHOR_ID) != null) {
+            book.setAuthor(new Author(
+                    rs.getLong(AUTHOR_ID),
+                    rs.getString(AUTHOR_NAME)
+            ));
         }
     }
 
