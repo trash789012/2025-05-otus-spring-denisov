@@ -18,3 +18,4 @@ spring:
     enabled: true
     parameters:
       csv.allowQuotedData: true
+    contexts: dev

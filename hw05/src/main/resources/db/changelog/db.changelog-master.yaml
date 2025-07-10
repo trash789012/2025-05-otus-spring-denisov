@@ -4,3 +4,4 @@ databaseChangeLog:
 
   - includeAll: #Данные
       path: db/changelog/data/1.0/
+      context: dev
