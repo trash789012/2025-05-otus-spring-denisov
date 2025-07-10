@@ -1,11 +1,11 @@
 spring:
   datasource:
     url: jdbc:h2:mem:maindb
-  sql:
-    init:
-      mode: always
-      data-locations: data.sql
-      schema-locations: schema.sql
+#  sql:
+#    init:
+#      mode: always
+#      data-locations: data.sql
+#      schema-locations: schema.sql
   h2:
     console:
       path: /h2-console
@@ -14,3 +14,8 @@ spring:
   shell:
     interactive:
       enabled: true
+  liquibase:
+    enabled: true
+    #change-log: classpath:/db/changelog/db.changelog-master.yaml
+    parameters:
+      csv.allowQuotedData: true
