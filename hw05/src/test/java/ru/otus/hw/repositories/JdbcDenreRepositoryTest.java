@@ -8,7 +8,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Genre;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +37,18 @@ public class JdbcDenreRepositoryTest {
         var expectedGenres = dbGenres;
 
         assertThat(actualGenres).containsExactlyElementsOf(expectedGenres);
+    }
+
+    @DisplayName("Должен возвращать список жанров по передаваемым id")
+    @Test
+    void shouldReturnCorrectGenreByIds() {
+        var requestedIds = Set.of(1L, 2L);
+        var result = jdbcGenreRepository.findAllByIds(requestedIds);
+
+        assertThat(result)
+                .hasSize(2)
+                .extracting(Genre::getId)
+                .containsExactlyInAnyOrder(1L, 2L);
     }
 
     private List<Genre> getDbGenres() {
