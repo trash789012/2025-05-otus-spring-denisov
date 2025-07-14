@@ -280,7 +280,6 @@ public class JdbcBookRepository implements BookRepository {
         }
     }
 
-    // Использовать для findById
     @SuppressWarnings("ClassCanBeRecord")
     @RequiredArgsConstructor
     private static class BookResultSetExtractor implements ResultSetExtractor<Book> {
