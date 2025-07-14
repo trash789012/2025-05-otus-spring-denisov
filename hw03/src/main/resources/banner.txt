@@ -1,0 +1,15 @@
+${AnsiColor.BRIGHT_MAGENTA}
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║  ${AnsiStyle.BOLD}${AnsiColor.BRIGHT_CYAN}████████╗███████╗███████╗████████╗██╗███╗   ██╗ ██████╗${AnsiColor.BRIGHT_MAGENTA}   ║
+║  ${AnsiColor.BRIGHT_CYAN}╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██║████╗  ██║██╔════╝${AnsiColor.BRIGHT_MAGENTA}   ║
+║  ${AnsiColor.BRIGHT_CYAN}   ██║   █████╗  ███████╗   ██║   ██║██╔██╗ ██║██║     ${AnsiColor.BRIGHT_MAGENTA}   ║
+║  ${AnsiColor.BRIGHT_CYAN}   ██║   ██╔══╝  ╚════██║   ██║   ██║██║╚██╗██║██║     ${AnsiColor.BRIGHT_MAGENTA}   ║
+║  ${AnsiColor.BRIGHT_CYAN}   ██║   ███████╗███████║   ██║   ██║██║ ╚████║╚██████╗${AnsiColor.BRIGHT_MAGENTA}   ║
+║  ${AnsiColor.BRIGHT_CYAN}   ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝${AnsiColor.BRIGHT_MAGENTA}   ║
+║                                                            ║
+║  ${AnsiColor.BRIGHT_YELLOW}»»—— ${AnsiColor.BRIGHT_WHITE}${spring.application.name} ${AnsiColor.BRIGHT_YELLOW}——««${AnsiColor.BRIGHT_MAGENTA}
+║  ${AnsiColor.BRIGHT_GREEN}»»—— ${AnsiColor.BRIGHT_WHITE}Powered by Spring Boot ${spring-boot.version} ${AnsiColor.BRIGHT_GREEN}——««${AnsiColor.BRIGHT_MAGENTA}
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+${AnsiColor.DEFAULT}
