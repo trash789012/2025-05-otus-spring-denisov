@@ -31,4 +31,21 @@ public class CommentComands {
                 .collect(Collectors.joining("\n"));
     }
 
+    @ShellMethod(key = "ic", value = "Insert comment")
+    public String insertComment(String text, long bookId) {
+        var comment = commentService.insert(text, bookId);
+        return commentConverter.commentDtoToString(comment);
+    }
+
+    @ShellMethod(key = "uc", value = "Update comment")
+    public String updateComment(long id, String text) {
+        var comment = commentService.update(id, text);
+        return commentConverter.commentDtoToString(comment);
+    }
+
+    @ShellMethod(key = "dc", value = "Delete comment")
+    public void deleteComment(long id) {
+        commentService.deleteById(id);
+    }
+
 }

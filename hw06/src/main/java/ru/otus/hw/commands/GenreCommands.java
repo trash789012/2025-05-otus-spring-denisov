@@ -6,6 +6,7 @@ import org.springframework.shell.standard.ShellMethod;
 import ru.otus.hw.converters.GenreConverter;
 import ru.otus.hw.services.GenreService;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -19,6 +20,13 @@ public class GenreCommands {
     @ShellMethod(value = "Find all genres", key = "ag")
     public String findAllGenres() {
         return genreService.findAll().stream()
+                .map(genreConverter::genreDtoToString)
+                .collect(Collectors.joining("," + System.lineSeparator()));
+    }
+
+    @ShellMethod(value = "Find genres by ids", key = "gbids")
+    public String findGenresByIds(Set<Long> ids) {
+        return genreService.findByIds(ids).stream()
                 .map(genreConverter::genreDtoToString)
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
