@@ -12,7 +12,7 @@ public class BookCondensedConverter {
     private final AuthorConverter authorConverter;
 
     public String bookCondensedDtoToString(BookCondensedDto bookDto) {
-        return "id: %d, title: %s, author: $s".formatted(
+        return "id: %d, title: %s, author: %s".formatted(
                 bookDto.id(),
                 bookDto.title(),
                 bookDto.author().fullName()
