@@ -14,8 +14,6 @@ spring:
   shell:
     interactive:
       enabled: true
-    history:
-      enabled: false
   liquibase:
     enabled: true
     parameters:
