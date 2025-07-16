@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Comment;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
 
@@ -17,6 +20,7 @@ import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphTyp
 public class JpaCommentRepository implements CommentRepository {
 
     public static final String BOOK_AUTHOR_ENTITY_GRAPH = "comment-book-author-entity-graph";
+
     @PersistenceContext
     private final EntityManager em;
 
