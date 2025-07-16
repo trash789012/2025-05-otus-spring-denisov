@@ -11,6 +11,8 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -71,6 +73,7 @@ public class JpaBookRepositoryTest {
         persistentBook.setTitle("New Title");
         persistentBook.setAuthor(newAuthor);
         persistentBook.getGenres().add(newGenre);
+        int genreSize = persistentBook.getGenres().size();
         em.detach(persistentBook);
 
         jpaBookRepository.save(persistentBook);
@@ -86,7 +89,56 @@ public class JpaBookRepositoryTest {
                            .isEqualTo(newAuthor.getId());
                    assertThat(book.getGenres())
                            .isNotNull()
-                           .hasSize(3);
+                           .hasSize(genreSize);
                 });
+    }
+
+    @Test
+    @DisplayName(" должен корректно добавлять новую книгу")
+    void shouldCorrectInsertNewBook() {
+        Author author = em.find(Author.class, SECONDARY_AUTHOR_ID);
+        Genre genre = em.find(Genre.class, LAST_GENRE_ID);
+        Book transientBook = new Book(0, "Inserted Book", author, List.of(genre), List.of());
+
+        Book savedBook = jpaBookRepository.save(transientBook);
+        em.flush();
+        em.clear();
+
+        Book actualBook = em.find(Book.class, savedBook.getId());
+
+        assertThat(actualBook).isNotNull()
+                .satisfies(book -> {
+                    assertThat(book.getTitle()).contains("Inserted Book");
+
+                    //автора проверим
+                    assertThat(book.getAuthor().getId() == author.getId());
+                    assertThat(book.getAuthor().getFullName()).isEqualTo(author.getFullName());
+
+                    //жанры
+                    assertThat(book.getGenres())
+                            .hasSize(1)
+                            .first()
+                            .extracting(Genre::getId, Genre::getName)
+                            .containsExactly(
+                                    genre.getId(),
+                                    genre.getName()
+                            );
+
+                });
+    }
+
+    @Test
+    @DisplayName(" должен корректно удалять книгу по id")
+    void shouldCorrectDeleteExistingBook() {
+        val book = em.find(Book.class, FIRST_BOOK_ID);
+        assertThat(book).isNotNull();
+        em.detach(book);
+
+        jpaBookRepository.deleteById(FIRST_BOOK_ID);
+        em.flush();
+        em.clear();
+
+        val deletedBook = em.find(Book.class, FIRST_BOOK_ID);
+        assertThat(deletedBook).isNull();
     }
 }
