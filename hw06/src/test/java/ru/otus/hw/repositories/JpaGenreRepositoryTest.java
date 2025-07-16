@@ -17,7 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JpaGenreRepositoryTest {
 
     public static final int EXPECTED_NUMBER_OF_GENRES = 6;
+
     public static final long NOT_EXISTS_GENRE_ID = 99L;
+
     @Autowired
     private JpaGenreRepository jpaGenreRepository;
 

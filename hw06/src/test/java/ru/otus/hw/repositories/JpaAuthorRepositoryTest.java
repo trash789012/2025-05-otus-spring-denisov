@@ -41,7 +41,6 @@ public class JpaAuthorRepositoryTest {
         val authors = jpaAuthorRepository.findAll();
         assertThat(authors).isNotNull().hasSize(EXPECTED_NUMBER_OF_AUTHORS)
                 .allMatch(a -> a.getFullName() != null);
-
     }
 
 }
