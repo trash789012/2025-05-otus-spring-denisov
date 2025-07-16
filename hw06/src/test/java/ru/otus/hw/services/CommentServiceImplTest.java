@@ -34,7 +34,7 @@ public class CommentServiceImplTest {
     }
 
     @Test
-    @DisplayName("Должен находить комментарий без LazyInitializationException")
+    @DisplayName("Должен находить комментарий")
     void findByIdShouldNotThrowLazyException() {
         var optionalComment = commentService.findById(FIRST_COMMENT_ID);
 
@@ -48,7 +48,7 @@ public class CommentServiceImplTest {
     }
 
     @Test
-    @DisplayName("Должен находить комментарии по id книги без LazyInitializationException")
+    @DisplayName("Должен находить комментарии по id книги")
     void findByBookIdShouldNotThrowLazyException() {
         var comments = commentService.findByBookId(FIRST_BOOK_ID);
 
@@ -61,7 +61,7 @@ public class CommentServiceImplTest {
     }
 
     @Test
-    @DisplayName("Должен удалять комментарий без исключения LazyInitializationException")
+    @DisplayName("Должен удалять комментарий")
     void deleteByIdShouldNotThrowLazyException() {
         var comment = commentService.findById(FIRST_COMMENT_ID);
         assertThat(comment).isPresent();
@@ -71,7 +71,7 @@ public class CommentServiceImplTest {
     }
 
     @Test
-    @DisplayName("Должен создавать новый комментарий без исключения LazyInitializationException")
+    @DisplayName("Должен создавать новый комментарий")
     void insertShouldNotThrowLazyException() {
 
         String text = "New Comment";
@@ -88,7 +88,7 @@ public class CommentServiceImplTest {
     }
 
     @Test
-    @DisplayName("Должен обновлять комментарий без исключения LazyInitializationException")
+    @DisplayName("Должен обновлять комментарий")
     void updateByIdShouldNotThrowLazyException() {
         String text = "New Comment Text Test";
 
