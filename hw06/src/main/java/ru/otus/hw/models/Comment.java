@@ -10,6 +10,21 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "comments")
+@NamedEntityGraph(
+        name = "comment-book-author-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode("book"),
+                @NamedAttributeNode(value = "book", subgraph = "book-author-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "book-author-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("author")
+                        }
+                )
+        }
+)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

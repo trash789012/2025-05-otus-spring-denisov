@@ -1,26 +1,37 @@
 package ru.otus.hw.repositories;
 
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Book;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
 
 @Primary
 @Repository
 @RequiredArgsConstructor
 public class JpaBookRepository implements BookRepository {
 
+    public static final String BOOK_AUTHOR_ENTITY_GRAPH = "book-author-entity-graph";
+
     @PersistenceContext
     private final EntityManager em;
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.ofNullable(em.find(Book.class, id));
+
+        EntityGraph<?> entityGraph = em.getEntityGraph(BOOK_AUTHOR_ENTITY_GRAPH);
+
+        Map<String, Object> parameters = new LinkedHashMap<>();
+        parameters.put(FETCH.getKey(), entityGraph);
+
+        return Optional.ofNullable(em.find(Book.class, id, parameters));
     }
 
     @Override
@@ -30,7 +41,12 @@ public class JpaBookRepository implements BookRepository {
                         select b 
                           from Book b
                         """;
-        return em.createQuery(jpql, Book.class).getResultList();
+        EntityGraph<?> entityGraph = em.getEntityGraph(BOOK_AUTHOR_ENTITY_GRAPH);
+
+        TypedQuery<Book> query = em.createQuery(jpql, Book.class);
+        query.setHint(FETCH.getKey(), entityGraph);
+
+        return query.getResultList();
     }
 
     @Override
