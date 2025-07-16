@@ -11,8 +11,6 @@ import ru.otus.hw.models.Author;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 @DisplayName("Репозиторий JPA для работы с авторами ")
 @DataJpaTest
 @Import({JpaAuthorRepository.class})
