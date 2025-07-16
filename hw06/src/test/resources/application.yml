@@ -8,6 +8,15 @@ spring:
   shell:
     interactive:
       enabled: false
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
 #  sql:
 #    init:
 #      mode: always
