@@ -8,7 +8,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.*;
+import ru.otus.hw.converters.AuthorConverter;
+import ru.otus.hw.converters.BookCondensedConverter;
+import ru.otus.hw.converters.BookConverter;
+import ru.otus.hw.converters.CommentConverter;
+import ru.otus.hw.converters.GenreConverter;
 import ru.otus.hw.repositories.JpaBookRepository;
 import ru.otus.hw.repositories.JpaCommentRepository;
 

@@ -43,13 +43,9 @@ public class JpaCommentRepositoryTest {
     @DisplayName(" должен загружать список комментариев по id книги")
     void shouldReturnCorrectCommentsListByBookId() {
         val comments = repository.findByBookId(BOOK_ID);
+        val expectedComments = em.find(Book.class, BOOK_ID).getComments();
 
-        assertThat(comments).isNotNull().hasSize(EXPECTED_COMMENTS_COUNT)
-                .allSatisfy(comment -> {
-                    assertThat(!comment.getText().isBlank());
-                    assertThat(comment.getBook()).isNotNull();
-                    assertThat(!comment.getBook().getTitle().isBlank());
-                });
+        assertThat(comments).usingRecursiveComparison().isEqualTo(expectedComments);
     }
 
     @Test

@@ -8,8 +8,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.*;
+import ru.otus.hw.converters.AuthorConverter;
+import ru.otus.hw.converters.BookCondensedConverter;
+import ru.otus.hw.converters.BookConverter;
+import ru.otus.hw.converters.CommentConverter;
+import ru.otus.hw.converters.GenreConverter;
 import ru.otus.hw.dto.GenreDto;
+import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.JpaAuthorRepository;
 import ru.otus.hw.repositories.JpaBookRepository;
 import ru.otus.hw.repositories.JpaCommentRepository;
@@ -18,6 +23,7 @@ import ru.otus.hw.repositories.JpaGenreRepository;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Интеграционный тест сервиса книг")
 @DataJpaTest
@@ -52,16 +58,18 @@ public class BookServiceImplTest {
         var book = optionalBook.get();
 
         //обращаемся ко всем элементам
-        assertThat(book.id()).isGreaterThan(0);
-        assertThat(book.title()).isNotBlank();
+        assertThat(book.id()).isGreaterThan(0).isEqualTo(FIRST_BOOK_ID);
+        assertThat(book.title()).isNotBlank().isEqualTo("BookTitle_1");
 
         assertThat(book.author()).isNotNull();
-        assertThat(book.author().fullName()).isNotBlank();
+        assertThat(book.author().fullName()).isNotBlank().isEqualTo("Author_1");
 
-        assertThat(book.genres()).isNotEmpty();
-        assertThat(book.genres()).allSatisfy(genreDto -> {
-            assertThat(genreDto.id()).isGreaterThan(0);
-            assertThat(genreDto.name()).isNotBlank();
+        assertThat(book.genres()).isNotEmpty().hasSize(2);
+        assertThat(book.genres()).satisfies(genreDto -> {
+            assertThat(genreDto.get(0).id()).isEqualTo(1L);
+            assertThat(genreDto.get(0).name()).isNotBlank().isEqualTo("Genre_1");
+            assertThat(genreDto.get(1).id()).isEqualTo(2L);
+            assertThat(genreDto.get(1).name()).isNotBlank().isEqualTo("Genre_2");
         });
 
         assertThat(book.comments()).isNotNull();
@@ -142,5 +150,25 @@ public class BookServiceImplTest {
                 .extracting(GenreDto::id)
                 .containsExactlyInAnyOrderElementsOf(genres);
 
+    }
+
+    @Test
+    @DisplayName("Должен бросать исключение при создании книги с несуществующим автором")
+    void insertBookShoulThrowWithNoExistsAuthor() {
+        assertThatThrownBy(() ->
+                bookService.insert("Title", 99L, Set.of(1L, 2L)))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Author with id 99 not found");
+
+    }
+
+    @Test
+    @DisplayName("Должен бросать исключение при создании книги с несуществующим жанром")
+    void insertBookShouldThrowWithNoExistsGenre() {
+        assertThatThrownBy(() -> {
+            bookService.insert("Title New", 1L, Set.of(99L));
+        })
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("One or all genres with ids [99] not found");
     }
 }
