@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.*;
 import ru.otus.hw.repositories.JpaBookRepository;
 import ru.otus.hw.repositories.JpaCommentRepository;
@@ -21,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         GenreConverter.class,
         JpaCommentRepository.class,
         JpaBookRepository.class})
+@Transactional(propagation = Propagation.NEVER)
 public class CommentServiceImplTest {
 
     public static final long FIRST_COMMENT_ID = 1L;
@@ -62,6 +66,7 @@ public class CommentServiceImplTest {
 
     @Test
     @DisplayName("Должен удалять комментарий")
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void deleteByIdShouldNotThrowLazyException() {
         var comment = commentService.findById(FIRST_COMMENT_ID);
         assertThat(comment).isPresent();
@@ -72,6 +77,7 @@ public class CommentServiceImplTest {
 
     @Test
     @DisplayName("Должен создавать новый комментарий")
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void insertShouldNotThrowLazyException() {
 
         String text = "New Comment";
@@ -89,6 +95,7 @@ public class CommentServiceImplTest {
 
     @Test
     @DisplayName("Должен обновлять комментарий")
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void updateByIdShouldNotThrowLazyException() {
         String text = "New Comment Text Test";
 

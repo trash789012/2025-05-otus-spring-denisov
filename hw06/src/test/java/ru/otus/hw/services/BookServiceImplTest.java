@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.*;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.repositories.JpaAuthorRepository;
@@ -28,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         GenreConverter.class,
         CommentConverter.class,
         BookCondensedConverter.class})
+@Transactional(propagation = Propagation.NEVER)
 public class BookServiceImplTest {
 
     public static final long FIRST_BOOK_ID = 1L;
@@ -89,6 +93,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Должен удалять книгу по id")
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     public void deleteBookByIdShouldNotThrowLazyException() {
         var optionalBook = bookService.findById(FIRST_BOOK_ID);
 
@@ -101,6 +106,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Должен создавать новую книгу")
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     public void insertBookShouldNotThrowLazyException() {
 
         String title = "New Book Title";
@@ -120,6 +126,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Должен обновлять книгу")
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void updateBookShouldNotThrowLazyException() {
 
         String title = "New Book Title";
