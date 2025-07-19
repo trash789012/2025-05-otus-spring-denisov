@@ -93,7 +93,7 @@ public class JpaCommentRepositoryTest {
     }
 
     @Test
-    @DisplayName(" дожен корректно удалять комментарий по id")
+    @DisplayName(" должен корректно удалять комментарий по id")
     void shouldDeleteCommentById() {
         Comment comment = em.find(Comment.class, FIRST_COMMENT_ID);
         assertThat(comment).isNotNull();
@@ -104,6 +104,5 @@ public class JpaCommentRepositoryTest {
         em.clear();
 
         assertThat(em.find(Comment.class, FIRST_COMMENT_ID)).isNull();
-
     }
 }

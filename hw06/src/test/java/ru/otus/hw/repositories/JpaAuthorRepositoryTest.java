@@ -17,7 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JpaAuthorRepositoryTest {
 
     public static final long FIRST_AUTHOR_ID = 1L;
+
     public static final int EXPECTED_NUMBER_OF_AUTHORS = 3;
+
     @Autowired
     private JpaAuthorRepository jpaAuthorRepository;
 

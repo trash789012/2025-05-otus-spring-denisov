@@ -21,8 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JpaBookRepositoryTest {
 
     public static final long FIRST_BOOK_ID = 1L;
+
     public static final long SECONDARY_AUTHOR_ID = 2L;
+
     public static final long LAST_GENRE_ID = 6L;
+
     @Autowired
     private JpaBookRepository jpaBookRepository;
 
@@ -33,6 +36,8 @@ public class JpaBookRepositoryTest {
     @DisplayName(" должен корректно находить книгу по id с полной информацией")
     void shouldCorrectFindExpectedBookById() {
         val expectedBook = em.find(Book.class, FIRST_BOOK_ID);
+        int genresSize = expectedBook.getGenres().size();
+        int commentsSize = expectedBook.getComments().size();
         em.detach(expectedBook);
 
         val actualBook = jpaBookRepository.findById(FIRST_BOOK_ID);
@@ -52,12 +57,11 @@ public class JpaBookRepositoryTest {
 
                     assertThat(book.getGenres())
                             .isNotNull()
-                            .size()
-                            .isEqualTo(2);
+                            .hasSize(genresSize);
 
                     assertThat(book.getComments())
                             .isNotNull()
-                            .hasSizeGreaterThanOrEqualTo(0);
+                            .hasSize(commentsSize);
                 });
     }
 
