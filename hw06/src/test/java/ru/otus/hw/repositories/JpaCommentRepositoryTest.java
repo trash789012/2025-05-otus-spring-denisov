@@ -21,8 +21,6 @@ public class JpaCommentRepositoryTest {
 
     public static final long BOOK_ID = 1L;
 
-    public static final int EXPECTED_COMMENTS_COUNT = 2;
-
     @Autowired
     private JpaCommentRepository repository;
 
