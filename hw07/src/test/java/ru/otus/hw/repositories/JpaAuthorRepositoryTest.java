@@ -13,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий JPA для работы с авторами ")
 @DataJpaTest
-@Import({JpaAuthorRepository.class})
 public class JpaAuthorRepositoryTest {
 
     public static final long FIRST_AUTHOR_ID = 1L;

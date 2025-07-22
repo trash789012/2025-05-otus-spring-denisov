@@ -13,7 +13,6 @@ import ru.otus.hw.models.Comment;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(JpaCommentRepository.class)
 @DisplayName("Репозиторий JPA для работы с комментариями ")
 public class JpaCommentRepositoryTest {
 
@@ -22,7 +21,7 @@ public class JpaCommentRepositoryTest {
     public static final long BOOK_ID = 1L;
 
     @Autowired
-    private JpaCommentRepository repository;
+    private CommentRepository repository;
 
     @Autowired
     private TestEntityManager em;
