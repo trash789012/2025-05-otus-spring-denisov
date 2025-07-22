@@ -21,7 +21,7 @@ public class JpaGenreRepositoryTest {
     public static final long NOT_EXISTS_GENRE_ID = 99L;
 
     @Autowired
-    private JpaGenreRepository jpaGenreRepository;
+    private GenreRepository jpaGenreRepository;
 
     @DisplayName(" должен загружать список всех жанров")
     @Test
@@ -38,7 +38,7 @@ public class JpaGenreRepositoryTest {
     void shouldFindAllGenresByIds() {
         val ids = Set.of(1L, 2L);
 
-        val genres = jpaGenreRepository.findAllByIds(ids);
+        val genres = jpaGenreRepository.findAllById(ids);
 
         assertThat(genres).isNotNull().hasSize(2)
                 .allSatisfy(g -> {
@@ -52,7 +52,7 @@ public class JpaGenreRepositoryTest {
     void shouldReturnEmptyListWhenNotFound() {
         val ids = Set.of(NOT_EXISTS_GENRE_ID);
 
-        val genres = jpaGenreRepository.findAllByIds(ids);
+        val genres = jpaGenreRepository.findAllById(ids);
 
         assertThat(genres)
                 .isNotNull()

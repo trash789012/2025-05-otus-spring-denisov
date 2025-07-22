@@ -21,7 +21,7 @@ public class JpaAuthorRepositoryTest {
     public static final int EXPECTED_NUMBER_OF_AUTHORS = 3;
 
     @Autowired
-    private JpaAuthorRepository jpaAuthorRepository;
+    private AuthorRepository jpaAuthorRepository;
 
     @Autowired
     private TestEntityManager em;
