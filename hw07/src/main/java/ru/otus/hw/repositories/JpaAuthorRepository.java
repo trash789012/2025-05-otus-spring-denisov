@@ -10,26 +10,26 @@ import ru.otus.hw.models.Author;
 import java.util.List;
 import java.util.Optional;
 
-@Primary
-@Repository
-@RequiredArgsConstructor
-public class JpaAuthorRepository implements AuthorRepository {
+//@Primary
+//@Repository
+//@RequiredArgsConstructor
+public class JpaAuthorRepository  {
 
-    @PersistenceContext
-    private final EntityManager em;
-
-    @Override
-    public List<Author> findAll() {
-        //language=jpql
-        String jpql = """
-                 SELECT a FROM Author a
-                """;
-        return em.createQuery(jpql, Author.class).getResultList();
-    }
-
-    @Override
-    public Optional<Author> findById(long id) {
-        return Optional.ofNullable(em.find(Author.class, id));
-    }
+//    @PersistenceContext
+//    private final EntityManager em;
+//
+//    @Override
+//    public List<Author> findAll() {
+//        //language=jpql
+//        String jpql = """
+//                 SELECT a FROM Author a
+//                """;
+//        return em.createQuery(jpql, Author.class).getResultList();
+//    }
+//
+//    @Override
+//    public Optional<Author> findById(long id) {
+//        return Optional.ofNullable(em.find(Author.class, id));
+//    }
 }
 
