@@ -17,6 +17,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Setter
 @Getter
@@ -25,21 +27,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "comments")
-@NamedEntityGraph(
-        name = "comment-book-author-entity-graph",
-        attributeNodes = {
-                @NamedAttributeNode("book"),
-                @NamedAttributeNode(value = "book", subgraph = "book-author-subgraph")
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "book-author-subgraph",
-                        attributeNodes = {
-                                @NamedAttributeNode("author")
-                        }
-                )
-        }
-)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
