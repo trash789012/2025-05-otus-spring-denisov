@@ -13,7 +13,6 @@ import ru.otus.hw.converters.BookCondensedConverter;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.converters.CommentConverter;
 import ru.otus.hw.converters.GenreConverter;
-import ru.otus.hw.repositories.JpaBookRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         BookConverter.class,
         BookCondensedConverter.class,
         AuthorConverter.class,
-        GenreConverter.class,
-        JpaBookRepository.class})
+        GenreConverter.class})
 @Transactional(propagation = Propagation.NEVER)
 public class CommentServiceImplTest {
 

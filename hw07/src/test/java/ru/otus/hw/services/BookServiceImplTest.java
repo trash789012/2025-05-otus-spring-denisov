@@ -15,7 +15,6 @@ import ru.otus.hw.converters.CommentConverter;
 import ru.otus.hw.converters.GenreConverter;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.repositories.JpaBookRepository;
 
 import java.util.Set;
 
@@ -25,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("Интеграционный тест сервиса книг")
 @DataJpaTest
 @Import({BookServiceImpl.class,
-        JpaBookRepository.class,
         BookConverter.class,
         AuthorConverter.class,
         GenreConverter.class,

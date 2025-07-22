@@ -16,7 +16,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import({JpaBookRepository.class})
 @DisplayName("Репозиторий JPA для работы с книгами ")
 public class JpaBookRepositoryTest {
 
@@ -27,7 +26,7 @@ public class JpaBookRepositoryTest {
     public static final long LAST_GENRE_ID = 6L;
 
     @Autowired
-    private JpaBookRepository jpaBookRepository;
+    private BookRepository jpaBookRepository;
 
     @Autowired
     private TestEntityManager em;
