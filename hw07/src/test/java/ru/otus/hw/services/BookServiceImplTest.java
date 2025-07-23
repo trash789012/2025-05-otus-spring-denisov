@@ -9,7 +9,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.AuthorConverter;
-import ru.otus.hw.converters.BookCondensedConverter;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.converters.CommentConverter;
 import ru.otus.hw.converters.GenreConverter;
@@ -27,8 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
         BookConverter.class,
         AuthorConverter.class,
         GenreConverter.class,
-        CommentConverter.class,
-        BookCondensedConverter.class})
+        CommentConverter.class})
 @Transactional(propagation = Propagation.NEVER)
 public class BookServiceImplTest {
 
@@ -63,8 +61,6 @@ public class BookServiceImplTest {
             assertThat(genreDto.get(1).id()).isEqualTo(2L);
             assertThat(genreDto.get(1).name()).isNotBlank().isEqualTo("Genre_2");
         });
-
-        assertThat(book.comments()).isNotNull();
     }
 
     @Test

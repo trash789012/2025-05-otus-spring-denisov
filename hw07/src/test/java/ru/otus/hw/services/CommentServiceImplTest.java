@@ -9,7 +9,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.AuthorConverter;
-import ru.otus.hw.converters.BookCondensedConverter;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.converters.CommentConverter;
 import ru.otus.hw.converters.GenreConverter;
@@ -21,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import({CommentServiceImpl.class,
         CommentConverter.class,
         BookConverter.class,
-        BookCondensedConverter.class,
         AuthorConverter.class,
         GenreConverter.class})
 @Transactional(propagation = Propagation.NEVER)
@@ -46,9 +44,7 @@ public class CommentServiceImplTest {
         assertThat(optionalComment).isPresent();
         assertThat(optionalComment.get().text()).isNotBlank();
         assertThat(optionalComment.get().id()).isEqualTo(FIRST_COMMENT_ID);
-        assertThat(optionalComment.get().book().id()).isGreaterThan(0L);
-        assertThat(optionalComment.get().book().author().id()).isGreaterThan(0L);
-        assertThat(optionalComment.get().book().author().fullName()).isNotBlank();
+        assertThat(optionalComment.get().bookId()).isGreaterThan(0L);
     }
 
     @Test
@@ -59,8 +55,7 @@ public class CommentServiceImplTest {
         assertThat(comments).isNotNull().hasSize(2)
                 .allSatisfy(comment -> {
                    assertThat(comment.text()).isNotBlank();
-                   assertThat(comment.book().id()).isEqualTo(FIRST_BOOK_ID);
-                   assertThat(comment.book().author().fullName()).isNotBlank();
+                   assertThat(comment.bookId()).isEqualTo(FIRST_BOOK_ID);
                 });
     }
 
@@ -85,7 +80,7 @@ public class CommentServiceImplTest {
 
         assertThat(comment.id()).isGreaterThan(0L);
         assertThat(comment.text()).isEqualTo(text);
-        assertThat(comment.book().id()).isEqualTo(FIRST_BOOK_ID);
+        assertThat(comment.bookId()).isEqualTo(FIRST_BOOK_ID);
 
         //находим сохраненный коммент, проверяем его
         var savedComment = commentService.findById(comment.id());

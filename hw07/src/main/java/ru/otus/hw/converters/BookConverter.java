@@ -14,25 +14,18 @@ public class BookConverter {
 
     private final GenreConverter genreConverter;
 
-    private final CommentConverter commentConverter;
-
     public String bookDtoToString(BookDto book) {
         var genresString = book.genres().stream()
                 .map(genreConverter::genreDtoToString)
                 .map("{%s}"::formatted)
                 .collect(Collectors.joining(", "));
 
-        var commentString = book.comments().stream()
-                .map(commentConverter::commentDtoToString)
-                .map("{%s}"::formatted)
-                .collect(Collectors.joining(", "));
-
-        return "Id: %d, title: %s, author: {%s}, genres: [%s], comments: [%s]".formatted(
+        return "Id: %d, title: %s, author: {%s}, genres: [%s]".formatted(
                 book.id(),
                 book.title(),
                 authorConverter.authorDtoToString(book.author()),
-                genresString,
-                commentString);
+                genresString
+        );
     }
 
     public BookDto bookToBookDto(Book book) {
@@ -46,9 +39,6 @@ public class BookConverter {
                 authorConverter.authorToDto(book.getAuthor()),
                 book.getGenres().stream()
                         .map(genreConverter::genreToDto)
-                        .toList(),
-                book.getComments().stream()
-                        .map(commentConverter::commentToDto)
                         .toList()
         );
     }
