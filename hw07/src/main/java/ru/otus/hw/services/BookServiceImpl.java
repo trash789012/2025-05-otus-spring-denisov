@@ -70,6 +70,15 @@ public class BookServiceImpl implements BookService {
             throw new IllegalArgumentException("Genres ids must not be null");
         }
 
+        Book book;
+        if (id == 0) {
+            book = new Book();
+        } else {
+            book = bookRepository.findById(id).orElseThrow(
+                    () -> new EntityNotFoundException("Book with id %d not found".formatted(id))
+            );
+        }
+
         var author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId)));
         var genres = genreRepository.findAllById(genresIds);
@@ -77,8 +86,10 @@ public class BookServiceImpl implements BookService {
             throw new EntityNotFoundException("One or all genres with ids %s not found".formatted(genresIds));
         }
 
-        List<Comment> comments = commentRepository.findByBookId(id);
-        var book = new Book(id, title, author, genres, comments);
+        book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setGenres(genres);
 
         return bookConverter.bookToBookDto(bookRepository.save(book));
     }
