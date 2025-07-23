@@ -7,7 +7,6 @@ import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Comment;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
@@ -69,7 +68,6 @@ public class BookServiceImpl implements BookService {
         if (isEmpty(genresIds)) {
             throw new IllegalArgumentException("Genres ids must not be null");
         }
-
         Book book;
         if (id == 0) {
             book = new Book();
@@ -78,19 +76,16 @@ public class BookServiceImpl implements BookService {
                     () -> new EntityNotFoundException("Book with id %d not found".formatted(id))
             );
         }
-
         var author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId)));
         var genres = genreRepository.findAllById(genresIds);
         if (isEmpty(genres) || genresIds.size() != genres.size()) {
             throw new EntityNotFoundException("One or all genres with ids %s not found".formatted(genresIds));
         }
-
         book.setId(id);
         book.setTitle(title);
         book.setAuthor(author);
         book.setGenres(genres);
-
         return bookConverter.bookToBookDto(bookRepository.save(book));
     }
 }
