@@ -27,7 +27,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AuthorDto> findById(long id) {
+    public Optional<AuthorDto> findById(String id) {
         return authorRepository.findById(id)
                 .map(authorConverter::authorToDto);
     }

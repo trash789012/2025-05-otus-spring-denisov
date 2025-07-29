@@ -6,6 +6,7 @@ import org.springframework.shell.standard.ShellMethod;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.services.BookService;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class BookCommands {
 
     @ShellMethod(value = "Find book by id", key = "bbid")
     public String findBookById(long id) {
-        return bookService.findById(id)
+        return bookService.findById(String.valueOf(id))
                 .map(bookConverter::bookDtoToString)
                 .orElse("Book with id %d not found".formatted(id));
     }
@@ -34,20 +35,31 @@ public class BookCommands {
     // bins newBook 1 1,6
     @ShellMethod(value = "Insert book", key = "bins")
     public String insertBook(String title, long authorId, Set<Long> genresIds) {
-        var savedBook = bookService.insert(title, authorId, genresIds);
+        var savedBook = bookService.insert(
+                title,
+                String.valueOf(authorId),
+                genresIds.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toSet()));
         return bookConverter.bookDtoToString(savedBook);
     }
 
     // bupd 4 editedBook 3 2,5
     @ShellMethod(value = "Update book", key = "bupd")
     public String updateBook(long id, String title, long authorId, Set<Long> genresIds) {
-        var savedBook = bookService.update(id, title, authorId, genresIds);
+        var savedBook = bookService.update(
+                String.valueOf(id),
+                title,
+                String.valueOf(authorId),
+                genresIds.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toSet()));
         return bookConverter.bookDtoToString(savedBook);
     }
 
     // bdel 4
     @ShellMethod(value = "Delete book by id", key = "bdel")
     public void deleteBook(long id) {
-        bookService.deleteById(id);
+        bookService.deleteById(String.valueOf(id));
     }
 }

@@ -4,12 +4,13 @@ spring:
       enabled: always
   data:
     mongodb:
-      port: 0
-      database: company
+      port: 27017
+      database: book_lib
+      host: localhost
 
   shell:
     interactive:
-      enabled: true
+      enabled: false
 
 de:
   flapdoodle:
@@ -18,8 +19,8 @@ de:
         version: 4.0.2
 
 mongock:
-#  runner-type: "ApplicationRunner" # default
-  runner-type: "InitializingBean"
+  runner-type: "ApplicationRunner" # default
+#  runner-type: "InitializingBean"
   change-logs-scan-package:
     - ru.otus.hw.mongock.changelog
   mongo-db:

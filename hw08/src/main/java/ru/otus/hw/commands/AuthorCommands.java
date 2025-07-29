@@ -25,7 +25,7 @@ public class AuthorCommands {
 
     @ShellMethod(value = "Find author by id", key = "abid")
     public String findById(long id) {
-        return authorService.findById(id)
+        return authorService.findById(String.valueOf(id))
                 .map(authorConverter::authorDtoToString)
                 .orElse("Author %d not found".formatted(id));
     }
