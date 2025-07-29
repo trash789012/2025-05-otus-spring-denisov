@@ -62,7 +62,7 @@ public class DatabaseChangelog {
     }
 
     @ChangeSet(order = "005", id = "createCommentsInitial", author = "nadenisov")
-    public void createCommentsInitial(CommentRepository repository,
+    public void createCommentsInitial(CommentRepository commentRepository,
                                       BookRepository bookRepository) {
 
         var books = bookRepository.findAll();
@@ -81,6 +81,8 @@ public class DatabaseChangelog {
 
         Comment comment5 = new Comment("Единственный комментарий книги 3");
         comment5.setBook(books.get(2));
+
+        commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
     }
 
 }

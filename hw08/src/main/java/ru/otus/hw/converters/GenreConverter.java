@@ -7,7 +7,7 @@ import ru.otus.hw.models.Genre;
 @Component
 public class GenreConverter {
     public String genreDtoToString(GenreDto genre) {
-        return "Id: %d, Name: %s".formatted(genre.id(), genre.name());
+        return "Id: %s, Name: %s".formatted(genre.id(), genre.name());
     }
 
     public GenreDto genreToDto(Genre genre) {

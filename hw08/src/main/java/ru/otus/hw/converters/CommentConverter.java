@@ -10,7 +10,7 @@ import ru.otus.hw.models.Comment;
 public class CommentConverter {
 
     public String commentDtoToString(CommentDto comment) {
-        return "Id: %d, Text: %s, book: %s".formatted(
+        return "Id: %s, Text: %s, book: %s".formatted(
                 comment.id(),
                 comment.text(),
                 comment.bookId()

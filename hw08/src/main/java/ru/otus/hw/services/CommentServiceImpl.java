@@ -76,7 +76,7 @@ public class CommentServiceImpl implements CommentService {
             comment = commentRepository.findById(id)
                     .orElseThrow(() ->
                             new EntityNotFoundException(
-                                    "Comment with id %d not found".formatted(id))
+                                    "Comment with id %s not found".formatted(id))
                     );
         }
 

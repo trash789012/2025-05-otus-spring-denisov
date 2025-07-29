@@ -20,7 +20,7 @@ public class BookConverter {
                 .map("{%s}"::formatted)
                 .collect(Collectors.joining(", "));
 
-        return "Id: %d, title: %s, author: {%s}, genres: [%s]".formatted(
+        return "Id: %s, title: %s, author: {%s}, genres: [%s]".formatted(
                 book.id(),
                 book.title(),
                 authorConverter.authorDtoToString(book.author()),

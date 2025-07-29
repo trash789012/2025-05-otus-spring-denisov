@@ -59,7 +59,7 @@ public class BookCommands {
 
     // bdel 4
     @ShellMethod(value = "Delete book by id", key = "bdel")
-    public void deleteBook(long id) {
-        bookService.deleteById(String.valueOf(id));
+    public void deleteBook(String id) {
+        bookService.deleteById(id);
     }
 }
