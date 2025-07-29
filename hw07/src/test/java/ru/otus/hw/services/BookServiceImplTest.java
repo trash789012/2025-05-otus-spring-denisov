@@ -12,9 +12,13 @@ import ru.otus.hw.converters.AuthorConverter;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.converters.CommentConverter;
 import ru.otus.hw.converters.GenreConverter;
+import ru.otus.hw.dto.AuthorDto;
+import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -109,7 +113,16 @@ public class BookServiceImplTest {
         long authorId = 1L;
         Set<Long> genres = Set.of(1L, 2L);
 
-        var bookInserted = bookService.insert(title, authorId, genres);
+        AuthorDto authorDto = new AuthorDto(authorId, null);
+        List<GenreDto> genresDto = new ArrayList<>();
+
+        genres.stream().forEach(genresId -> {
+            genresDto.add(new GenreDto(genresId, null));
+        });
+
+        BookDto bookDto = new BookDto(0, title, authorDto, genresDto);
+
+        var bookInserted = bookService.insert(bookDto);
 
         assertThat(bookInserted).isNotNull();
         assertThat(bookInserted.id()).isGreaterThan(0);
@@ -129,7 +142,16 @@ public class BookServiceImplTest {
         long authorId = 3L;
         Set<Long> genres = Set.of(5L, 6L);
 
-        var bookUpdated = bookService.update(FIRST_BOOK_ID, title, authorId, genres);
+        AuthorDto authorDto = new AuthorDto(authorId, null);
+        List<GenreDto> genresDto = new ArrayList<>();
+
+        genres.stream().forEach(genresId -> {
+            genresDto.add(new GenreDto(genresId, null));
+        });
+
+        BookDto bookDto = new BookDto(FIRST_BOOK_ID, title, authorDto, genresDto);
+
+        var bookUpdated = bookService.update(bookDto);
 
         assertThat(bookUpdated.id()).isEqualTo(FIRST_BOOK_ID);
         assertThat(bookUpdated.title()).isEqualTo(title);
@@ -143,8 +165,16 @@ public class BookServiceImplTest {
     @Test
     @DisplayName("Должен бросать исключение при создании книги с несуществующим автором")
     void insertBookShoulThrowWithNoExistsAuthor() {
+        AuthorDto authorDto = new AuthorDto(99L, null);
+        List<GenreDto> genresDto = List.of(
+                new GenreDto(1L, null),
+                new GenreDto(2L, null)
+        );
+
+        BookDto bookDto = new BookDto(0, "Title", authorDto, genresDto);
+
         assertThatThrownBy(() ->
-                bookService.insert("Title", 99L, Set.of(1L, 2L)))
+                bookService.insert(bookDto))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Author with id 99 not found");
 
@@ -153,8 +183,14 @@ public class BookServiceImplTest {
     @Test
     @DisplayName("Должен бросать исключение при создании книги с несуществующим жанром")
     void insertBookShouldThrowWithNoExistsGenre() {
+
+        AuthorDto authorDto = new AuthorDto(1L, null);
+        List<GenreDto> genresDto = List.of(new GenreDto(99L, null));
+
+        BookDto bookDto = new BookDto(FIRST_BOOK_ID, "Title New", authorDto, genresDto);
+
         assertThatThrownBy(() -> {
-            bookService.insert("Title New", 1L, Set.of(99L));
+            bookService.insert(bookDto);
         })
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("One or all genres with ids [99] not found");

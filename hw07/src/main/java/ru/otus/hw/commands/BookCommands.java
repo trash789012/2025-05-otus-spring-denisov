@@ -4,8 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.hw.converters.BookConverter;
+import ru.otus.hw.dto.AuthorDto;
+import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.services.BookService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,14 +39,30 @@ public class BookCommands {
     // bins newBook 1 1,6
     @ShellMethod(value = "Insert book", key = "bins")
     public String insertBook(String title, long authorId, Set<Long> genresIds) {
-        var savedBook = bookService.insert(title, authorId, genresIds);
+        List<GenreDto> genresDto = new ArrayList<>();
+
+        genresIds.stream().forEach(genresId -> {
+            genresDto.add(new GenreDto(genresId, null));
+        });
+
+        AuthorDto authorDto = new AuthorDto(authorId, null);
+        BookDto bookDto = new BookDto(0, title, authorDto, genresDto);
+        var savedBook = bookService.insert(bookDto);
         return bookConverter.bookDtoToString(savedBook);
     }
 
     // bupd 4 editedBook 3 2,5
     @ShellMethod(value = "Update book", key = "bupd")
     public String updateBook(long id, String title, long authorId, Set<Long> genresIds) {
-        var savedBook = bookService.update(id, title, authorId, genresIds);
+        AuthorDto authorDto = new AuthorDto(authorId, null);
+        List<GenreDto> genresDto = new ArrayList<>();
+
+        genresIds.stream().forEach(genresId -> {
+            genresDto.add(new GenreDto(genresId, null));
+        });
+        BookDto bookDto = new BookDto(id, title, authorDto, genresDto);
+        var savedBook = bookService.update(bookDto);
+
         return bookConverter.bookDtoToString(savedBook);
     }
 
