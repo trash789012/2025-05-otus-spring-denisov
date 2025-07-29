@@ -15,7 +15,6 @@ import ru.otus.hw.repositories.GenreRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -66,7 +65,6 @@ public class BookServiceImpl implements BookService {
 
     private BookDto save(BookDto bookDto) {
         List<Long> genresIds = bookDto.genres().stream().map(GenreDto::id).toList();
-
         if (isEmpty(genresIds)) {
             throw new IllegalArgumentException("Genres ids must not be null");
         }
@@ -78,10 +76,8 @@ public class BookServiceImpl implements BookService {
                     () -> new EntityNotFoundException("Book with id %d not found".formatted(bookDto.id()))
             );
         }
-        var author = authorRepository.findById(bookDto.author().id())
-                .orElseThrow(() ->
+        var author = authorRepository.findById(bookDto.author().id()).orElseThrow(() ->
                         new EntityNotFoundException("Author with id %d not found".formatted(bookDto.author().id())));
-
         var genres = genreRepository.findAllById(genresIds);
         if (isEmpty(genres) || genresIds.size() != genres.size()) {
             throw new EntityNotFoundException("One or all genres with ids %s not found".formatted(genresIds));
