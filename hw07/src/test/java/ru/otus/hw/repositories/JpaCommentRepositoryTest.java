@@ -78,7 +78,7 @@ public class JpaCommentRepositoryTest {
         Comment comment = em.find(Comment.class, FIRST_COMMENT_ID);
         String newText = "New comment text";
         comment.setText(newText);
-        em.detach(comment); //отсоединяем от persistent контекста
+        em.detach(comment);
 
         repository.save(comment);
         em.flush();

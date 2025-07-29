@@ -113,11 +113,9 @@ public class JpaBookRepositoryTest {
                 .satisfies(book -> {
                     assertThat(book.getTitle()).contains("Inserted Book");
 
-                    //автора проверим
                     assertThat(book.getAuthor().getId() == author.getId());
                     assertThat(book.getAuthor().getFullName()).isEqualTo(author.getFullName());
 
-                    //жанры
                     assertThat(book.getGenres())
                             .hasSize(1)
                             .first()
