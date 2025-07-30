@@ -1,5 +1,6 @@
 package ru.otus.hw.services;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,11 @@ public class GenreServiceImplTest {
     @Autowired
     GenreServiceImplTest(GenreService genreService) {
         this.genreService = genreService;
+    }
+
+    @BeforeEach
+    void setUp() {
+        mongoTemplate.getDb().drop();
     }
 
     @Test
