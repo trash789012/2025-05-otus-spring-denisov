@@ -11,6 +11,7 @@ import ru.otus.hw.models.Comment;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException(
-                    "Book with id %d not found".formatted(bookId)
+                    "Book with id %s not found".formatted(bookId)
             );
         }
 
