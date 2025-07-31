@@ -29,7 +29,7 @@ public class Book {
 
     private List<Genre> genres;
 
-    @DocumentReference(lazy = true)
+    @Transient
     private List<Comment> comments;
 
     public Book(String title) {
