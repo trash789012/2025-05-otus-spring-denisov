@@ -11,7 +11,6 @@ import ru.otus.hw.models.Comment;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
