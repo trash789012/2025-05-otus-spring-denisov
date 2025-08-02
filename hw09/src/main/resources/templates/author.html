@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit author</title>
+    <style th:replace="~{fragments/menu :: menu-styles}"></style>
+    <style th:replace="~{fragments/styles :: global-styles}"></style>
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+    <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+    <form id="edit-form" action="author.html" th:action="@{/author}" th:method="post"
+          th:object="${author}" th:field="*{id}">
+
+        <div class="row" th:if="${author.id() != null}">
+            <label for="id-input">ID:</label>
+            <input id="id-input" type="text" readonly="readonly" name="id" th:value="*{id()}" value="1"/>
+        </div>
+
+        <div class="row">
+            <label for="person-name-input">Name:</label>
+            <input id="person-name-input" name="fullName" type="text" th:value="*{fullName()}" value="John Doe"/>
+            <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
+        </div>
+
+        <div class="row">
+            <button type="submit">Save</button>
+            <a href="author.html" th:href="@{/authors}">
+                <button type="button">Cancel</button>
+            </a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
