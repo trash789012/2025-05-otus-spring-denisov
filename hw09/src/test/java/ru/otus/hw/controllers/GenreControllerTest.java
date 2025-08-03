@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.repositories.GenreRepository;
 import ru.otus.hw.services.GenreService;
@@ -18,7 +19,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(GenreController.class)
 public class GenreControllerTest {
@@ -42,8 +42,8 @@ public class GenreControllerTest {
         when(genreService.findAll()).thenReturn(expectedGenres);
 
         MvcResult result = mvc.perform(get("/genres"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("genres"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("genres"))
                 .andReturn();
 
         List<GenreDto> actualGenres = (List<GenreDto>) result.getModelAndView().getModel().get("genres");
@@ -60,8 +60,8 @@ public class GenreControllerTest {
                 .thenReturn(List.of(expectedGenre));
 
         MvcResult result = mvc.perform(get("/genre/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("genre"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("genre"))
                 .andReturn();
 
         GenreDto actualGenre = (GenreDto) result.getModelAndView().getModel().get("genre");
@@ -72,8 +72,8 @@ public class GenreControllerTest {
     @Test
     void shouldReturnEditPageForNewGenre() throws Exception {
         MvcResult result = mvc.perform(get("/genre/new"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("genre"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("genre"))
                 .andReturn();
 
         GenreDto actualGenre = (GenreDto) result.getModelAndView().getModel().get("genre");
@@ -88,9 +88,9 @@ public class GenreControllerTest {
                 .thenReturn(List.of());
 
         mvc.perform(get("/genre/{id}", nonExistentId))
-                .andExpect(status().isOk())
-                .andExpect(view().name("customError"))
-                .andExpect(model().attributeExists("errorText"));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("customError"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("errorText"));
     }
 
     @Test
@@ -101,8 +101,8 @@ public class GenreControllerTest {
 
         mvc.perform(post("/genre")
                         .param("name", "New Genre"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/genre/1"));
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/genre/1"));
     }
 
     @Test
@@ -113,18 +113,17 @@ public class GenreControllerTest {
         mvc.perform(post("/genre")
                         .param("id", "1")
                         .param("name", "Updated Genre"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/genre/1"));
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/genre/1"));
     }
 
     @Test
     void shouldDeleteGenre() throws Exception {
         mvc.perform(post("/genreDelete")
                         .param("genreId", "1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/genres"));
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/genres"));
 
-        // Проверка вызова сервиса
         verify(genreService).deleteById("1");
     }
 }

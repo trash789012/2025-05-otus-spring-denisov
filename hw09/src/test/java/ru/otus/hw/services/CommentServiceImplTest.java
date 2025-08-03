@@ -15,7 +15,6 @@ import ru.otus.hw.models.Comment;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
