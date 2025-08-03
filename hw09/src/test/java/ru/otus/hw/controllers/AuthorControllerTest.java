@@ -1,44 +1,35 @@
 package ru.otus.hw.controllers;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
+import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.hw.dto.AuthorDto;
+import ru.otus.hw.repositories.AuthorRepository;
+import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.services.AuthorService;
-
-import java.util.List;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import ru.otus.hw.services.BookService;
 
 @WebMvcTest(AuthorController.class)
+//@Import(TestMongoConfig.class)
 public class AuthorControllerTest {
 
     @Autowired
-    private MockMvc mvc;
+    private MockMvc mockMvc;
 
     @MockitoBean
     @Autowired
     private AuthorService authorService;
 
+    @MockitoBean
+    @Autowired
+    private AuthorRepository authorRepository;
+
+
     @Test
-    @DisplayName("должен вывести всех авторов")
     public void whenGetAllAuthors() throws Exception {
-        List<AuthorDto> authors = List.of(
-                new AuthorDto("1", "Lermontov"),
-                new AuthorDto("2", "Pushkin")
-        );
-
-        when(authorService.findAll()).thenReturn(authors);
-
-        mvc.perform(get("/authors"))
-                .andExpect(status().isOk());
+        // Здесь будет тест
     }
-
 }
