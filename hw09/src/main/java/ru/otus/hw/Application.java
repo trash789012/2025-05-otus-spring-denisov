@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @EnableMongock
-@EnableMongoRepositories(basePackages = "ru.otus.hw.repositories")
 @SpringBootApplication
 public class Application {
 

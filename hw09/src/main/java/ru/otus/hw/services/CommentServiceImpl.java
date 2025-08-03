@@ -69,7 +69,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDto save(CommentDto commentDto) {
-
         Book book = null;
         if (commentDto.bookId() != null) {
             book = bookRepository.findById(commentDto.bookId()).orElseThrow(
@@ -77,6 +76,12 @@ public class CommentServiceImpl implements CommentService {
             );
         }
 
+        Comment comment = prepareComment(commentDto, book);
+
+        return commentConverter.commentToDto(commentRepository.save(comment));
+    }
+
+    private Comment prepareComment(CommentDto commentDto, Book book) {
         Comment comment;
         if (commentDto.id() == null) {
             comment = new Comment();
@@ -96,7 +101,6 @@ public class CommentServiceImpl implements CommentService {
         if (book != null) {
             comment.setBook(book);
         }
-
-        return commentConverter.commentToDto(commentRepository.save(comment));
+        return comment;
     }
 }

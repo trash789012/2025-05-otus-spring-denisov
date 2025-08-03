@@ -12,8 +12,6 @@ import ru.otus.hw.repositories.AuthorRepository;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 @RequiredArgsConstructor
 @Service
 public class AuthorServiceImpl implements AuthorService {

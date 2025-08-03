@@ -3,33 +3,35 @@ package ru.otus.hw.controllers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.repositories.AuthorRepository;
-import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.services.AuthorService;
-import ru.otus.hw.services.BookService;
 
-@WebMvcTest(AuthorController.class)
-//@Import(TestMongoConfig.class)
-public class AuthorControllerTest {
+import java.util.List;
+
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(value = {AuthorController.class})
+class AuthorControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mvc;
 
     @MockitoBean
-    @Autowired
     private AuthorService authorService;
 
     @MockitoBean
-    @Autowired
     private AuthorRepository authorRepository;
 
-
     @Test
-    public void whenGetAllAuthors() throws Exception {
-        // Здесь будет тест
+    void testGetAllAuthors() throws Exception {
+        given(authorService.findAll()).willReturn(List.of(new AuthorDto("1", "Test Author")));
+
+        mvc.perform(get("/authors"))
+                .andExpect(status().isOk());
     }
 }
