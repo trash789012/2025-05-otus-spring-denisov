@@ -1,4 +1,4 @@
-package ru.otus.hw.controllers;
+package ru.otus.hw.services;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

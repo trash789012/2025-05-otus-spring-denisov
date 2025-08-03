@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
 @DisplayName("Интеграционный тест сервиса комментариев ")
-@Import({CommentServiceImpl.class, CommentConverter.class})
+@Import({CommentServiceImpl.class, CommentConverter.class, TestMongoConfig.class})
 public class CommentServiceImplTest {
     @Autowired
     private MongoTemplate mongoTemplate;

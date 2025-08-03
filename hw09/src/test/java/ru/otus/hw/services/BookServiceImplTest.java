@@ -33,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
         BookConverter.class,
         AuthorConverter.class,
         GenreConverter.class,
-        BookCascadeDeleteMongoListener.class})
+        BookCascadeDeleteMongoListener.class,
+        TestMongoConfig.class})
 public class BookServiceImplTest {
 
     @Autowired

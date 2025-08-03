@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
 @DisplayName("Интеграционный тест сервиса жанров ")
-@Import({GenreServiceImpl.class, GenreConverter.class})
+@Import({GenreServiceImpl.class, GenreConverter.class, TestMongoConfig.class})
 public class GenreServiceImplTest {
 
     @Autowired

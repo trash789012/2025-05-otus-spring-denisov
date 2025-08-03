@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataMongoTest
 @DisplayName("Интеграционный тест сервиса авторов ")
-@Import({AuthorServiceImpl.class, AuthorConverter.class})
+@Import({AuthorServiceImpl.class, AuthorConverter.class, TestMongoConfig.class})
 public class AuthorServiceImplTest {
 
     @Autowired

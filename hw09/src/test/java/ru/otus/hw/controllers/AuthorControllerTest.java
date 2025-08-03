@@ -12,8 +12,10 @@ import ru.otus.hw.services.AuthorService;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value = {AuthorController.class})
 class AuthorControllerTest {
@@ -29,9 +31,19 @@ class AuthorControllerTest {
 
     @Test
     void testGetAllAuthors() throws Exception {
-        given(authorService.findAll()).willReturn(List.of(new AuthorDto("1", "Test Author")));
+        List<AuthorDto> authors = List.of(
+                new AuthorDto("1", "Author 1"),
+                new AuthorDto("2", "Author 2")
+        );
+
+        given(authorService.findAll()).willReturn(authors);
 
         mvc.perform(get("/authors"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("authors"))
+                .andExpect(model().attributeExists("authors"))
+                .andExpect(model().attribute("authors", authors));
+
+        verify(authorService, times(1)).findAll();
     }
 }
