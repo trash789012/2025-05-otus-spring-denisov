@@ -4,6 +4,7 @@ dependency-reduced-pom.xml
 *.class
 *.mvn
 .DS_Store
+*.log
 
 ### STS ###
 .apt_generated
