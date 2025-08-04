@@ -31,7 +31,7 @@ public class CommentControllerTest {
         String bookId = "1";
         String commentId = "10";
 
-        mvc.perform(post("/book/{bookId}/comments/{commentId}/deleteComment", bookId, commentId))
+        mvc.perform(post("/books/{bookId}/comments/{commentId}/deleteComment", bookId, commentId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/book/" + bookId));
 
@@ -44,7 +44,7 @@ public class CommentControllerTest {
         String bookId = "1";
         CommentDto commentDto = new CommentDto(null, "New comment", bookId);
 
-        mvc.perform(post("/book/{bookId}/addComment", bookId)
+        mvc.perform(post("/book/{bookId}/comments/addComment", bookId)
                         .param("text", "New comment")
                         .param("bookId", bookId))
                 .andExpect(status().is3xxRedirection())
@@ -61,7 +61,7 @@ public class CommentControllerTest {
     void shouldHandleEmptyCommentText() throws Exception {
         String bookId = "1";
 
-        mvc.perform(post("/book/{bookId}/addComment", bookId)
+        mvc.perform(post("/book/{bookId}/comments/addComment", bookId)
                         .param("text", "")
                         .param("bookId", bookId))
                 .andExpect(status().is3xxRedirection())
