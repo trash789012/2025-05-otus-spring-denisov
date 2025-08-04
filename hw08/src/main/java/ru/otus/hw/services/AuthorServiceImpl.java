@@ -18,7 +18,6 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorConverter authorConverter;
 
     @Override
-    @Transactional(readOnly = true)
     public List<AuthorDto> findAll() {
         return authorRepository.findAll().stream()
                 .map(authorConverter::authorToDto)
@@ -26,7 +25,6 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Optional<AuthorDto> findById(String id) {
         return authorRepository.findById(id)
                 .map(authorConverter::authorToDto);

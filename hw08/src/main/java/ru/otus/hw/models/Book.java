@@ -26,10 +26,7 @@ public class Book {
     private Author author;
 
     private List<Genre> genres;
-
-    @Transient
-    private List<Comment> comments;
-
+    
     public Book(String title) {
         this.title = title;
     }

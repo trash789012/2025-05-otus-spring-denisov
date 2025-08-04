@@ -25,14 +25,12 @@ public class CommentServiceImpl implements CommentService {
     private final BookRepository bookRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public Optional<CommentDto> findById(String id) {
         return commentRepository.findById(id)
                 .map(commentConverter::commentToDto);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<CommentDto> findByBookId(String bookId) {
 
         if (!bookRepository.existsById(bookId)) {
