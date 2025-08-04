@@ -7,10 +7,13 @@ spring:
       port: 27017
       database: book_lib
       host: localhost
-
   shell:
     interactive:
       enabled: false
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 
 de:
   flapdoodle:

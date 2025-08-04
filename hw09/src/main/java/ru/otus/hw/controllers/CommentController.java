@@ -2,6 +2,7 @@ package ru.otus.hw.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,14 +15,14 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/book/{bookId}/comments/{commentId}/deleteComment")
+    @PostMapping("/books/{bookId}/comments/{commentId}/deleteComment")
     public String deleteComment(@PathVariable("bookId") String bookId,
                                 @PathVariable("commentId") String commentId) {
         commentService.deleteById(commentId);
         return "redirect:/book/" + bookId;
     }
 
-    @PostMapping("/book/{bookId}/addComment")
+    @PostMapping("/book/{bookId}/comments/addComment")
     public String saveComment(@PathVariable("bookId") String bookId, @ModelAttribute("comment") CommentDto commentDto) {
         commentService.insert(commentDto);
         return "redirect:/book/" + bookId;

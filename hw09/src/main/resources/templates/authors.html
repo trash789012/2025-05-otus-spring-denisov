@@ -34,7 +34,7 @@
                    th:text="${author.fullName()}">Author_1</a>
             </td>
             <td>
-                <form th:action="@{authorDelete(authorId=${author.id()})}" method="post">
+                <form th:action="@{/authorDelete(authorId=${author.id()})}" method="post">
                     <button type="submit" class="btn-link">Delete</button>
                 </form>
             </td>
