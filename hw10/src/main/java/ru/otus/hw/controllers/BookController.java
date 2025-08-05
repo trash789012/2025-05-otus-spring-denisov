@@ -32,22 +32,6 @@ public class BookController {
 
     @GetMapping({"/book/{id}", "/book/new"})
     public String editPage(@PathVariable(required = false) String id, Model model) {
-//        BookDto book = (id != null)
-//                ? bookService.findById(id)
-//                .orElseThrow(EntityNotFoundException::new)
-//                : new BookDto(null, null, null, null);
-//
-//        model.addAttribute(
-//                "book",
-//                bookConverter.bookDtoToBookFormDto(book));
-//
-//        model.addAttribute("allAuthors", authorService.findAll());
-//        model.addAttribute("allGenres", genreService.findAll());
-//
-//        if (id != null) {
-//            model.addAttribute("bookComments", commentService.findByBookId(id));
-//        }
-
         return "book";
     }
 }

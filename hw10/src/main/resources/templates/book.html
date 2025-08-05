@@ -14,44 +14,53 @@
 </div>
 
 <div class="content-container">
-    <form id="edit-form" action="book.html" th:action="@{/book}" th:method="post"
-          th:object="${book}" th:field="*{id}">
+    <form id="edit-form" action="book.html" th:action="@{/book}" th:method="post">
 
-        <div class="form-group" th:if="${book.id() != null}">
+        <div class="form-group">
             <label for="id-input">ID:</label>
-            <input id="id-input" type="text" readonly="readonly" name="id" th:value="*{id()}" value="1"/>
+            <input id="id-input" type="text" readonly="readonly" name="id"/>
         </div>
 
         <div class="form-group">
-            <label for="person-name-input">Name:</label>
-            <input id="person-name-input" name="title" type="text" th:value="*{title()}" value="John Doe"/>
+            <label for="book-name-input">Name:</label>
+            <input id="book-name-input" name="title" type="text"/>
             <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
         </div>
 
         <div>
             <div>
                 <label>Author:</label>
-                <select id="book-authors-select" name="bookAuthors" th:field="*{authorId}">
-                    <option th:each="author: ${allAuthors}"
-                            th:value="${author.id()}"
-                            th:text="${author.fullName()}"
-                            th:selected="${author.id() == book?.authorId()} ?: false">
+<!--                <select id="book-authors-select" name="bookAuthors" th:field="*{authorId}">-->
+<!--                    <option th:each="author: ${allAuthors}"-->
+<!--                            th:value="${author.id()}"-->
+<!--                            th:text="${author.fullName()}"-->
+<!--                            th:selected="${author.id() == book?.authorId()} ?: false">-->
+<!--                    </option>-->
+<!--                </select>-->
+                <select id="book-authors-select" name="bookAuthors" required>
+                    <option>Автор
                     </option>
                 </select>
             </div>
 
             <div>
                 <label for="book-genres-select">Genres:</label>
-                <select id="book-genres-select" name="bookGenres" th:field="*{genreIds}" multiple>
-                    <option th:each="genre : ${allGenres}"
-                            th:value="${genre.id()}"
-                            th:text="${genre.name()}"
-                            th:selected="${book?.genreIds()?.contains(genre.id())} ?: false"></option>
+<!--                <select id="book-genres-select" name="bookGenres" th:field="*{genreIds}" multiple>-->
+<!--                    <option th:each="genre : ${allGenres}"-->
+<!--                            th:value="${genre.id()}"-->
+<!--                            th:text="${genre.name()}"-->
+<!--                            th:selected="${book?.genreIds()?.contains(genre.id())} ?: false"></option>-->
+<!--                </select>-->
+                <select id="book-genres-select" name="bookGenres" multiple>
+                    <option value="2"
+                    th:text="2"
+                    selected="selected"></option>
                 </select>
             </div>
 
             <div class="form-group">
-                <button type="submit" th:text="${book.id() != null} ? 'Save' : 'Create'"></button>
+<!--                <button type="button" th:text="${book.id() != null} ? 'Save' : 'Create'"></button>-->
+                <button type="button">Save</button>
                 <a href="index.html" th:href="@{/}">
                     <button type="button">Cancel</button>
                 </a>
@@ -60,30 +69,98 @@
     </form>
 
     <!--comments-->
-    <div class="comments-section" th:if="${book.id() != null}" th:object="${bookComments}">
-        <h3 class="comments-title">Comments</h3>
+<!--    <div class="comments-section">-->
+<!--        <h3 class="comments-title">Comments</h3>-->
 
-        <div class="comments-list" th:if="${not #lists.isEmpty(bookComments)}">
-            <div class="comment-card" th:each="comment: ${bookComments}">
-                <div class="comment-content">
-                    <p class="comment-text" th:text="${comment.text()}"></p>
-                    <form th:action="@{/books/{bookId}/comments/{commentId}/deleteComment(bookId=${book.id()}, commentId=${comment.id()})}"
-                          method="post">
-                        <button type="submit" class="delete-comment-btn" title="Delete comment">×</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+<!--        <div class="comments-list">-->
+<!--            <div class="comment-card" th:each="comment: ${bookComments}">-->
+<!--                <div class="comment-content">-->
+<!--                    <p class="comment-text" th:text="${comment.text()}"></p>-->
+<!--                    <form th:action="@{/books/{bookId}/comments/{commentId}/deleteComment(bookId=${book.id()}, commentId=${comment.id()})}"-->
+<!--                          method="post">-->
+<!--                        <button type="submit" class="delete-comment-btn" title="Delete comment">×</button>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
-        <!-- Форма добавления комментария -->
-        <div class="add-comment-form">
-            <form th:action="@{/book/{bookId}/comments/addComment(bookId=${book.id()})}" method="post">
-                <textarea class="comment-input" name="text" placeholder="Add your comment..." required></textarea>
-                <button type="submit" class="add-comment-btn">Add Comment</button>
-            </form>
-        </div>
-    </div>
+<!--        &lt;!&ndash; Форма добавления комментария &ndash;&gt;-->
+<!--        <div class="add-comment-form">-->
+<!--            <form method="post">-->
+<!--                <textarea class="comment-input" name="text" placeholder="Add your comment..." required></textarea>-->
+<!--                <button type="button" class="add-comment-btn">Add Comment</button>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function (){
+        const pathParts = window.location.pathname.split('/');
+        const bookId = pathParts[pathParts.length - 1];
+
+        if (bookId && bookId !== 'new') {
+            loadBook(bookId);
+        }
+
+        async function loadBook(bookId) {
+            try {
+                const [book, authors, genres] = await Promise.all([
+                    fetchBook(bookId),
+                    fetchAllAuthors(),
+                    fetchAllGenres()
+                ]);
+
+                buildAuthorList(book, authors);
+            } catch (error) {
+                console.error("Error in loading book data", error);
+                alert('Failed to load book');
+            }
+        }
+
+         async function fetchBook(bookId) {
+            const response = await fetch(`/api/v1/book/${bookId}`);
+            if (!response.ok) throw new Error("Error in loading book")
+            return response.json();
+        }
+
+        async function fetchAllAuthors() {
+            const response = await fetch("/api/v1/author");
+            if (!response.ok) {
+                throw new Error("Error in loading authors")
+            }
+
+            return response.json();
+        }
+
+        async function fetchAllGenres() {
+            const response = await fetch("/api/v1/genre");
+            if (!response.ok) {
+                throw new Error("Error in loading genres");
+            }
+
+            return response.json();
+        }
+
+        // async function fetchCommentsById() {
+        //     const response = fetch("api/v1/comment")
+        // }
+
+        function buildAuthorList(book, authors) {
+            const authorSelect = document.getElementById("book-authors-select");
+            authorSelect.innerHTML = '';
+
+            authors.forEach(author => {
+                const option = document.createElement('option');
+                option.value = author.id;
+                option.textContent = author.fullName;
+                option.selected = book.authorId === author.id;
+
+                authorSelect.appendChild(option);
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

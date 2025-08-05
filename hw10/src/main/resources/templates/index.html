@@ -28,20 +28,102 @@
             <th>Action</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="book : ${books}">
-            <td>
-                <a th:href="@{/book/{id}(id=${book.id()})}" href="book.html" th:text="${book.title()}">BookTitle_1</a>
-            </td>
-            <td th:text="${book.author()?.fullName()}">Author_1</td>
-            <td>
-                <form th:action="@{bookDelete(bookId=${book.id()})}" method="post">
-                    <button type="submit" class="btn-link">Delete</button>
-                </form>
-            </td>
-        </tr>
+        <tbody id="books-table-body">
+<!--        <tr th:each="book : ${books}">-->
+<!--            <td>-->
+<!--                <a th:href="@{/book/{id}(id=${book.id()})}" href="book.html" th:text="${book.title()}">BookTitle_1</a>-->
+<!--            </td>-->
+<!--            <td th:text="${book.author()?.fullName()}">Author_1</td>-->
+<!--            <td>-->
+<!--                <form th:action="@{bookDelete(bookId=${book.id()})}" method="post">-->
+<!--                    <button type="submit" class="btn-link">Delete</button>-->
+<!--                </form>-->
+<!--            </td>-->
+<!--        </tr>-->
         </tbody>
     </table>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        //грузим авторов
+        loadBooks();
+
+        function loadBooks() {
+            fetch('/api/v1/book')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok!")
+                    }
+                    return response.json();
+                })
+                .then(books => {
+                    const tableBody = document.getElementById("books-table-body");
+                    tableBody.innerHTML = '';
+
+                    books.forEach(book => {
+                        const row = document.createElement('tr');
+
+                        // Колонка с названием книги
+                        const nameCell = document.createElement('td');
+                        const nameLink = document.createElement('a');
+                        nameLink.href = `/book/${book.id}`;
+                        nameLink.textContent = book.title;
+                        nameCell.appendChild(nameLink);
+
+                        // Колонка с автором книги
+                        const authorCell = document.createElement('td');
+                        authorCell.textContent = book.author.fullName;
+
+                        // Колонка с действиями
+                        const actionCell = document.createElement('td');
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.className = 'btn-link';
+                        deleteButton.onclick = () =>  {
+                            deleteBook(book.id);
+                        }
+                        actionCell.appendChild(deleteButton);
+
+                        row.appendChild(nameCell);
+                        row.appendChild(authorCell);
+                        row.appendChild(actionCell);
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading books', error);
+                    alert('Failed to load books')
+                })
+        }
+
+        function deleteBook(bookId) {
+            if (!confirm('Are you sure you want to delete this book?')) {
+                return;
+            }
+
+            fetch(`/api/v1/book/${bookId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadBooks(); // Обновляем список после удаления
+                    } else {
+                        throw new Error('Delete failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting book:', error);
+                    alert('Filed to delete book');
+                })
+        }
+
+    })
+</script>
 </body>
 </html>
