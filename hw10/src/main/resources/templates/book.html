@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit book</title>
+    <style th:replace="~{fragments/menu :: menu-styles}"></style>
+    <style th:replace="~{fragments/styles :: global-styles}"></style>
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+    <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+    <form id="edit-form" action="book.html" th:action="@{/book}" th:method="post"
+          th:object="${book}" th:field="*{id}">
+
+        <div class="form-group" th:if="${book.id() != null}">
+            <label for="id-input">ID:</label>
+            <input id="id-input" type="text" readonly="readonly" name="id" th:value="*{id()}" value="1"/>
+        </div>
+
+        <div class="form-group">
+            <label for="person-name-input">Name:</label>
+            <input id="person-name-input" name="title" type="text" th:value="*{title()}" value="John Doe"/>
+            <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
+        </div>
+
+        <div>
+            <div>
+                <label>Author:</label>
+                <select id="book-authors-select" name="bookAuthors" th:field="*{authorId}">
+                    <option th:each="author: ${allAuthors}"
+                            th:value="${author.id()}"
+                            th:text="${author.fullName()}"
+                            th:selected="${author.id() == book?.authorId()} ?: false">
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="book-genres-select">Genres:</label>
+                <select id="book-genres-select" name="bookGenres" th:field="*{genreIds}" multiple>
+                    <option th:each="genre : ${allGenres}"
+                            th:value="${genre.id()}"
+                            th:text="${genre.name()}"
+                            th:selected="${book?.genreIds()?.contains(genre.id())} ?: false"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" th:text="${book.id() != null} ? 'Save' : 'Create'"></button>
+                <a href="index.html" th:href="@{/}">
+                    <button type="button">Cancel</button>
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!--comments-->
+    <div class="comments-section" th:if="${book.id() != null}" th:object="${bookComments}">
+        <h3 class="comments-title">Comments</h3>
+
+        <div class="comments-list" th:if="${not #lists.isEmpty(bookComments)}">
+            <div class="comment-card" th:each="comment: ${bookComments}">
+                <div class="comment-content">
+                    <p class="comment-text" th:text="${comment.text()}"></p>
+                    <form th:action="@{/books/{bookId}/comments/{commentId}/deleteComment(bookId=${book.id()}, commentId=${comment.id()})}"
+                          method="post">
+                        <button type="submit" class="delete-comment-btn" title="Delete comment">×</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма добавления комментария -->
+        <div class="add-comment-form">
+            <form th:action="@{/book/{bookId}/comments/addComment(bookId=${book.id()})}" method="post">
+                <textarea class="comment-input" name="text" placeholder="Add your comment..." required></textarea>
+                <button type="submit" class="add-comment-btn">Add Comment</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

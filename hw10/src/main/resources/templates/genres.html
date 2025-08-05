@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all genres</title>
+    <style th:replace="~{fragments/menu :: menu-styles}"></style>
+    <style th:replace="~{fragments/styles :: table-styles}"></style>
+    <style th:replace="~{fragments/styles :: global-styles}"></style>
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+    <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+    <div class="table-header">
+        <h2>List of genres</h2>
+        <a th:href="@{/genre/new}" class="create-button-action">new</a>
+    </div>
+
+    <table class="genres">
+        <thead>
+        <tr>
+            <th>Genre name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="genre : ${genres}">
+            <td>
+                <a th:href="@{genre/{id}(id=${genre.id()})}" href="genre.html"
+                   th:text="${genre.name()}">Genre_1</a>
+            </td>
+            <td>
+                <form th:action="@{genreDelete(genreId=${genre.id()})}" method="post">
+                    <button type="submit" class="btn-link">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
