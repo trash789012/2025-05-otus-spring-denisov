@@ -29,14 +29,7 @@
 
         <div>
             <div>
-                <label>Author:</label>
-<!--                <select id="book-authors-select" name="bookAuthors" th:field="*{authorId}">-->
-<!--                    <option th:each="author: ${allAuthors}"-->
-<!--                            th:value="${author.id()}"-->
-<!--                            th:text="${author.fullName()}"-->
-<!--                            th:selected="${author.id() == book?.authorId()} ?: false">-->
-<!--                    </option>-->
-<!--                </select>-->
+                <label for="book-authors-select">Author:</label>
                 <select id="book-authors-select" name="bookAuthors" required>
                     <option>Автор
                     </option>
@@ -52,9 +45,8 @@
 <!--                            th:selected="${book?.genreIds()?.contains(genre.id())} ?: false"></option>-->
 <!--                </select>-->
                 <select id="book-genres-select" name="bookGenres" multiple>
-                    <option value="2"
-                    th:text="2"
-                    selected="selected"></option>
+                    <option>Жанр
+                    </option>
                 </select>
             </div>
 
@@ -112,6 +104,7 @@
                 ]);
 
                 buildAuthorList(book, authors);
+                buidGenreList(book, genres);
             } catch (error) {
                 console.error("Error in loading book data", error);
                 alert('Failed to load book');
@@ -157,6 +150,20 @@
                 option.selected = book.authorId === author.id;
 
                 authorSelect.appendChild(option);
+            });
+        }
+
+        function buidGenreList(book, genres) {
+            const genreSelect = document.getElementById('book-genres-select');
+            genreSelect.innerHTML = '';
+
+            genres.forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre.id;
+                option.textContent = genre.name;
+                option.selected = book.genreIds.includes(genre.id);
+
+                genreSelect.appendChild(option);
             });
         }
     });
