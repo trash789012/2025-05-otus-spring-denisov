@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthorControllerRest {
+public class AuthorController {
 
     private final AuthorService authorService;
 

@@ -23,37 +23,27 @@ public class GenreController {
 
     @GetMapping("/genres")
     public String listPage(Model model) {
-        List<GenreDto> genres = genreService.findAll();
-        model.addAttribute("genres", genres);
         return "genres";
     }
 
     @GetMapping({"/genre/{id}", "/genre/new"})
     public String editPage(@PathVariable(required = false) String id, Model model) {
-        GenreDto genre = (id != null)
-                ? genreService.findByIds(Set.of(id))
-                .stream().findFirst()
-                .orElseThrow(EntityNotFoundException::new)
-                : new GenreDto(null, null);
-
-        model.addAttribute("genre", genre);
-
         return "genre";
     }
 
-    @PostMapping("/genre")
-    public String saveGenre(@ModelAttribute("genre") GenreDto genreDto) {
-        GenreDto savedGenre = (genreDto.id() != null)
-                ? genreService.update(genreDto)
-                : genreService.insert(genreDto);
-
-        return "redirect:/genre/" + savedGenre.id();
-    }
-
-    @PostMapping("/genreDelete")
-    public String deleteGenre(@RequestParam("genreId") String id) {
-        genreService.deleteById(id);
-        return "redirect:/genres";
-    }
+//    @PostMapping("/genre")
+//    public String saveGenre(@ModelAttribute("genre") GenreDto genreDto) {
+//        GenreDto savedGenre = (genreDto.id() != null)
+//                ? genreService.update(genreDto)
+//                : genreService.insert(genreDto);
+//
+//        return "redirect:/genre/" + savedGenre.id();
+//    }
+//
+//    @PostMapping("/genreDelete")
+//    public String deleteGenre(@RequestParam("genreId") String id) {
+//        genreService.deleteById(id);
+//        return "redirect:/genres";
+//    }
 
 }
