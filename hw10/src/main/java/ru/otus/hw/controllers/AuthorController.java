@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.hw.dto.AuthorDto;
-import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.services.AuthorService;
-
-import java.util.List;
 
 @Primary
 @Controller
@@ -24,20 +21,11 @@ public class AuthorController {
 
     @GetMapping("/authors")
     public String listPage(Model model) {
-        List<AuthorDto> authors = authorService.findAll();
-        model.addAttribute("authors", authors);
         return "authors";
     }
 
     @GetMapping({"/author/{id}", "/author/new"})
     public String editPage(@PathVariable(required = false) String id, Model model) {
-        AuthorDto author = (id != null)
-                ? authorService.findById(id)
-                .orElseThrow(EntityNotFoundException::new)
-                : new AuthorDto(null, null);
-
-        model.addAttribute("author", author);
-
         return "author";
     }
 

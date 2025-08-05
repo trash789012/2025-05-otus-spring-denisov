@@ -13,29 +13,136 @@
     <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
 </div>
 
-<div class="content-container">
-    <form id="edit-form" action="author.html" th:action="@{/author}" th:method="post"
-          th:object="${author}" th:field="*{id}">
+<!--<div class="content-container">-->
+<!--    <form id="edit-form" action="author.html" th:action="@{/author}" th:method="post"-->
+<!--          th:object="${author}" th:field="*{id}">-->
 
-        <div class="row" th:if="${author.id() != null}">
+<!--        <div class="row" th:if="${author.id() != null}">-->
+<!--            <label for="id-input">ID:</label>-->
+<!--            <input id="id-input" type="text" readonly="readonly" name="id" th:value="*{id()}" value="1"/>-->
+<!--        </div>-->
+
+<!--        <div class="row">-->
+<!--            <label for="person-name-input">Name:</label>-->
+<!--            <input id="person-name-input" name="fullName" type="text" th:value="*{fullName()}" value="John Doe"/>-->
+<!--            &lt;!&ndash;        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>&ndash;&gt;-->
+<!--        </div>-->
+
+<!--        <div class="row">-->
+<!--            <button type="submit">Save</button>-->
+<!--            <a href="author.html" th:href="@{/authors}">-->
+<!--                <button type="button">Cancel</button>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--    </form>-->
+<!--</div>-->
+
+
+<div class="content-container">
+    <form id="edit-form" action="author.html" th:method="post">
+
+        <div class="row" id="id-row">
             <label for="id-input">ID:</label>
-            <input id="id-input" type="text" readonly="readonly" name="id" th:value="*{id()}" value="1"/>
+            <input id="id-input" type="text" readonly="readonly" name="id"/>
         </div>
 
         <div class="row">
             <label for="person-name-input">Name:</label>
-            <input id="person-name-input" name="fullName" type="text" th:value="*{fullName()}" value="John Doe"/>
+            <input id="person-name-input" name="fullName" type="text"/>
             <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
         </div>
 
         <div class="row">
-            <button type="submit">Save</button>
+            <button type="button" onclick="saveAuthor()">Save</button>
             <a href="author.html" th:href="@{/authors}">
                 <button type="button">Cancel</button>
             </a>
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const idInput = document.getElementById('id-input');
+        const fullNameInput = document.getElementById('person-name-input');
+
+        const pathParts = window.location.pathname.split('/');
+        const authorId = pathParts[pathParts.length - 1];
+
+        if (authorId && authorId !== 'new') {
+            loadAuthor(authorId);
+        }
+
+        function loadAuthor(id) {
+            fetch(`/api/v1/author/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Author not found');
+                    }
+
+                    return response.json();
+                })
+                .then(author => {
+                    idInput.value = author.id;
+                    fullNameInput.value = author.fullName;
+                })
+                .catch(error => {
+                    console.error('Error loading author', error);
+                    alert('Failed to load author');
+                })
+        }
+
+    });
+
+    function saveAuthor() {
+        const fullNameInput = document.getElementById('person-name-input');
+        const idInput = document.getElementById('id-input');
+
+        const authorData = {
+            fullName: fullNameInput.value
+        };
+
+        if (idInput.value) {
+            authorData.id = idInput.value;
+        }
+
+        const endpointUrl = idInput.value
+                                ? `/api/v1/author/${authorData.id}`
+                                : `/api/v1/author`;
+        const method = idInput.value ? 'PUT' : 'POST';
+
+        const authorNew = !idInput.value;
+
+        fetch(endpointUrl, {
+            method: method,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(authorData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Save failed');
+                }
+
+                return response.json();
+            })
+            .then(updatedAuthor => {
+                alert('Author saved successfully!');
+                if (authorNew) {
+                    window.location.replace(`/author/${updatedAuthor.id}`);
+                } else {
+                    fullNameInput.value = updatedAuthor.fullName;
+                }
+            })
+            .catch(error => {
+                console.error('Error saving author:', error)
+                alert('Failed to save author');
+            });
+    }
+
+</script>
 
 </body>
 </html>
