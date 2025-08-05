@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>ru.otus.hw</groupId>
-    <artifactId>hw08-mongodb</artifactId>
+    <artifactId>hw10-ajax</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-mongodb-homework</name>
-    <description>Spring Boot MongoDB homework project</description>
+    <name>spring-ajax-homework</name>
+    <description>Spring ajax homework project</description>
 
     <properties>
         <java.version>17</java.version>
@@ -56,11 +56,6 @@
         </dependency>
 
         <!-- Database Migration -->
-        <dependency>
-            <groupId>com.github.cloudyrock.mongock</groupId>
-            <artifactId>mongock-spring-v5</artifactId>
-            <version>${mongock.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
             <artifactId>mongodb-springdata-v3-driver</artifactId>
