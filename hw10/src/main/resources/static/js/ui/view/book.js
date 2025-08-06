@@ -1,4 +1,4 @@
-import {parseLastUrlParam} from "../../utils/util.js";
+import {parseErrors, parseLastUrlParam} from "../../utils/util.js";
 import {createBook, fetchBook, updateBook} from "../../api/bookApi.js";
 import {AuthorSelector} from "../components/authorSelector.js";
 import {fetchAllAuthors} from "../../api/authorApi.js";
@@ -38,7 +38,9 @@ export class Book {
 
     init = async () => {
         this.loadBook(this.bookId).catch(console.error);
-        this.commentForm.style.display = 'none';
+        if (!this.isEditMode()) {
+            this.commentForm.style.display = 'none';
+        }
     }
 
     isEditMode = () => {
@@ -93,19 +95,21 @@ export class Book {
         try {
             let response = null;
             if (method === 'POST') {
-                response = createBook(bookData);
+                response = await createBook(bookData);
             } else {
-                response = updateBook(bookData.id, bookData);
+                response = await updateBook(bookData.id, bookData);
             }
 
-            await response.then((updatedBook) => {
+            if (response.success === false) {
+                alert('Filed to save book: \n' + parseErrors(response.errors));
+            } else {
                 alert('Book saved successfully!');
                 if (bookNew) {
-                    window.location.replace(`/book/${updatedBook.id}`);
+                    window.location.replace(`/book/${response.book.id}`);
                 } else {
-                    this.loadBook(updatedBook.id);
+                    await this.loadBook(response.book.id);
                 }
-            })
+            }
         } catch (error) {
             console.error('Error save book:', error);
             alert('Filed to save book');

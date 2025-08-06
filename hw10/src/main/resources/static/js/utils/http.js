@@ -1,5 +1,9 @@
 const API_BASE = '/api/v1'
 
+export function getApiBase() {
+    return API_BASE;
+}
+
 export async function get(url, options = {}) {
     const response = await fetch(`${API_BASE}${url}`, {
         headers: {

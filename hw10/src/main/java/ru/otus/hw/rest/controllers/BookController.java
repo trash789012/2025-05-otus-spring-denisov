@@ -1,7 +1,9 @@
 package ru.otus.hw.rest.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,9 +40,16 @@ public class BookController {
     }
 
     @PostMapping("/api/v1/book")
-    public ResponseEntity<BookDto> createBook(@RequestBody BookFormDto bookDto) {
+    public ResponseEntity<?> createBook(
+            @Valid @RequestBody BookFormDto bookDto,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(bindingResult.getAllErrors());
+        }
         var savedBook = bookService.insert(bookDto);
-        return ResponseEntity.ok().body(savedBook);
+        return ResponseEntity.ok(savedBook);
     }
 
     @PutMapping("/api/v1/book/{id}")
