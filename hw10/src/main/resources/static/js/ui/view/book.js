@@ -1,5 +1,5 @@
 import {parseLastUrlParam} from "../../utils/util.js";
-import {fetchBook} from "../../api/bookApi.js";
+import {createBook, fetchBook, updateBook} from "../../api/bookApi.js";
 import {AuthorSelector} from "../components/authorSelector.js";
 import {fetchAllAuthors} from "../../api/authorApi.js";
 import {fetchAllGenres} from "../../api/genreApi.js";
@@ -18,7 +18,7 @@ export class Book {
         this.idInput = document.getElementById('id-input-book');
         this.titleInput = document.getElementById('book-name-input');
         this.commentInput = document.getElementById('add-comment-textarea');
-        
+        this.commentForm = document.getElementById('comment-section-id');
         this.authorSelector = new AuthorSelector('book-authors-select', null);
         this.genreSelector = new GenreSelector('book-genres-select');
         this.commentSelector = new CommentSelector('comments-list-card', this.deleteCommentCallback);
@@ -31,42 +31,43 @@ export class Book {
         this.addCommentButton = document.getElementById('add-comment-btn')
         if (this.addCommentButton) {
             this.addCommentButton.onclick = () => {
-                this.addCommentCallback(this.bookId).catch(console.log);
+                this.addCommentCallback(this.idInput.value).catch(console.log);
             }
         }
     }
 
     init = async () => {
-        if (this.bookId && this.bookId !== 'new') {
-            //edit mode
-            this.loadBook(this.bookId).catch(console.error);
-        }
+        this.loadBook(this.bookId).catch(console.error);
+        this.commentForm.style.display = 'none';
+    }
+
+    isEditMode = () => {
+        return this.bookId && this.bookId !== 'new';
     }
 
     loadBook = async (id) => {
         try {
             const [
-                book,
                 authors,
-                genres,
-                comments
+                genres
             ] = await Promise.all([
-                fetchBook(id),
                 fetchAllAuthors(),
-                fetchAllGenres(),
-                fetchAllCommentsByBookId(id)
+                fetchAllGenres()
             ]);
 
-            this.idInput.value = book.id;
-            this.titleInput.value = book.title;
+            if (this.isEditMode()) {
+                const book = await fetchBook(id);
+                const comments = await fetchAllCommentsByBookId(id);
 
-            this.authorSelector.authorId = book.authorId;
+                this.idInput.value = book.id;
+                this.titleInput.value = book.title;
+                this.authorSelector.authorId = book.authorId;
+                this.genreSelector.genreIds = book.genreIds;
+                this.commentSelector.render(comments);
+            }
+
             this.authorSelector.render(authors);
-
-            this.genreSelector.genreIds = book.genreIds;
             this.genreSelector.render(genres)
-
-            this.commentSelector.render(comments);
         } catch (error) {
             console.error('Error loading book', error);
             alert('Failed to load book');
@@ -74,39 +75,41 @@ export class Book {
     }
 
     saveBook = async () => {
-        // const authorData = {
-        //     fullName: this.fullNameInput.value
-        // };
-        //
-        // if (this.idInput.value) {
-        //     authorData.id = this.idInput.value;
-        // }
-        //
-        // let method = this.idInput.value ? 'PUT' : 'POST';
-        //
-        // let authorNew;
-        // authorNew = !this.idInput.value;
-        //
-        // try {
-        //     let response = null;
-        //     if (method === 'POST') {
-        //         response = createAuthor(authorData);
-        //     } else {
-        //         response = updateAuthor(authorData.id, authorData);
-        //     }
-        //
-        //     await response.then((updatedAuthor) => {
-        //         alert('Author saved successfully!');
-        //         if (authorNew) {
-        //             this.loadAuthor(updatedAuthor.id);
-        //         } else {
-        //             this.fullNameInput.value = updatedAuthor.fullName;
-        //         }
-        //     })
-        // } catch (error) {
-        //     console.error('Error save author:', error);
-        //     alert('Filed to save author');
-        // }
+
+        const bookData = {
+            title: this.titleInput.value,
+            authorId: this.authorSelector.getValue(),
+            genreIds: this.genreSelector.getSelectedValues()
+        }
+
+        if (this.idInput.value) {
+            bookData.id = this.idInput.value;
+        }
+
+        let method = this.idInput.value ? 'PUT' : 'POST';
+
+        let bookNew = !this.idInput.value;
+
+        try {
+            let response = null;
+            if (method === 'POST') {
+                response = createBook(bookData);
+            } else {
+                response = updateBook(bookData.id, bookData);
+            }
+
+            await response.then((updatedBook) => {
+                alert('Book saved successfully!');
+                if (bookNew) {
+                    window.location.replace(`/book/${updatedBook.id}`);
+                } else {
+                    this.loadBook(updatedBook.id);
+                }
+            })
+        } catch (error) {
+            console.error('Error save book:', error);
+            alert('Filed to save book');
+        }
     }
 
     deleteCommentCallback = async (bookId, commentId, event) => {

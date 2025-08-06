@@ -27,7 +27,9 @@ export class BookTable {
 
             // Колонка с автором книги
             const authorCell = document.createElement('td');
-            authorCell.textContent = book.author.fullName;
+            if (book.author) {
+                authorCell.textContent = book.author.fullName;
+            }
 
             // Колонка с действиями
             const actionCell = document.createElement('td');

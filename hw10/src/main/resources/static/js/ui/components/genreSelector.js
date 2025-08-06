@@ -14,9 +14,15 @@ export class GenreSelector {
             const option = document.createElement('option');
             option.value = genre.id;
             option.textContent = genre.name;
-            option.selected = this.genreIds.includes(genre.id);
+            if (this.genreIds) {
+                option.selected = this.genreIds.includes(genre.id);
+            }
 
             this.genreSelect.appendChild(option);
         });
+    }
+
+    getSelectedValues() {
+        return Array.from(this.genreSelect.selectedOptions).map(option => option.value);
     }
 }

@@ -19,4 +19,8 @@ export class AuthorSelector {
          this.authorSelect.appendChild(option);
  });
     }
+
+    getValue() {
+        return this.authorSelect.value;
+    }
 }

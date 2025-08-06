@@ -38,12 +38,6 @@
 
             <div>
                 <label for="book-genres-select">Genres:</label>
-                <!--                <select id="book-genres-select" name="bookGenres" th:field="*{genreIds}" multiple>-->
-                <!--                    <option th:each="genre : ${allGenres}"-->
-                <!--                            th:value="${genre.id()}"-->
-                <!--                            th:text="${genre.name()}"-->
-                <!--                            th:selected="${book?.genreIds()?.contains(genre.id())} ?: false"></option>-->
-                <!--                </select>-->
                 <select id="book-genres-select" name="bookGenres" multiple>
                     <option>Жанр
                     </option>
@@ -61,28 +55,29 @@
     </form>
 
     <!--comments-->
-        <div class="comments-section" id="comment-section-id">
-            <h3 class="comments-title">Comments</h3>
+    <div class="comments-section" id="comment-section-id">
+        <h3 class="comments-title">Comments</h3>
 
-            <div class="comments-list" id="comments-list-card">
-                <div class="comment-card">
-                    <div class="comment-content">
-                        <p class="comment-text"></p>
-                        <form method="post">
-                            <button type="submit" class="delete-comment-btn" title="Delete comment">×</button>
-                        </form>
-                    </div>
+        <div class="comments-list" id="comments-list-card">
+            <div class="comment-card">
+                <div class="comment-content">
+                    <p class="comment-text"></p>
+                    <form method="post">
+                        <button type="submit" class="delete-comment-btn" title="Delete comment">×</button>
+                    </form>
                 </div>
             </div>
-
-            <!-- Форма добавления комментария -->
-            <div class="add-comment-form" id="id-comment-add-form">
-                <form method="post">
-                    <textarea class="comment-input" id="add-comment-textarea" name="text" placeholder="Add your comment..." required></textarea>
-                    <button type="button" class="add-comment-btn" id="add-comment-btn">Add Comment</button>
-                </form>
-            </div>
         </div>
+
+        <!-- Форма добавления комментария -->
+        <div class="add-comment-form" id="id-comment-add-form">
+            <form method="post">
+                <textarea class="comment-input" id="add-comment-textarea" name="text" placeholder="Add your comment..."
+                          required></textarea>
+                <button type="button" class="add-comment-btn" id="add-comment-btn">Add Comment</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script type="module" src="../static/js/ui/view/book.js" th:src="@{/js/ui/view/book.js}"></script>

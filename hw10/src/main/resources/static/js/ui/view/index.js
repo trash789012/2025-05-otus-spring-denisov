@@ -20,8 +20,8 @@ export class Books {
             const books = await fetchAllBooks();
             this.table.render(books);
         } catch (error) {
-            console.error('Error loading genres', error);
-            alert('Failed to load genres')
+            console.error('Error loading books', error);
+            alert('Failed to load books')
         }
     }
 
