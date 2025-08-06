@@ -13,7 +13,7 @@ import ru.otus.hw.services.GenreService;
 
 @Controller
 @RequiredArgsConstructor
-public class BookController {
+public class BookPageController {
 
     private final BookService bookService;
 

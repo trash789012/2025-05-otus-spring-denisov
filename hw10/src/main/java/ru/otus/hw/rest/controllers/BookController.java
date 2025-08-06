@@ -9,66 +9,48 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
-import ru.otus.hw.services.CommentService;
-import ru.otus.hw.services.GenreService;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class BookControllerRest {
+public class BookController {
     private final BookService bookService;
-
-    private final BookConverter bookConverter;
-
-    private final AuthorService authorService;
-
-    private final GenreService genreService;
-
-    private final CommentService commentService;
 
     @GetMapping("/api/v1/book")
     public List<BookDto> getAllBooks() {
-        List<BookDto> books = bookService.findAll();
-        if (books.isEmpty()) {
-            throw new EntityNotFoundException("Book not found!");
-        }
-
-        return books;
+        return bookService.findAll();
     }
 
     @GetMapping("/api/v1/book/{id}")
-    public ResponseEntity<BookFormDto> getBookById(@PathVariable String id) {
+    public ResponseEntity<BookDto> getBookById(@PathVariable String id) {
         return bookService.findById(id)
-                .map(bookConverter::bookDtoToBookFormDto)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found".formatted(id)));
     }
 
     @PostMapping("/api/v1/book")
-    public ResponseEntity<BookDto> createBook(@RequestBody BookFormDto bookFormDto) {
-        var savedBook = bookService.insert(bookFormDto);
+    public ResponseEntity<BookDto> createBook(@RequestBody BookFormDto bookDto) {
+        var savedBook = bookService.insert(bookDto);
         return ResponseEntity.ok().body(savedBook);
     }
 
     @PutMapping("/api/v1/book/{id}")
-    public ResponseEntity<BookDto> updateBook(@PathVariable String id, @RequestBody BookFormDto bookFormDto) {
-        if (!id.equals(bookFormDto.id())) {
+    public ResponseEntity<BookDto> updateBook(@PathVariable String id, @RequestBody BookFormDto bookDto) {
+        if (!id.equals(bookDto.id())) {
             throw new IllegalArgumentException("ID in path and body must match");
         }
 
-        BookDto updatedBook = bookService.update(bookFormDto);
-        return ResponseEntity.ok().body(updatedBook);
+        BookDto savedBook = bookService.update(bookDto);
+        return ResponseEntity.ok().body(savedBook);
     }
 
     @DeleteMapping("/api/v1/book/{id}")
-    public ResponseEntity<BookDto> deleteBook(@PathVariable String id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable String id) {
         bookService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
