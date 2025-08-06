@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.AuthorDto;
-import ru.otus.hw.exceptions.EntityNotFoundException;
+import ru.otus.hw.rest.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.AuthorService;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class AuthorController {
     public List<AuthorDto> getAllAuthors() {
         List<AuthorDto> authors = authorService.findAll();
         if (authors.isEmpty()) {
-            throw new EntityNotFoundException("Authors not found!");
+            throw new NotFoundRequestException("Authors not found!");
         }
         return authors;
     }
@@ -34,7 +34,7 @@ public class AuthorController {
     public ResponseEntity<AuthorDto> getAuthorById(@PathVariable String id) {
         return authorService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new EntityNotFoundException("Author with id %s not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundRequestException("Author with id %s not found!".formatted(id)));
     }
 
     @PostMapping("/api/v1/author")
@@ -47,7 +47,7 @@ public class AuthorController {
     public ResponseEntity<AuthorDto> updateAuthor(@PathVariable String id,
                                                   @RequestBody AuthorDto authorDto) {
         if (!id.equals(authorDto.id())) {
-            throw new IllegalArgumentException("ID in path and body must match");
+            return ResponseEntity.badRequest().build();
         }
 
         AuthorDto updatedAuthor = authorService.update(authorDto);
