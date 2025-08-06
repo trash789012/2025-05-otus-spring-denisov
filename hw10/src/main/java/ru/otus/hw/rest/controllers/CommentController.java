@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.CommentDto;
+import ru.otus.hw.rest.exceptions.BadRequestException;
 import ru.otus.hw.services.CommentService;
 
 import java.util.List;
@@ -25,6 +26,12 @@ public class CommentController {
 
     @PostMapping("/api/v1/book/{id}/comment")
     public ResponseEntity<CommentDto> createComment(@PathVariable("id") String bookId, @RequestBody CommentDto commentDto) {
+        if (bookId == null || commentDto == null) {
+            throw new BadRequestException("Id is null or empty");
+        }
+        if (commentDto.text() == null || commentDto.text().isEmpty()) {
+            throw new BadRequestException("Text is null or empty");
+        }
         var savedComment = commentService.insert(commentDto);
         return ResponseEntity.ok().body(savedComment);
     }

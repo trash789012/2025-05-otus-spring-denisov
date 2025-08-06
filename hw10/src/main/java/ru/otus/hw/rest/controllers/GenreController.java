@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.exceptions.EntityNotFoundException;
+import ru.otus.hw.rest.exceptions.BadRequestException;
+import ru.otus.hw.rest.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.GenreService;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class GenreController {
     public List<GenreDto> getAllGenres() {
         List<GenreDto> genres = genreService.findAll();
         if (genres.isEmpty()) {
-            throw new EntityNotFoundException("Genres not found!");
+            throw new NotFoundRequestException("Genres not found!");
         }
         return genres;
     }
@@ -35,7 +36,7 @@ public class GenreController {
         return genreService.findByIds(Set.of(id))
                 .stream().findFirst()
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new NotFoundRequestException("Genre with id %s not found!".formatted(id)));
     }
 
     @PostMapping("/api/v1/genre")
@@ -48,7 +49,7 @@ public class GenreController {
     public ResponseEntity<GenreDto> updateGenre(@PathVariable String id,
                                                 @RequestBody GenreDto genreDto) {
         if (!id.equals(genreDto.id())) {
-            throw new IllegalArgumentException("ID in path and body must match");
+            throw new BadRequestException("ID in path and body must match");
         }
 
         GenreDto updatedGenre = genreService.update(genreDto);

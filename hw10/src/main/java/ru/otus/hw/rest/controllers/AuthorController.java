@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.AuthorDto;
+import ru.otus.hw.rest.exceptions.BadRequestException;
 import ru.otus.hw.rest.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.AuthorService;
 
@@ -47,7 +48,7 @@ public class AuthorController {
     public ResponseEntity<AuthorDto> updateAuthor(@PathVariable String id,
                                                   @RequestBody AuthorDto authorDto) {
         if (!id.equals(authorDto.id())) {
-            return ResponseEntity.badRequest().build();
+            throw new BadRequestException("Author id %s mismatch".formatted(id));
         }
 
         AuthorDto updatedAuthor = authorService.update(authorDto);
