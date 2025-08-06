@@ -34,6 +34,10 @@ export async function post(url, data, options = {}) {
         },
     });
 
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     return await response.json();
 }
 
@@ -46,6 +50,10 @@ export async function put(url, data, options = {}) {
             ...options.headers
         }
     });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
     return await response.json();
 }

@@ -21,7 +21,7 @@ export class GenreTable {
             // Колонка с именем жанра
             const nameCell = document.createElement('td');
             const nameLink = document.createElement('a');
-            nameLink.href = `/author/${genre.id}`;
+            nameLink.href = `/genre/${genre.id}`;
             nameLink.textContent = genre.name;
             nameCell.appendChild(nameLink);
 

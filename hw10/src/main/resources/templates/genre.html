@@ -17,8 +17,8 @@
   <form id="edit-form" action="genre.html" th:method="post">
 
     <div class="row">
-      <label for="id-input">ID:</label>
-      <input id="id-input" type="text" readonly="readonly" name="id"/>
+      <label for="id-input-genre">ID:</label>
+      <input id="id-input-genre" type="text" readonly="readonly" name="id"/>
     </div>
 
     <div class="row">
@@ -28,7 +28,7 @@
     </div>
 
     <div class="row">
-      <button type="button" onclick="saveGenre()">Save</button>
+      <button type="button" id="genre-save">Save</button>
       <a href="genre.html" th:href="@{/genres}">
         <button type="button">Cancel</button>
       </a>
@@ -36,87 +36,89 @@
   </form>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const idInput = document.getElementById('id-input');
-    const fullNameInput = document.getElementById('genre-name-input');
+<script type="module" src="../static/js/ui/view/genre.js" th:src="@{/js/ui/view/genre.js}"></script>
 
-    const pathParts = window.location.pathname.split('/');
-    const genreId = pathParts[pathParts.length - 1];
+<!--<script>-->
+<!--  document.addEventListener('DOMContentLoaded', function () {-->
+<!--    const idInput = document.getElementById('id-input');-->
+<!--    const fullNameInput = document.getElementById('genre-name-input');-->
 
-    if (genreId && genreId !== 'new') {
-      loadAuthor(genreId);
-    }
+<!--    const pathParts = window.location.pathname.split('/');-->
+<!--    const genreId = pathParts[pathParts.length - 1];-->
 
-    function loadAuthor(id) {
-      fetch(`/api/v1/genre/${id}`)
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Genre not found');
-                }
+<!--    if (genreId && genreId !== 'new') {-->
+<!--      loadAuthor(genreId);-->
+<!--    }-->
 
-                return response.json();
-              })
-              .then(genre => {
-                idInput.value = genre.id;
-                fullNameInput.value = genre.name;
-              })
-              .catch(error => {
-                console.error('Error loading genre', error);
-                alert('Failed to load genre');
-              })
-    }
+<!--    function loadAuthor(id) {-->
+<!--      fetch(`/api/v1/genre/${id}`)-->
+<!--              .then(response => {-->
+<!--                if (!response.ok) {-->
+<!--                  throw new Error('Genre not found');-->
+<!--                }-->
 
-  });
+<!--                return response.json();-->
+<!--              })-->
+<!--              .then(genre => {-->
+<!--                idInput.value = genre.id;-->
+<!--                fullNameInput.value = genre.name;-->
+<!--              })-->
+<!--              .catch(error => {-->
+<!--                console.error('Error loading genre', error);-->
+<!--                alert('Failed to load genre');-->
+<!--              })-->
+<!--    }-->
 
-  function saveGenre() {
-    const nameInput = document.getElementById('genre-name-input');
-    const idInput = document.getElementById('id-input');
+<!--  });-->
 
-    const genreData = {
-      name: nameInput.value
-    };
+<!--  function saveGenre() {-->
+<!--    const nameInput = document.getElementById('genre-name-input');-->
+<!--    const idInput = document.getElementById('id-input');-->
 
-    if (idInput.value) {
-      genreData.id = idInput.value;
-    }
+<!--    const genreData = {-->
+<!--      name: nameInput.value-->
+<!--    };-->
 
-    const endpointUrl = idInput.value
-            ? `/api/v1/genre/${genreData.id}`
-            : `/api/v1/genre`;
-    const method = idInput.value ? 'PUT' : 'POST';
+<!--    if (idInput.value) {-->
+<!--      genreData.id = idInput.value;-->
+<!--    }-->
 
-    const genreNew = !idInput.value;
+<!--    const endpointUrl = idInput.value-->
+<!--            ? `/api/v1/genre/${genreData.id}`-->
+<!--            : `/api/v1/genre`;-->
+<!--    const method = idInput.value ? 'PUT' : 'POST';-->
 
-    fetch(endpointUrl, {
-      method: method,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(genreData)
-    })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Save failed');
-              }
+<!--    const genreNew = !idInput.value;-->
 
-              return response.json();
-            })
-            .then(updatedGenre => {
-              alert('Genre saved successfully!');
-              if (genreNew) {
-                window.location.replace(`/genre/${updatedGenre.id}`);
-              } else {
-                nameInput.value = updatedGenre.name;
-              }
-            })
-            .catch(error => {
-              console.error('Error saving genre:', error)
-              alert('Failed to save genre');
-            });
-  }
-</script>
+<!--    fetch(endpointUrl, {-->
+<!--      method: method,-->
+<!--      headers: {-->
+<!--        'Accept': 'application/json',-->
+<!--        'Content-Type': 'application/json'-->
+<!--      },-->
+<!--      body: JSON.stringify(genreData)-->
+<!--    })-->
+<!--            .then(response => {-->
+<!--              if (!response.ok) {-->
+<!--                throw new Error('Save failed');-->
+<!--              }-->
+
+<!--              return response.json();-->
+<!--            })-->
+<!--            .then(updatedGenre => {-->
+<!--              alert('Genre saved successfully!');-->
+<!--              if (genreNew) {-->
+<!--                window.location.replace(`/genre/${updatedGenre.id}`);-->
+<!--              } else {-->
+<!--                nameInput.value = updatedGenre.name;-->
+<!--              }-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--              console.error('Error saving genre:', error)-->
+<!--              alert('Failed to save genre');-->
+<!--            });-->
+<!--  }-->
+<!--</script>-->
 
 </body>
 </html>

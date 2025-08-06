@@ -46,13 +46,10 @@ export class Author {
             authorData.id = this.idInput.value;
         }
 
-        const endpointUrl = this.idInput.value
-            ? `/author/${authorData.id}`
-            : `/author`;
+        let method = this.idInput.value ? 'PUT' : 'POST';
 
-        const method = this.idInput.value ? 'PUT' : 'POST';
-
-        const authorNew = !this.idInput.value;
+        let authorNew;
+        authorNew = !this.idInput.value;
 
         try {
             let response = null;
