@@ -140,6 +140,7 @@ export class Book {
             };
             const saved = await createComment(bookId, commentAdd);
             this.commentSelector.addSingle(saved);
+            this.commentInput.value = '';
         } catch (error) {
             console.error('Error deleting author:', error);
         }
