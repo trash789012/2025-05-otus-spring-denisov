@@ -1,4 +1,4 @@
-import {AuthorTable} from "../components/table.js";
+import {AuthorTable} from "../components/authorTable.js";
 import {deleteAuthor, fetchAllAuthors} from "../../api/authorApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
 
@@ -27,6 +27,9 @@ export class Authors {
     }
 
     deleteAuthor = async (id) => {
+        if (!confirm('Are you sure you want to delete this author?')) {
+            return;
+        }
         try {
             await deleteAuthor(id);
             await this.loadAuthors();
