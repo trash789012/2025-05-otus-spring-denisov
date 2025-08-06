@@ -3,7 +3,7 @@ import {fetchBook} from "../../api/bookApi.js";
 import {AuthorSelector} from "../components/authorSelector.js";
 import {fetchAllAuthors} from "../../api/authorApi.js";
 import {fetchAllGenres} from "../../api/genreApi.js";
-import {deleteComment, fetchAllCommentsByBookId} from "../../api/commentApi.js";
+import {createComment, deleteComment, fetchAllCommentsByBookId} from "../../api/commentApi.js";
 import {GenreSelector} from "../components/genreSelector.js";
 import {CommentSelector} from "../components/commentSelector.js";
 
@@ -17,6 +17,8 @@ export class Book {
         this.bookId = bookId;
         this.idInput = document.getElementById('id-input-book');
         this.titleInput = document.getElementById('book-name-input');
+        this.commentInput = document.getElementById('add-comment-textarea');
+        
         this.authorSelector = new AuthorSelector('book-authors-select', null);
         this.genreSelector = new GenreSelector('book-genres-select');
         this.commentSelector = new CommentSelector('comments-list-card', this.deleteCommentCallback);
@@ -24,6 +26,12 @@ export class Book {
         if (this.saveButton) {
             this.saveButton.onclick = () => {
                 this.saveBook().catch(console.log);
+            }
+        }
+        this.addCommentButton = document.getElementById('add-comment-btn')
+        if (this.addCommentButton) {
+            this.addCommentButton.onclick = () => {
+                this.addCommentCallback(this.bookId).catch(console.log);
             }
         }
     }
@@ -111,8 +119,22 @@ export class Book {
             const commentCard = event.target.closest('.comment-card');
             commentCard.remove();
         } catch (error) {
+            console.error('Error deleting comment:', error);
+            alert('Filed to delete comment');
+        }
+    }
+
+    addCommentCallback = async (bookId) => {
+        try {
+            const commentAdd = {
+                id: null,
+                text: this.commentInput.value,
+                bookId: bookId
+            };
+            const saved = await createComment(bookId, commentAdd);
+            this.commentSelector.addSingle(saved);
+        } catch (error) {
             console.error('Error deleting author:', error);
-            alert('Filed to delete author');
         }
     }
 }

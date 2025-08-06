@@ -17,6 +17,14 @@ export class CommentSelector {
         });
     }
 
+    addSingle(comment) {
+        this.commentSelect.appendChild(this.createCommentCard(
+            comment.text,
+            comment.id,
+            comment.bookId
+        ));
+    }
+
     createCommentCard(commentText, commentId, bookId) {
         const commentCard = document.createElement('div');
         commentCard.className = 'comment-card';
