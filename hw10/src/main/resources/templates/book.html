@@ -61,20 +61,8 @@
     </form>
 
     <!--comments-->
-        <div class="comments-section">
+        <div class="comments-section" id="comment-section-id">
             <h3 class="comments-title">Comments</h3>
-
-<!--            <div class="comments-list">-->
-<!--                <div class="comment-card" th:each="comment: ${bookComments}">-->
-<!--                    <div class="comment-content">-->
-<!--                        <p class="comment-text" th:text="${comment.text()}"></p>-->
-<!--                        <form th:action="@{/books/{bookId}/comments/{commentId}/deleteComment(bookId=${book.id()}, commentId=${comment.id()})}"-->
-<!--                              method="post">-->
-<!--                            <button type="submit" class="delete-comment-btn" title="Delete comment">×</button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
 
             <div class="comments-list" id="comments-list-card">
                 <div class="comment-card">

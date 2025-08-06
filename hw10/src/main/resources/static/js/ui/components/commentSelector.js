@@ -1,9 +1,11 @@
 export class CommentSelector {
-    constructor(selector) {
+    constructor(selector, deleteCallback) {
         this.commentSelect = document.getElementById(selector);
         if (!this.commentSelect) {
             throw new Error(`Element ${selector} not found!`)
         }
+
+        this.deleteCallback = deleteCallback;
     }
 
     render(comments) {
@@ -28,13 +30,15 @@ export class CommentSelector {
 
         const formElement = document.createElement('form');
         formElement.method = 'post';
-        formElement.action = `/books/${bookId}/comments/${commentId}/delete`;
 
         const deleteButton = document.createElement('button');
-        deleteButton.type = 'submit';
+        deleteButton.type = 'button';
         deleteButton.className = 'delete-comment-btn';
         deleteButton.title = 'Delete comment';
         deleteButton.textContent = '×';
+        deleteButton.onclick = (event) => {
+            this.deleteCallback(bookId, commentId, event);
+        }
 
         formElement.appendChild(deleteButton);
         commentContent.append(textElement, formElement);

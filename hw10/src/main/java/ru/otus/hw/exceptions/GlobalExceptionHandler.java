@@ -15,5 +15,10 @@ public class GlobalExceptionHandler {
                 "errorText", "Объект не найден");
     }
 
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handeException(Exception ex) {
+        return new ModelAndView("customError",
+                "errorText", ex.getMessage());
+    }
 
 }

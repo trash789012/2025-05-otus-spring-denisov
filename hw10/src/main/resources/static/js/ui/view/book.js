@@ -3,7 +3,7 @@ import {fetchBook} from "../../api/bookApi.js";
 import {AuthorSelector} from "../components/authorSelector.js";
 import {fetchAllAuthors} from "../../api/authorApi.js";
 import {fetchAllGenres} from "../../api/genreApi.js";
-import {fetchAllCommentsByBookId} from "../../api/commentApi.js";
+import {deleteComment, fetchAllCommentsByBookId} from "../../api/commentApi.js";
 import {GenreSelector} from "../components/genreSelector.js";
 import {CommentSelector} from "../components/commentSelector.js";
 
@@ -19,7 +19,7 @@ export class Book {
         this.titleInput = document.getElementById('book-name-input');
         this.authorSelector = new AuthorSelector('book-authors-select', null);
         this.genreSelector = new GenreSelector('book-genres-select');
-        this.commentSelector = new CommentSelector('comments-list-card')
+        this.commentSelector = new CommentSelector('comments-list-card', this.deleteCommentCallback);
         this.saveButton = document.getElementById('book-save');
         if (this.saveButton) {
             this.saveButton.onclick = () => {
@@ -99,5 +99,20 @@ export class Book {
         //     console.error('Error save author:', error);
         //     alert('Filed to save author');
         // }
+    }
+
+    deleteCommentCallback = async (bookId, commentId, event) => {
+        if (!confirm('Are you sure you want to delete this comment?')) {
+            return;
+        }
+        try {
+            await deleteComment(bookId, commentId);
+
+            const commentCard = event.target.closest('.comment-card');
+            commentCard.remove();
+        } catch (error) {
+            console.error('Error deleting author:', error);
+            alert('Filed to delete author');
+        }
     }
 }
