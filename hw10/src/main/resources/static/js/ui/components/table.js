@@ -11,6 +11,10 @@ export class AuthorTable {
     render(authors) {
         this.table.innerHTML = '';
 
+        if (authors == null) {
+            return;
+        }
+
         authors.forEach(author => {
             const row = document.createElement('tr');
 

@@ -1,6 +1,6 @@
-import {AuthorPage} from "./ui/authorPage.js";
+import {AuthorsPage} from "./ui/authorsPage.js";
 
 document.addEventListener('DOMContentLoaded', () => {
-   const page = new AuthorPage();
+   const page = new AuthorsPage();
    page.loadAuthors().catch(console.error);
 });

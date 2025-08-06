@@ -1,7 +1,7 @@
 import {AuthorTable} from "./components/table.js";
 import {deleteAuthor, fetchAllAuthors} from "../api/authorApi.js";
 
-export class AuthorPage {
+export class AuthorsPage {
     constructor() {
         this.table = new AuthorTable('authors-table-body', this.deleteAuthor);
     }

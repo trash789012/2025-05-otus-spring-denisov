@@ -13,7 +13,15 @@ export async function get(url, options = {}) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    return response.json();
+    if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+        return null;
+    }
+
+    try {
+        return await response.json();
+    } catch (error) {
+        return null;
+    }
 }
 
 export async function post(url, data, options = {}) {
