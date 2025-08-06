@@ -25,7 +25,8 @@ public class CommentController {
     }
 
     @PostMapping("/api/v1/book/{id}/comment")
-    public ResponseEntity<CommentDto> createComment(@PathVariable("id") String bookId, @RequestBody CommentDto commentDto) {
+    public ResponseEntity<CommentDto> createComment(@PathVariable("id") String bookId,
+                                                    @RequestBody CommentDto commentDto) {
         if (bookId == null || commentDto == null) {
             throw new BadRequestException("Id is null or empty");
         }
@@ -37,7 +38,8 @@ public class CommentController {
     }
 
     @DeleteMapping("/api/v1/book/{bookId}/comment/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("bookId") String bookId, @PathVariable("commentId") String commentId) {
+    public ResponseEntity<Void> deleteComment(@PathVariable("bookId") String bookId,
+                                              @PathVariable("commentId") String commentId) {
         commentService.deleteById(commentId);
         return ResponseEntity.noContent().build();
     }
