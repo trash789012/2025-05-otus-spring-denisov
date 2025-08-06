@@ -1,7 +1,7 @@
 import {del, get, post} from "../utils/http.js";
 
-export async function fetchAllByBookId(bookId) {
-    return get(`/book/${id}/comment`)
+export async function fetchAllCommentsByBookId(bookId) {
+    return get(`/book/${bookId}/comment`)
 }
 
 export async function createComment(bookId, comment) {

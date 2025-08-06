@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -21,14 +22,17 @@ import java.util.List;
 public class BookController {
     private final BookService bookService;
 
+    private final BookConverter bookConverter;
+
     @GetMapping("/api/v1/book")
     public List<BookDto> getAllBooks() {
         return bookService.findAll();
     }
 
     @GetMapping("/api/v1/book/{id}")
-    public ResponseEntity<BookDto> getBookById(@PathVariable String id) {
+    public ResponseEntity<BookFormDto> getBookById(@PathVariable String id) {
         return bookService.findById(id)
+                .map(bookConverter::bookDtoToBookFormDto)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found".formatted(id)));
     }
