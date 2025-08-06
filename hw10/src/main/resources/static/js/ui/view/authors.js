@@ -1,12 +1,22 @@
-import {AuthorTable} from "./components/table.js";
-import {deleteAuthor, fetchAllAuthors} from "../api/authorApi.js";
+import {AuthorTable} from "../components/table.js";
+import {deleteAuthor, fetchAllAuthors} from "../../api/authorApi.js";
+import {parseLastUrlParam} from "../../utils/util.js";
 
-export class AuthorsPage {
+document.addEventListener('DOMContentLoaded', () => {
+    const page = new Authors(parseLastUrlParam());
+    page.init().catch(console.error)
+})
+
+export class Authors {
     constructor() {
         this.table = new AuthorTable('authors-table-body', this.deleteAuthor);
     }
 
-    loadAuthors = async() => {
+    init = async () => {
+        this.loadAuthors().catch(console.error);
+    }
+
+    loadAuthors = async () => {
         try {
             const authors = await fetchAllAuthors();
             this.table.render(authors);

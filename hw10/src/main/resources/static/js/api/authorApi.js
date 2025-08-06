@@ -1,4 +1,4 @@
-import {del, get, post} from '../utils/http.js';
+import {del, get, post, put} from '../utils/http.js';
 
 export async function fetchAuthor(id) {
     return get(`/author/${id}`);
@@ -16,6 +16,15 @@ export async function createAuthor(author) {
             }
         }
     );
+}
+
+export async function updateAuthor(id, author) {
+    return put(`/author/${id}`, author,
+        {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
 }
 
 export async function deleteAuthor(id) {

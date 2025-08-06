@@ -32,13 +32,25 @@ export async function post(url, data, options = {}) {
             'Content-Type': 'application/json',
             ...options.headers
         },
-        ...options
     });
 
-    return response.json(); //TODO
+    return await response.json();
 }
 
-export async function del (url) {
+export async function put(url, data, options = {}) {
+    const response = await fetch(`${API_BASE}${url}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+
+    return await response.json();
+}
+
+export async function del(url) {
     const response = await fetch(`${API_BASE}${url}`, {
         method: 'DELETE',
         headers: {

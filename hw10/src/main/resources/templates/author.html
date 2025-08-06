@@ -28,7 +28,7 @@
         </div>
 
         <div class="row">
-            <button type="button" onclick="saveAuthor()">Save</button>
+            <button id="author-save" type="button">Save</button>
             <a href="author.html" th:href="@{/authors}">
                 <button type="button">Cancel</button>
             </a>
@@ -36,88 +36,90 @@
     </form>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const idInput = document.getElementById('id-input');
-        const fullNameInput = document.getElementById('author-name-input');
+<script type="module" src="../static/js/ui/view/author.js" th:src="@{/js/ui/view/author.js}"></script>
 
-        const pathParts = window.location.pathname.split('/');
-        const authorId = pathParts[pathParts.length - 1];
+<!--<script>-->
+<!--    const idInput = document.getElementById('id-input');-->
+<!--    const fullNameInput = document.getElementById('author-name-input');-->
 
-        if (authorId && authorId !== 'new') {
-            loadAuthor(authorId);
-        }
+<!--    const pathParts = window.location.pathname.split('/');-->
+<!--    const authorId = pathParts[pathParts.length - 1];-->
 
-        function loadAuthor(id) {
-            fetch(`/api/v1/author/${id}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Author not found');
-                    }
+<!--    if (authorId && authorId !== 'new') {-->
+<!--        loadAuthor(authorId);-->
+<!--    }-->
 
-                    return response.json();
-                })
-                .then(author => {
-                    idInput.value = author.id;
-                    fullNameInput.value = author.fullName;
-                })
-                .catch(error => {
-                    console.error('Error loading author', error);
-                    alert('Failed to load author');
-                })
-        }
+<!--    function loadAuthor(id) {-->
+<!--        fetch(`/api/v1/author/${id}`)-->
+<!--            .then(response => {-->
+<!--                if (!response.ok) {-->
+<!--                    throw new Error('Author not found');-->
+<!--                }-->
 
-    });
+<!--                return response.json();-->
+<!--            })-->
+<!--            .then(author => {-->
+<!--                idInput.value = author.id;-->
+<!--                fullNameInput.value = author.fullName;-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error loading author', error);-->
+<!--                alert('Failed to load author');-->
+<!--            })-->
+<!--    }-->
 
-    function saveAuthor() {
-        const fullNameInput = document.getElementById('author-name-input');
-        const idInput = document.getElementById('id-input');
+<!--    });-->
 
-        const authorData = {
-            fullName: fullNameInput.value
-        };
+<!--    function saveAuthor() {-->
+<!--        const fullNameInput = document.getElementById('author-name-input');-->
+<!--        const idInput = document.getElementById('id-input');-->
 
-        if (idInput.value) {
-            authorData.id = idInput.value;
-        }
+<!--        const authorData = {-->
+<!--            fullName: fullNameInput.value-->
+<!--        };-->
 
-        const endpointUrl = idInput.value
-                                ? `/api/v1/author/${authorData.id}`
-                                : `/api/v1/author`;
-        const method = idInput.value ? 'PUT' : 'POST';
+<!--        if (idInput.value) {-->
+<!--            authorData.id = idInput.value;-->
+<!--        }-->
 
-        const authorNew = !idInput.value;
+<!--        const endpointUrl = idInput.value-->
+<!--            ? `/api/v1/author/${authorData.id}`-->
+<!--            : `/api/v1/author`;-->
+<!--        const method = idInput.value ? 'PUT' : 'POST';-->
 
-        fetch(endpointUrl, {
-            method: method,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(authorData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Save failed');
-                }
+<!--        const authorNew = !idInput.value;-->
 
-                return response.json();
-            })
-            .then(updatedAuthor => {
-                alert('Author saved successfully!');
-                if (authorNew) {
-                    window.location.replace(`/author/${updatedAuthor.id}`);
-                } else {
-                    fullNameInput.value = updatedAuthor.fullName;
-                }
-            })
-            .catch(error => {
-                console.error('Error saving author:', error)
-                alert('Failed to save author');
-            });
-    }
+<!--        fetch(endpointUrl, {-->
+<!--            method: method,-->
+<!--            headers: {-->
+<!--                'Accept': 'application/json',-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify(authorData)-->
+<!--        })-->
+<!--            .then(response => {-->
+<!--                if (!response.ok) {-->
+<!--                    throw new Error('Save failed');-->
+<!--                }-->
 
-</script>
+<!--                return response.json();-->
+<!--            })-->
+<!--            .then(updatedAuthor => {-->
+<!--                alert('Author saved successfully!');-->
+<!--                if (authorNew) {-->
+<!--                    window.location.replace(`/author/${updatedAuthor.id}`);-->
+<!--                } else {-->
+<!--                    fullNameInput.value = updatedAuthor.fullName;-->
+<!--                }-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error saving author:', error)-->
+<!--                alert('Failed to save author');-->
+<!--            });-->
+<!--    }-->
+
+<!--</script>-->
+<!--document.addEventListener('DOMContentLoaded', function () {-->
 
 </body>
 </html>
