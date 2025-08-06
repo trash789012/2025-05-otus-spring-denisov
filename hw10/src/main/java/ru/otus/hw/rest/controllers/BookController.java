@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
-import ru.otus.hw.exceptions.EntityNotFoundException;
+import ru.otus.hw.rest.exceptions.BadRequestException;
+import ru.otus.hw.rest.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.BookService;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class BookController {
         return bookService.findById(id)
                 .map(bookConverter::bookDtoToBookFormDto)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundRequestException("Book with id %s not found".formatted(id)));
     }
 
     @PostMapping("/api/v1/book")
@@ -48,6 +49,7 @@ public class BookController {
             return ResponseEntity.badRequest()
                     .body(bindingResult.getAllErrors());
         }
+
         var savedBook = bookService.insert(bookDto);
         return ResponseEntity.ok(savedBook);
     }
@@ -55,7 +57,7 @@ public class BookController {
     @PutMapping("/api/v1/book/{id}")
     public ResponseEntity<BookDto> updateBook(@PathVariable String id, @RequestBody BookFormDto bookDto) {
         if (!id.equals(bookDto.id())) {
-            throw new IllegalArgumentException("ID in path and body must match");
+            throw new BadRequestException("ID in path and body must match");
         }
 
         BookDto savedBook = bookService.update(bookDto);

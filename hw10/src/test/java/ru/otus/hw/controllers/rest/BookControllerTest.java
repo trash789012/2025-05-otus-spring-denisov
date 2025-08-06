@@ -1,0 +1,189 @@
+package ru.otus.hw.controllers.rest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import ru.otus.hw.converters.AuthorConverter;
+import ru.otus.hw.converters.BookConverter;
+import ru.otus.hw.converters.GenreConverter;
+import ru.otus.hw.dto.AuthorDto;
+import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.dto.BookFormDto;
+import ru.otus.hw.dto.GenreDto;
+import ru.otus.hw.rest.controllers.BookController;
+import ru.otus.hw.services.BookService;
+
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(BookController.class)
+@Import({BookConverter.class, AuthorConverter.class, GenreConverter.class,
+        LocalValidatorFactoryBean.class})
+public class BookControllerTest {
+    @Autowired
+    private MockMvc mvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private BookService bookService;
+
+    @Autowired
+    private BookConverter bookConverter;
+
+    @Test
+    void shouldGetAllBooks() throws Exception {
+
+        BookDto book1 = new BookDto(
+                "1",
+                "Book Title 1",
+                new AuthorDto("1", "Author 1"),
+                List.of(new GenreDto("1", "Genre 1"))
+        );
+
+        BookDto book2 = new BookDto(
+                "2",
+                "Book Title 2",
+                new AuthorDto("2", "Author 2"),
+                List.of(new GenreDto("2", "Genre 2"))
+        );
+
+        List<BookDto> books = List.of(book1, book2);
+
+        given(bookService.findAll()).willReturn(books);
+
+        mvc.perform(get("/api/v1/book"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value("1"))
+                .andExpect(jsonPath("$[0].title").value("Book Title 1"))
+                .andExpect(jsonPath("$[1].id").value("2"))
+                .andExpect(jsonPath("$[1].title").value("Book Title 2"));
+    }
+
+    @Test
+    void shouldGetBookById() throws Exception {
+        BookDto bookDto = new BookDto(
+                "1",
+                "Book Title",
+                new AuthorDto("1", "Author"),
+                List.of(new GenreDto("1", "Genre"))
+        );
+
+        given(bookService.findById("1")).willReturn(java.util.Optional.of(bookDto));
+
+        mvc.perform(get("/api/v1/book/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.title").value("Book Title"));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenBookNotExist() throws Exception {
+        given(bookService.findById("1")).willReturn(java.util.Optional.empty());
+
+        mvc.perform(get("/api/v1/book/1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldCreateBook() throws Exception {
+        BookDto bookDto = new BookDto(
+                null,
+                "New Book",
+                new AuthorDto("1", "author1"),
+                List.of(new GenreDto("1", "genre1"))
+        );
+        BookFormDto requestDto = bookConverter.bookDtoToBookFormDto(bookDto);
+        BookDto responseDto = new BookDto(
+                "1",
+                "New Book",
+                new AuthorDto("1", "author1"),
+                List.of(new GenreDto("1", "genre1"))
+        );
+
+        given(bookService.insert(any(BookFormDto.class))).willReturn(responseDto);
+
+        mvc.perform(post("/api/v1/book")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.title").value("New Book"));
+    }
+
+    @Test
+    void shouldValidateWhenCreatingInvalidBook() throws Exception {
+        BookFormDto invalidDto = new BookFormDto(null, "", null, null);
+
+        mvc.perform(post("/api/v1/book")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].defaultMessage").exists());
+    }
+
+    @Test
+    void shouldUpdateBook() throws Exception {
+        BookDto bookDto = new BookDto(
+                "1",
+                "New Book",
+                new AuthorDto("1", "author1"),
+                List.of(new GenreDto("1", "genre1"))
+        );
+        BookFormDto requestDto = bookConverter.bookDtoToBookFormDto(bookDto);
+        BookDto responseDto = new BookDto(
+                "1",
+                "Updated Book",
+                new AuthorDto("1", "author1"),
+                List.of(new GenreDto("1", "genre1"))
+        );
+        given(bookService.update(any(BookFormDto.class))).willReturn(responseDto);
+
+        mvc.perform(put("/api/v1/book/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.title").value("Updated Book"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenIdsMismatch() throws Exception {
+        BookFormDto requestDto = new BookFormDto("2", "Book Title", "author1", List.of("genre1"));
+
+        mvc.perform(put("/api/v1/book/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldDeleteBook() throws Exception {
+        mvc.perform(delete("/api/v1/book/1"))
+                .andExpect(status().isNoContent());
+
+        verify(bookService).deleteById("1");
+    }
+}

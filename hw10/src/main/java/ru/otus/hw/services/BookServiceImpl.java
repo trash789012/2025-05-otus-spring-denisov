@@ -44,6 +44,9 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookDto insert(BookFormDto bookDto) {
+        if (bookDto.authorId() == null) {
+            throw new IllegalArgumentException("Book id must not be null");
+        }
         return save(bookDto);
     }
 

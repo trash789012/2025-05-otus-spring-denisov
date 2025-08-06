@@ -1,38 +1,39 @@
-package ru.otus.hw.controllers;
+package ru.otus.hw.controllers.page;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.controllers.GenrePageController;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(value = {AuthorPageController.class})
-class AuthorPageControllerTest {
+@WebMvcTest(GenrePageController.class)
+public class GenrePageControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @Test
-    void listPageShouldReturnAuthorsView() throws Exception {
-        mvc.perform(get("/authors"))
+    void listPageShouldReturnGenresView() throws Exception {
+        mvc.perform(get("/genres"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("authors"));
+                .andExpect(view().name("genres"));
     }
 
     @Test
-    void editPageWithIdShouldReturnAuthorView() throws Exception {
-        mvc.perform(get("/author/1"))
+    void editPageWithIdShouldReturnGenreView() throws Exception {
+        mvc.perform(get("/genre/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("author"));
+                .andExpect(view().name("genre"));
     }
 
     @Test
-    void editPageNewAuthorShouldReturnAuthorView() throws Exception {
-        mvc.perform(get("/author/new"))
+    void editPageNewGenreShouldReturnGenreView() throws Exception {
+        mvc.perform(get("/genre/new"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("author"));
+                .andExpect(view().name("genre"));
     }
 }

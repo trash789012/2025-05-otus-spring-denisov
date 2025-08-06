@@ -1,4 +1,4 @@
-package ru.otus.hw.controllers;
+package ru.otus.hw.controllers.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -8,12 +8,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.rest.controllers.GenreController;
-import ru.otus.hw.services.GenreService;
+import ru.otus.hw.dto.AuthorDto;
+import ru.otus.hw.rest.controllers.AuthorController;
+import ru.otus.hw.services.AuthorService;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -27,9 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(AuthorController.class)
+class AuthorControllerTest {
 
-@WebMvcTest(GenreController.class)
-public class GenreControllerTest {
     @Autowired
     private MockMvc mvc;
 
@@ -37,99 +37,98 @@ public class GenreControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private GenreService genreService;
+    private AuthorService authorService;
 
     @Test
-    void shouldReturnAllGenres() throws Exception {
-        List<GenreDto> genres = List.of(
-                new GenreDto("1", "Genre1"),
-                new GenreDto("2", "Genre2")
+    void shouldReturnAllAuthors() throws Exception {
+        List<AuthorDto> authors = List.of(
+                new AuthorDto("1", "Author1"),
+                new AuthorDto("2", "Author2")
         );
 
-        when(genreService.findAll()).thenReturn(genres);
+        when(authorService.findAll()).thenReturn(authors);
 
-        mvc.perform(get("/api/v1/genre"))
+        mvc.perform(get("/api/v1/author"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is("1")))
-                .andExpect(jsonPath("$[0].name", is("Genre1")))
+                .andExpect(jsonPath("$[0].fullName", is("Author1")))
                 .andExpect(jsonPath("$[1].id", is("2")))
-                .andExpect(jsonPath("$[1].name", is("Genre2")));
+                .andExpect(jsonPath("$[1].fullName", is("Author2")));
     }
 
     @Test
-    void shouldReturnNotFoundWhenNoGenresExist() throws Exception {
-        when(genreService.findAll()).thenReturn(List.of());
+    void shouldReturnEmptyAuthorsList() throws Exception {
+        when(authorService.findAll()).thenReturn(List.of());
 
-        mvc.perform(get("/api/v1/genre"))
+        mvc.perform(get("/api/v1/author"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void shouldReturnGenreById() throws Exception {
-        GenreDto genre = new GenreDto("1", "Genre1");
-        when(genreService.findByIds(Set.of("1"))).thenReturn(List.of(genre));
+    void shouldReturnAuthorById() throws Exception {
+        AuthorDto author = new AuthorDto("1", "Author1");
+        when(authorService.findById("1")).thenReturn(Optional.of(author));
 
-        mvc.perform(get("/api/v1/genre/1"))
+        mvc.perform(get("/api/v1/author/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is("1")))
-                .andExpect(jsonPath("$.name", is("Genre1")));
+                .andExpect(jsonPath("$.fullName", is("Author1")));
     }
 
     @Test
-    void shouldReturnNotFoundWhenGenreNotExist() throws Exception {
-        when(genreService.findByIds(Set.of("1"))).thenReturn(List.of());
+    void shouldReturnNotFoundWhenAuthorNotExist() throws Exception {
+        when(authorService.findById("100")).thenReturn(Optional.empty());
 
-        mvc.perform(get("/api/v1/genre/1"))
+        mvc.perform(get("/api/v1/author/100"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void shouldCreateGenre() throws Exception {
-        GenreDto genreToCreate = new GenreDto(null, "NewGenre");
-        GenreDto createdGenre = new GenreDto("1", "NewGenre");
+    void shouldCreateAuthor() throws Exception {
+        AuthorDto authorToCreate = new AuthorDto(null, "NewAuthor");
+        AuthorDto createdAuthor = new AuthorDto("1", "NewAuthor");
 
-        when(genreService.insert(any(GenreDto.class))).thenReturn(createdGenre);
+        when(authorService.insert(any(AuthorDto.class))).thenReturn(createdAuthor);
 
-        mvc.perform(post("/api/v1/genre")
+        mvc.perform(post("/api/v1/author")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(genreToCreate)))
+                        .content(objectMapper.writeValueAsString(authorToCreate)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is("1")))
-                .andExpect(jsonPath("$.name", is("NewGenre")));
+                .andExpect(jsonPath("$.fullName", is("NewAuthor")));
     }
 
     @Test
-    void shouldUpdateGenre() throws Exception {
-        GenreDto genreToUpdate = new GenreDto("1", "UpdatedGenre");
-        when(genreService.update(any(GenreDto.class))).thenReturn(genreToUpdate);
+    void shouldUpdateAuthor() throws Exception {
+        AuthorDto authorToUpdate = new AuthorDto("1", "UpdatedAuthor");
+        when(authorService.update(any(AuthorDto.class))).thenReturn(authorToUpdate);
 
-        mvc.perform(put("/api/v1/genre/1")
+        mvc.perform(put("/api/v1/author/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(genreToUpdate)))
+                        .content(objectMapper.writeValueAsString(authorToUpdate)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is("1")))
-                .andExpect(jsonPath("$.name", is("UpdatedGenre")));
+                .andExpect(jsonPath("$.fullName", is("UpdatedAuthor")));
     }
 
     @Test
     void shouldReturnBadRequestWhenIdsMismatch() throws Exception {
-        GenreDto genreToUpdate = new GenreDto("2", "UpdatedGenre");
+        AuthorDto authorToUpdate = new AuthorDto("2", "UpdatedAuthor");
 
-        mvc.perform(put("/api/v1/genre/1")
+        mvc.perform(put("/api/v1/author/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(genreToUpdate)))
+                        .content(objectMapper.writeValueAsString(authorToUpdate)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void shouldDeleteGenre() throws Exception {
-        mvc.perform(delete("/api/v1/genre/1"))
+    void shouldDeleteAuthor() throws Exception {
+        mvc.perform(delete("/api/v1/author/1"))
                 .andExpect(status().isNoContent());
 
-        Mockito.verify(genreService).deleteById("1");
+        Mockito.verify(authorService).deleteById("1");
     }
-
 }
