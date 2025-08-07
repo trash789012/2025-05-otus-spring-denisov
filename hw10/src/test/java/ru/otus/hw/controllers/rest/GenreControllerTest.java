@@ -61,11 +61,11 @@ public class GenreControllerTest {
     }
 
     @Test
-    void shouldReturnNotFoundWhenNoGenresExist() throws Exception {
+    void shouldReturnEmptyGenreList() throws Exception {
         when(genreService.findAll()).thenReturn(List.of());
 
         mvc.perform(get("/api/v1/genre"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test

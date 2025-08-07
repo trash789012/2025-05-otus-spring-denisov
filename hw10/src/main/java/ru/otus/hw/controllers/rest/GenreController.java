@@ -26,11 +26,7 @@ public class GenreController {
 
     @GetMapping("/api/v1/genre")
     public List<GenreDto> getAllGenres() {
-        List<GenreDto> genres = genreService.findAll();
-        if (genres.isEmpty()) {
-            throw new NotFoundRequestException("Genres not found!");
-        }
-        return genres;
+        return genreService.findAll();
     }
 
     @GetMapping("/api/v1/genre/{id}")

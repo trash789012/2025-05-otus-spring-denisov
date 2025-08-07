@@ -26,11 +26,7 @@ public class AuthorController {
 
     @GetMapping("/api/v1/author")
     public List<AuthorDto> getAllAuthors() {
-        List<AuthorDto> authors = authorService.findAll();
-        if (authors.isEmpty()) {
-            throw new NotFoundRequestException("Authors not found!");
-        }
-        return authors;
+        return authorService.findAll();
     }
 
     @GetMapping("/api/v1/author/{id}")

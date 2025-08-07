@@ -65,7 +65,7 @@ class AuthorControllerTest {
         when(authorService.findAll()).thenReturn(List.of());
 
         mvc.perform(get("/api/v1/author"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test
