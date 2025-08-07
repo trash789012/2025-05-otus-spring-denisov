@@ -1,7 +1,9 @@
-package ru.otus.hw.rest.controllers;
+package ru.otus.hw.controllers.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.AuthorDto;
-import ru.otus.hw.rest.exceptions.BadRequestException;
-import ru.otus.hw.rest.exceptions.NotFoundRequestException;
+import ru.otus.hw.exceptions.BadRequestException;
+import ru.otus.hw.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.AuthorService;
 
 import java.util.List;
@@ -39,16 +41,29 @@ public class AuthorController {
     }
 
     @PostMapping("/api/v1/author")
-    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto authorDto) {
+    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorDto authorDto,
+                                                  BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(bindingResult.getAllErrors());
+        }
+
         var savedAuthor = authorService.insert(authorDto);
         return ResponseEntity.ok().body(savedAuthor);
     }
 
     @PutMapping("/api/v1/author/{id}")
-    public ResponseEntity<AuthorDto> updateAuthor(@PathVariable String id,
-                                                  @RequestBody AuthorDto authorDto) {
+    public ResponseEntity<?> updateAuthor(@PathVariable String id,
+                                                  @Valid @RequestBody AuthorDto authorDto,
+                                                  BindingResult bindingResult) {
         if (!id.equals(authorDto.id())) {
             throw new BadRequestException("Author id %s mismatch".formatted(id));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(bindingResult.getAllErrors());
         }
 
         AuthorDto updatedAuthor = authorService.update(authorDto);

@@ -1,5 +1,5 @@
 import {createAuthor, fetchAuthor, updateAuthor} from "../../api/authorApi.js";
-import {parseLastUrlParam} from "../../utils/util.js";
+import {parseErrors, parseLastUrlParam} from "../../utils/util.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const page = new Author(parseLastUrlParam());
@@ -54,19 +54,21 @@ export class Author {
         try {
             let response = null;
             if (method === 'POST') {
-                response = createAuthor(authorData);
+                response = await createAuthor(authorData);
             } else {
-                response = updateAuthor(authorData.id, authorData);
+                response = await updateAuthor(authorData.id, authorData);
             }
 
-            await response.then((updatedAuthor) => {
+            if (response.success === false) {
+                alert('Filed to save author: \n' + parseErrors(response.errors));
+            } else {
                 alert('Author saved successfully!');
                 if (authorNew) {
-                    this.loadAuthor(updatedAuthor.id);
+                    await this.loadAuthor(response.result.id);
                 } else {
-                    this.fullNameInput.value = updatedAuthor.fullName;
+                    this.fullNameInput.value = response.result.fullName;
                 }
-            })
+            }
         } catch (error) {
             console.error('Error save author:', error);
             alert('Filed to save author');

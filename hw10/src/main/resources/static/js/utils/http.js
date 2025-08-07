@@ -29,37 +29,51 @@ export async function get(url, options = {}) {
 }
 
 export async function post(url, data, options = {}) {
-    const response = await fetch(`${API_BASE}${url}`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        },
-    });
+    try {
+        const response = await fetch(`${API_BASE}${url}`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+        });
 
-    if (!response.ok) {
+        if (!response.ok) {
+            const errors = await response.json();
+            console.error('Ошибка валидации:', errors);
+            return { success: false, errors};
+        }
+
+        const result = await response.json();
+        return { success: true, result };
+    } catch (error) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    return await response.json();
 }
 
 export async function put(url, data, options = {}) {
-    const response = await fetch(`${API_BASE}${url}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
+    try {
+        const response = await fetch(`${API_BASE}${url}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
 
-    if (!response.ok) {
+        if (!response.ok) {
+            const errors = await response.json();
+            console.error('Ошибка валидации:', errors);
+            return { success: false, errors};
+        }
+
+        const result = await response.json();
+        return { success: true, result };
+    } catch (error) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    return await response.json();
 }
 
 export async function del(url) {

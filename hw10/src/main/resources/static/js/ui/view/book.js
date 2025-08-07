@@ -105,9 +105,9 @@ export class Book {
             } else {
                 alert('Book saved successfully!');
                 if (bookNew) {
-                    window.location.replace(`/book/${response.book.id}`);
+                    window.location.replace(`/book/${response.result.id}`);
                 } else {
-                    await this.loadBook(response.book.id);
+                    await this.loadBook(response.result.id);
                 }
             }
         } catch (error) {
@@ -138,11 +138,15 @@ export class Book {
                 text: this.commentInput.value,
                 bookId: bookId
             };
-            const saved = await createComment(bookId, commentAdd);
-            this.commentSelector.addSingle(saved);
-            this.commentInput.value = '';
+            const response = await createComment(bookId, commentAdd);
+            if (response.success === false) {
+                alert('Filed to add comment: \n' + parseErrors(response.errors));
+            } else {
+                this.commentSelector.addSingle(response.result);
+                this.commentInput.value = '';
+            }
         } catch (error) {
-            console.error('Error deleting author:', error);
+            console.error('Error adding comment:', error);
         }
     }
 }

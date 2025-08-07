@@ -16,7 +16,6 @@ import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
 import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.rest.controllers.BookController;
 import ru.otus.hw.services.BookService;
 
 import java.util.List;
@@ -76,8 +75,16 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value("1"))
                 .andExpect(jsonPath("$[0].title").value("Book Title 1"))
+                .andExpect(jsonPath("$[0].author.id").value("1"))
+                .andExpect(jsonPath("$[0].author.fullName").value("Author 1"))
+                .andExpect(jsonPath("$[0].genres[0].id").value("1"))
+                .andExpect(jsonPath("$[0].genres[0].name").value("Genre 1"))
                 .andExpect(jsonPath("$[1].id").value("2"))
-                .andExpect(jsonPath("$[1].title").value("Book Title 2"));
+                .andExpect(jsonPath("$[1].title").value("Book Title 2"))
+                .andExpect(jsonPath("$[1].author.id").value("2"))
+                .andExpect(jsonPath("$[1].author.fullName").value("Author 2"))
+                .andExpect(jsonPath("$[1].genres[0].id").value("2"))
+                .andExpect(jsonPath("$[1].genres[0].name").value("Genre 2"));
     }
 
     @Test
@@ -95,7 +102,9 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.title").value("Book Title"));
+                .andExpect(jsonPath("$.title").value("Book Title"))
+                .andExpect(jsonPath("$.authorId").value("1"))
+                .andExpect(jsonPath("$.genreIds[0]").value("1"));
     }
 
     @Test
@@ -129,7 +138,12 @@ public class BookControllerTest {
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.title").value("New Book"));
+                .andExpect(jsonPath("$.title").value("New Book"))
+                .andExpect(jsonPath("$.author.id").value("1"))
+                .andExpect(jsonPath("$.author.fullName").value("author1"))
+                .andExpect(jsonPath("$.genres[0].id").value("1"))
+                .andExpect(jsonPath("$.genres[0].name").value("genre1"))
+                .andExpect(jsonPath("$.genres", hasSize(1)));
     }
 
     @Test
@@ -137,6 +151,18 @@ public class BookControllerTest {
         BookFormDto invalidDto = new BookFormDto(null, "", null, null);
 
         mvc.perform(post("/api/v1/book")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].defaultMessage").exists());
+    }
+
+    @Test
+    void shouldValidateWhenUpdatingInvalidBook() throws Exception {
+        BookFormDto invalidDto = new BookFormDto("1", "", null, null);
+
+        mvc.perform(put("/api/v1/book/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest())
@@ -166,7 +192,12 @@ public class BookControllerTest {
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.title").value("Updated Book"));
+                .andExpect(jsonPath("$.title").value("Updated Book"))
+                .andExpect(jsonPath("$.author.id").value("1"))
+                .andExpect(jsonPath("$.author.fullName").value("author1"))
+                .andExpect(jsonPath("$.genres[0].id").value("1"))
+                .andExpect(jsonPath("$.genres[0].name").value("genre1"))
+                .andExpect(jsonPath("$.genres", hasSize(1)));
     }
 
     @Test

@@ -1,4 +1,4 @@
-package ru.otus.hw.rest.controllers;
+package ru.otus.hw.controllers.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
-import ru.otus.hw.rest.exceptions.BadRequestException;
-import ru.otus.hw.rest.exceptions.NotFoundRequestException;
+import ru.otus.hw.exceptions.BadRequestException;
+import ru.otus.hw.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.BookService;
 
 import java.util.List;
@@ -55,9 +55,16 @@ public class BookController {
     }
 
     @PutMapping("/api/v1/book/{id}")
-    public ResponseEntity<BookDto> updateBook(@PathVariable String id, @RequestBody BookFormDto bookDto) {
+    public ResponseEntity<?> updateBook(@PathVariable String id,
+                                        @Valid @RequestBody BookFormDto bookDto,
+                                        BindingResult bindingResult) {
         if (!id.equals(bookDto.id())) {
             throw new BadRequestException("ID in path and body must match");
+        }
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(bindingResult.getAllErrors());
         }
 
         BookDto savedBook = bookService.update(bookDto);

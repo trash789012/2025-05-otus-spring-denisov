@@ -1,4 +1,4 @@
-package ru.otus.hw.rest.exceptions;
+package ru.otus.hw.exceptions;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

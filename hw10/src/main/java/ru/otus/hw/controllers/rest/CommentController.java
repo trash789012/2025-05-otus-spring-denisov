@@ -1,4 +1,4 @@
-package ru.otus.hw.rest.controllers;
+package ru.otus.hw.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.CommentDto;
-import ru.otus.hw.rest.exceptions.BadRequestException;
+import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.services.CommentService;
 
 import java.util.List;

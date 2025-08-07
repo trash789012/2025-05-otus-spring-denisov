@@ -1,4 +1,4 @@
-package ru.otus.hw.controllers;
+package ru.otus.hw.controllers.page;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-public class AuthorPageController {
-    @GetMapping("/authors")
+public class GenrePageController {
+    @GetMapping("/genres")
     public String listPage(Model model) {
-        return "authors";
+        return "genres";
     }
 
-    @GetMapping({"/author/{id}", "/author/new"})
+    @GetMapping({"/genre/{id}", "/genre/new"})
     public String editPage(@PathVariable(required = false) String id, Model model) {
-        return "author";
+        return "genre";
     }
 }

@@ -1,4 +1,4 @@
-package ru.otus.hw.rest.exceptions;
+package ru.otus.hw.exceptions;
 
 public class NotFoundRequestException extends RuntimeException {
     public NotFoundRequestException(String message) {

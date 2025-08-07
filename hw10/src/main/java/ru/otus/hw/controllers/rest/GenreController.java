@@ -1,7 +1,9 @@
-package ru.otus.hw.rest.controllers;
+package ru.otus.hw.controllers.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.rest.exceptions.BadRequestException;
-import ru.otus.hw.rest.exceptions.NotFoundRequestException;
+import ru.otus.hw.exceptions.BadRequestException;
+import ru.otus.hw.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.GenreService;
 
 import java.util.List;
@@ -40,16 +42,28 @@ public class GenreController {
     }
 
     @PostMapping("/api/v1/genre")
-    public ResponseEntity<GenreDto> createGenre(@RequestBody GenreDto genreDto) {
+    public ResponseEntity<?> createGenre(@Valid @RequestBody GenreDto genreDto,
+                                                BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(bindingResult.getAllErrors());
+        }
+
         var savedGenre = genreService.insert(genreDto);
         return ResponseEntity.ok().body(savedGenre);
     }
 
     @PutMapping("/api/v1/genre/{id}")
-    public ResponseEntity<GenreDto> updateGenre(@PathVariable String id,
-                                                @RequestBody GenreDto genreDto) {
+    public ResponseEntity<?> updateGenre(@PathVariable String id,
+                                                @Valid @RequestBody GenreDto genreDto,
+                                                BindingResult bindingResult) {
         if (!id.equals(genreDto.id())) {
             throw new BadRequestException("ID in path and body must match");
+        }
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(bindingResult.getAllErrors());
         }
 
         GenreDto updatedGenre = genreService.update(genreDto);

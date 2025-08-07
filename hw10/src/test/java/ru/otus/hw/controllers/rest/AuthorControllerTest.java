@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import ru.otus.hw.dto.AuthorDto;
-import ru.otus.hw.rest.controllers.AuthorController;
 import ru.otus.hw.services.AuthorService;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthorController.class)
+@Import({LocalValidatorFactoryBean.class})
 class AuthorControllerTest {
 
     @Autowired
@@ -99,6 +101,30 @@ class AuthorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is("1")))
                 .andExpect(jsonPath("$.fullName", is("NewAuthor")));
+    }
+
+    @Test
+    void shouldValidateWhenCreatingInvalidAuthor() throws Exception {
+        AuthorDto invalidDto = new AuthorDto(null, null);
+
+        mvc.perform(post("/api/v1/author")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].defaultMessage").exists());
+    }
+
+    @Test
+    void shouldValidateWhenUpdatingInvalidAuthor() throws Exception {
+        AuthorDto invalidDto = new AuthorDto("1", null);
+
+        mvc.perform(put("/api/v1/author/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].defaultMessage").exists());
     }
 
     @Test

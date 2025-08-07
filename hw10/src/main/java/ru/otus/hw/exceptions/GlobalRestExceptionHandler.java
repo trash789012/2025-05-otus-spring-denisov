@@ -1,4 +1,4 @@
-package ru.otus.hw.rest.exceptions;
+package ru.otus.hw.exceptions;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

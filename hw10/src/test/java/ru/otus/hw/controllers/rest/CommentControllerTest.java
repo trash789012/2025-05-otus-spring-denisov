@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.dto.CommentDto;
-import ru.otus.hw.rest.controllers.CommentController;
 import ru.otus.hw.services.CommentService;
 
 import java.util.List;

@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.rest.controllers.GenreController;
 import ru.otus.hw.services.GenreService;
 
 import java.util.List;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(GenreController.class)
+@Import({LocalValidatorFactoryBean.class})
 public class GenreControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -112,6 +114,30 @@ public class GenreControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is("1")))
                 .andExpect(jsonPath("$.name", is("UpdatedGenre")));
+    }
+
+    @Test
+    void shouldValidateWhenCreatingInvalidGenre() throws Exception {
+        GenreDto invalidDto = new GenreDto(null, null);
+
+        mvc.perform(post("/api/v1/genre")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].defaultMessage").exists());
+    }
+
+    @Test
+    void shouldValidateWhenUpdatingInvalidGenre() throws Exception {
+        GenreDto invalidDto = new GenreDto("1", null);
+
+        mvc.perform(put("/api/v1/genre/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].defaultMessage").exists());
     }
 
     @Test

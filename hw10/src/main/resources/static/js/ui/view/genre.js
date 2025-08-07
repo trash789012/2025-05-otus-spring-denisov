@@ -1,5 +1,5 @@
 import {createGenre, fetchGenre, updateGenre} from "../../api/genreApi.js";
-import {parseLastUrlParam} from "../../utils/util.js";
+import {parseErrors, parseLastUrlParam} from "../../utils/util.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     const page = new Genre(parseLastUrlParam());
@@ -54,19 +54,21 @@ export class Genre {
         try {
             let response = null;
             if (method === 'POST') {
-                response = createGenre(genreData);
+                response = await createGenre(genreData);
             } else {
-                response = updateGenre(genreData.id, genreData);
+                response = await updateGenre(genreData.id, genreData);
             }
 
-            await response.then((updatedGenre) => {
+            if (response.success === false) {
+                alert('Filed to save genre: \n' + parseErrors(response.errors));
+            } else {
                 alert('Genre saved successfully!');
                 if (genreNew) {
-                    this.loadGenre(updatedGenre.id);
+                    await this.loadGenre(response.result.id);
                 } else {
-                    this.fullNameInput.value = updatedGenre.name;
+                    this.fullNameInput.value = response.result.name;
                 }
-            })
+            }
         } catch (error) {
             console.error('Error save genre:', error);
             alert('Filed to save genre');
