@@ -52,12 +52,7 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is("1")))
-                .andExpect(jsonPath("$[0].text", is("Comment 1")))
-                .andExpect(jsonPath("$[0].bookId", is("book1")))
-                .andExpect(jsonPath("$[1].id", is("2")))
-                .andExpect(jsonPath("$[1].text", is("Comment 2")))
-                .andExpect(jsonPath("$[1].bookId", is("book1")));
+                .andExpect(content().json(objectMapper.writeValueAsString(comments)));
     }
 
     @Test
