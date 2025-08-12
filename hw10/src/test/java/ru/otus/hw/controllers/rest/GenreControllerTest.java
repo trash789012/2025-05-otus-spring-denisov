@@ -54,10 +54,7 @@ public class GenreControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is("1")))
-                .andExpect(jsonPath("$[0].name", is("Genre1")))
-                .andExpect(jsonPath("$[1].id", is("2")))
-                .andExpect(jsonPath("$[1].name", is("Genre2")));
+                .andExpect(content().json(objectMapper.writeValueAsString(genres)));
     }
 
     @Test
