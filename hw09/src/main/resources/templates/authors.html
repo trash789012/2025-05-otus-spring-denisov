@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all authors</title>
+    <style th:replace="~{fragments/menu :: menu-styles}"></style>
+    <style th:replace="~{fragments/styles :: table-styles}"></style>
+    <style th:replace="~{fragments/styles :: global-styles}"></style>
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+    <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+    <div class="table-header">
+        <h2>List of authors</h2>
+        <a th:href="@{/author/new}" class="create-button-action">new</a>
+    </div>
+
+    <table class="authors">
+        <thead>
+        <tr>
+            <th>Author name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="author : ${authors}">
+            <td>
+                <a th:href="@{author/{id}(id=${author.id()})}" href="author.html"
+                   th:text="${author.fullName()}">Author_1</a>
+            </td>
+            <td>
+                <form th:action="@{/authorDelete(authorId=${author.id()})}" method="post">
+                    <button type="submit" class="btn-link">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
