@@ -5,7 +5,7 @@ spring:
   data:
     mongodb:
       port: 27017
-      database: book_lib
+      database: book_lib_reactive
       host: localhost
   shell:
     interactive:

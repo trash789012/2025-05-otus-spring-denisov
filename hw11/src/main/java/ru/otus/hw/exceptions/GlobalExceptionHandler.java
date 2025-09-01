@@ -1,117 +1,82 @@
 package ru.otus.hw.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebExceptionHandler;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+@Component
+public class GlobalExceptionHandler implements WebExceptionHandler {
+
     @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(
-            NoHandlerFoundException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request) {
+    public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
+        HttpStatus status;
+        String message;
 
-        return handleError(ex, request, HttpStatus.NOT_FOUND, ex.getMessage());
+        if (ex instanceof EntityNotFoundException || ex instanceof NotFoundRequestException) {
+            status = HttpStatus.NOT_FOUND;
+            message = ex.getMessage();
+        } else if (ex instanceof BadRequestException) {
+            status = HttpStatus.BAD_REQUEST;
+            message = ex.getMessage();
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = "Internal Server Error";
+            logError(ex, exchange);
+        }
+
+        return renderError(exchange, ex, status, message);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handeNotFoundException(
-            EntityNotFoundException ex,
-            WebRequest request) {
-
-        return handleError(ex, request, HttpStatus.NOT_FOUND, ex.getMessage());
-    }
-
-    @ExceptionHandler(NotFoundRequestException.class)
-    public ResponseEntity<Object> handleBadRequest(
-            NotFoundRequestException ex,
-            WebRequest request) {
-
-        return handleError(ex, request, HttpStatus.NOT_FOUND, ex.getMessage());
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Object> handleBadRequest(
-            BadRequestException ex,
-            WebRequest request) {
-
-        return handleError(ex, request, HttpStatus.BAD_REQUEST, ex.getMessage());
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllException(
-            Exception ex,
-            WebRequest request) {
-
-        logError(ex, request);
-        return handleError(ex, request, HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
-    }
-
-    private void logError(Exception ex, WebRequest request) {
+    private void logError(Throwable ex, ServerWebExchange exchange) {
         String errorData = """
-                    Class: %s
-                    Message: %s
-                    StackTrace: %s
-                """.formatted(ex.getClass().getName(), ex.getMessage(), ex.getStackTrace());
+                Class: %s
+                Message: %s
+                """.formatted(ex.getClass().getName(), ex.getMessage());
         String requestData = """
-                    URL: %s
-                    Headers: %s
-                """.formatted(
-                request.getDescription(false),
-                request.getHeaderNames());
+                URL: %s
+                Headers: %s
+                """.formatted(exchange.getRequest().getURI(), exchange.getRequest().getHeaders());
 
-        log.error(errorData, requestData);
+        log.error(errorData, requestData, ex);
     }
 
-    private ResponseEntity<Object> handleError(
-            Exception ex,
-            WebRequest request,
-            HttpStatus status,
-            String message) {
-
-        if (shouldReturnJsonResponse((ServletWebRequest) request)) {
+    private Mono<Void> renderError(ServerWebExchange exchange, Throwable ex, HttpStatus status, String message) {
+        if (shouldReturnJsonResponse(exchange)) {
             Map<String, Object> body = Map.of(
                     "error", message,
                     "status", status.value(),
-                    "uri", ((ServletWebRequest) request).getRequest().getRequestURI(),
+                    "uri", exchange.getRequest().getURI().toString(),
                     "exception", ex.getClass().getSimpleName()
             );
-
-            return ResponseEntity
-                    .status(status)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(body);
+            exchange.getResponse().setStatusCode(status);
+            exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+            return exchange.getResponse().writeWith(
+                    Mono.just(exchange.getResponse()
+                            .bufferFactory()
+                            .wrap(body.toString().getBytes()))
+            );
         } else {
-            ModelAndView modelAndView = new ModelAndView("customError");
-            modelAndView.addObject("errorText", message);
-            return ResponseEntity
-                    .status(status)
-                    .contentType(MediaType.TEXT_HTML)
-                    .body(modelAndView);
+            exchange.getResponse().setStatusCode(status);
+            exchange.getResponse().getHeaders().setContentType(MediaType.TEXT_HTML);
+            String html = "<html><body><h1>Error: " + message + "</h1></body></html>";
+            return exchange.getResponse().writeWith(
+                    Mono.just(exchange.getResponse().bufferFactory().wrap(html.getBytes()))
+            );
         }
     }
 
-    private boolean shouldReturnJsonResponse(ServletWebRequest request) {
-        String acceptHeader = request.getRequest().getHeader("Accept");
-        String uri = request.getRequest().getRequestURI();
-
-        return (acceptHeader != null && acceptHeader.contains("application/json")) ||
-                uri.startsWith("/api/");
+    private boolean shouldReturnJsonResponse(ServerWebExchange exchange) {
+        String acceptHeader = exchange.getRequest().getHeaders().getFirst("Accept");
+        String path = exchange.getRequest().getURI().getPath();
+        return (acceptHeader != null && acceptHeader.contains("application/json")) || path.startsWith("/api/");
     }
-
 }
