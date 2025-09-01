@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Setter
 @Getter
@@ -21,7 +20,7 @@ public class Comment {
 
     private String text;
 
-    @DocumentReference(lazy = true)
+    //@DocumentReference(lazy = true)
     private Book book;
 
     public Comment(String text) {
