@@ -3,13 +3,14 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.converters.GenreConverter;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.GenreRepository;
 
-import java.util.List;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -20,55 +21,58 @@ public class GenreServiceImpl implements GenreService {
     private final GenreConverter genreConverter;
 
     @Override
-    public List<GenreDto> findAll() {
-        return genreRepository.findAll().stream()
-                .map(genreConverter::genreToDto)
-                .toList();
+    public Flux<GenreDto> findAll() {
+        return genreRepository.findAll()
+                .map(genreConverter::genreToDto);
     }
 
     @Override
-    public List<GenreDto> findByIds(Set<String> ids) {
-        return genreRepository.findAllById(ids).stream()
-                .map(genreConverter::genreToDto)
-                .toList();
+    public Flux<GenreDto> findByIds(Set<String> ids) {
+        return genreRepository.findAllById(ids)
+                .map(genreConverter::genreToDto);
     }
 
     @Override
     @Transactional
-    public GenreDto insert(GenreDto genreDto) {
+    public Mono<GenreDto> insert(GenreDto genreDto) {
         return save(genreDto);
     }
 
     @Override
     @Transactional
-    public GenreDto update(GenreDto genreDto) {
+    public Mono<GenreDto> update(GenreDto genreDto) {
         return save(genreDto);
     }
 
     @Override
     @Transactional
-    public void deleteById(String id) {
-        genreRepository.deleteById(id);
+    public Mono<Void> deleteById(String id) {
+        return genreRepository.deleteById(id);
     }
 
-    private GenreDto save(GenreDto genreDto) {
-        if (genreDto.name() == null) {
-            throw new IllegalArgumentException("Genre name is empty");
+    private Mono<GenreDto> save(GenreDto genreDto) {
+        if (genreDto.name() == null || genreDto.name().isBlank()) {
+            return Mono.error(new IllegalArgumentException("Genre name is empty"));
         }
 
-        Genre genre;
+        Mono<Genre> genreMono;
         if (genreDto.id() == null) {
-            genre = new Genre();
+            Genre genre = new Genre();
+            genre.setName(genreDto.name());
+            genreMono = Mono.just(genre);
         } else {
-            genre = genreRepository.findById(genreDto.id())
-                    .orElseThrow(
-                            () -> new EntityNotFoundException("Genre with id %s not found".formatted(genreDto.id()))
-                    );
+            genreMono = genreRepository.findById(genreDto.id())
+                    .switchIfEmpty(Mono.error(
+                            new EntityNotFoundException("Genre with id %s not found".formatted(genreDto.id()))
+                    ))
+                    .map(existing -> {
+                        existing.setName(genreDto.name());
+                        return existing;
+                    });
         }
 
-        genre.setId(genreDto.id());
-        genre.setName(genreDto.name());
-
-        return genreConverter.genreToDto(genreRepository.save(genre));
+        return genreMono
+                .flatMap(genreRepository::save)
+                .map(genreConverter::genreToDto);
     }
 }

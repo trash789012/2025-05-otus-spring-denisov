@@ -3,14 +3,13 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.converters.AuthorConverter;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.repositories.AuthorRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,54 +19,57 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorConverter authorConverter;
 
     @Override
-    public List<AuthorDto> findAll() {
-        return authorRepository.findAll().stream()
-                .map(authorConverter::authorToDto)
-                .toList();
+    public Flux<AuthorDto> findAll() {
+        return authorRepository.findAll()
+                .map(authorConverter::authorToDto);
     }
 
     @Override
-    public Optional<AuthorDto> findById(String id) {
+    public Mono<AuthorDto> findById(String id) {
         return authorRepository.findById(id)
                 .map(authorConverter::authorToDto);
     }
 
     @Override
     @Transactional
-    public AuthorDto insert(AuthorDto authorDto) {
+    public Mono<AuthorDto> insert(AuthorDto authorDto) {
         return save(authorDto);
     }
 
     @Override
     @Transactional
-    public AuthorDto update(AuthorDto authorDto) {
+    public Mono<AuthorDto> update(AuthorDto authorDto) {
         return save(authorDto);
     }
 
     @Override
-    @Transactional
-    public void deleteById(String id) {
-        authorRepository.deleteById(id);
+    public Mono<Void> deleteById(String id) {
+        return authorRepository.deleteById(id);
     }
 
-    private AuthorDto save(AuthorDto authorDto) {
+    private Mono<AuthorDto> save(AuthorDto authorDto) {
         if (authorDto.fullName() == null) {
-            throw new IllegalArgumentException("Author name is empty");
+            return Mono.error(new IllegalArgumentException("Author name is empty"));
         }
 
-        Author author;
+        Mono<Author> authorMono;
         if (authorDto.id() == null) {
-            author = new Author();
+            Author newAuthor = new Author();
+            newAuthor.setFullName(authorDto.fullName());
+            authorMono = Mono.just(newAuthor);
         } else {
-            author = authorRepository.findById(authorDto.id())
-                    .orElseThrow(
-                            () -> new EntityNotFoundException("Author with id %s not found".formatted(authorDto.id()))
-                    );
+            authorMono = authorRepository.findById(authorDto.id())
+                    .switchIfEmpty(Mono.error(
+                            new EntityNotFoundException("Author with id %s not found".formatted(authorDto.id()))
+                    ))
+                    .map(existing -> {
+                        existing.setFullName(authorDto.fullName());
+                        return existing;
+                    });
         }
 
-        author.setId(authorDto.id());
-        author.setFullName(authorDto.fullName());
-
-        return authorConverter.authorToDto(authorRepository.save(author));
+        return authorMono
+                .flatMap(authorRepository::save)
+                .map(authorConverter::authorToDto);
     }
 }

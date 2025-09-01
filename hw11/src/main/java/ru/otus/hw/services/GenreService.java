@@ -1,18 +1,19 @@
 package ru.otus.hw.services;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.GenreDto;
 
-import java.util.List;
 import java.util.Set;
 
 public interface GenreService {
-    List<GenreDto> findAll();
+    Flux<GenreDto> findAll();
 
-    List<GenreDto> findByIds(Set<String> ids);
+    Flux<GenreDto> findByIds(Set<String> ids);
 
-    GenreDto insert(GenreDto genreDto);
+    Mono<GenreDto> insert(GenreDto genreDto);
 
-    GenreDto update(GenreDto genreDto);
+    Mono<GenreDto> update(GenreDto genreDto);
 
-    void deleteById(String id);
+    Mono<Void> deleteById(String id);
 }
