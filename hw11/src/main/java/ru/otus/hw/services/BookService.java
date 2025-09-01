@@ -11,6 +11,7 @@ public interface BookService {
     Flux<BookDto> findAll();
 
     Mono<BookDto> insert(BookFormDto bookDto);
+
     Mono<BookDto> update(BookFormDto bookDto);
 
     Mono<Void> deleteById(String id);

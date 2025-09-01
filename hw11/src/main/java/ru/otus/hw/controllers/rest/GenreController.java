@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.GenreService;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -25,50 +26,58 @@ public class GenreController {
     private final GenreService genreService;
 
     @GetMapping("/api/v1/genre")
-    public List<GenreDto> getAllGenres() {
+    public Flux<GenreDto> getAllGenres() {
         return genreService.findAll();
     }
 
     @GetMapping("/api/v1/genre/{id}")
-    public ResponseEntity<GenreDto> getGenreById(@PathVariable String id) {
+    public Mono<ResponseEntity<GenreDto>> getGenreById(@PathVariable String id) {
         return genreService.findByIds(Set.of(id))
-                .stream().findFirst()
+                .next()
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new NotFoundRequestException("Genre with id %s not found!".formatted(id)));
+                .switchIfEmpty(Mono.error(new NotFoundRequestException(
+                        "Genre with id %s not found!".formatted(id)
+                )));
     }
 
     @PostMapping("/api/v1/genre")
-    public ResponseEntity<?> createGenre(@Valid @RequestBody GenreDto genreDto,
-                                                BindingResult bindingResult) {
+    public Mono<ResponseEntity<?>> createGenre(@Valid @RequestBody GenreDto genreDto,
+                                               BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
+            return Mono.just(
+                    ResponseEntity.badRequest()
+                            .body(bindingResult.getAllErrors())
+            );
         }
 
-        var savedGenre = genreService.insert(genreDto);
-        return ResponseEntity.ok().body(savedGenre);
+        return genreService.insert(genreDto)
+                .map(savedGenre -> ResponseEntity.ok().body(savedGenre));
     }
 
     @PutMapping("/api/v1/genre/{id}")
-    public ResponseEntity<?> updateGenre(@PathVariable String id,
-                                                @Valid @RequestBody GenreDto genreDto,
-                                                BindingResult bindingResult) {
+    public Mono<ResponseEntity<?>> updateGenre(@PathVariable String id,
+                                               @Valid @RequestBody GenreDto genreDto,
+                                               BindingResult bindingResult) {
+
         if (!id.equals(genreDto.id())) {
-            throw new BadRequestException("ID in path and body must match");
+            return Mono.error(new BadRequestException("ID in path and body must match"));
         }
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
+            return Mono.just(
+                    ResponseEntity.badRequest()
+                            .body(bindingResult.getAllErrors())
+            );
         }
 
-        GenreDto updatedGenre = genreService.update(genreDto);
-        return ResponseEntity.ok().body(updatedGenre);
+        return genreService.update(genreDto)
+                .map(updatedGenre -> ResponseEntity.ok().body(updatedGenre));
     }
 
     @DeleteMapping("/api/v1/genre/{id}")
-    public ResponseEntity<GenreDto> deleteGenre(@PathVariable String id) {
-        genreService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public Mono<ResponseEntity<Void>> deleteGenre(@PathVariable String id) {
+        return genreService.deleteById(id)
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }

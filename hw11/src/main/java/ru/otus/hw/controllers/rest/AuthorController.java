@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.exceptions.NotFoundRequestException;
 import ru.otus.hw.services.AuthorService;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,50 +25,55 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @GetMapping("/api/v1/author")
-    public List<AuthorDto> getAllAuthors() {
+    public Flux<AuthorDto> getAllAuthors() {
         return authorService.findAll();
     }
 
     @GetMapping("/api/v1/author/{id}")
-    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable String id) {
+    public Mono<ResponseEntity<AuthorDto>> getAuthorById(@PathVariable String id) {
         return authorService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new NotFoundRequestException("Author with id %s not found!".formatted(id)));
+                .switchIfEmpty(Mono.error(
+                        new NotFoundRequestException("Author with id %s not found!".formatted(id))
+                ));
     }
 
     @PostMapping("/api/v1/author")
-    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorDto authorDto,
-                                                  BindingResult bindingResult) {
-
+    public Mono<ResponseEntity<?>> createAuthor(@Valid @RequestBody AuthorDto authorDto,
+                                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
+            return Mono.just(
+                    ResponseEntity.badRequest()
+                            .body(bindingResult.getAllErrors())
+            );
         }
 
-        var savedAuthor = authorService.insert(authorDto);
-        return ResponseEntity.ok().body(savedAuthor);
+        return authorService.insert(authorDto)
+                .map(savedAuthor -> ResponseEntity.ok().body(savedAuthor));
     }
 
     @PutMapping("/api/v1/author/{id}")
-    public ResponseEntity<?> updateAuthor(@PathVariable String id,
-                                                  @Valid @RequestBody AuthorDto authorDto,
-                                                  BindingResult bindingResult) {
+    public Mono<ResponseEntity<?>> updateAuthor(@PathVariable String id,
+                                                @Valid @RequestBody AuthorDto authorDto,
+                                                BindingResult bindingResult) {
         if (!id.equals(authorDto.id())) {
-            throw new BadRequestException("Author id %s mismatch".formatted(id));
+            return Mono.error(new BadRequestException("Author id %s mismatch".formatted(id)));
         }
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
+            return Mono.just(
+                    ResponseEntity.badRequest()
+                            .body(bindingResult.getAllErrors())
+            );
         }
 
-        AuthorDto updatedAuthor = authorService.update(authorDto);
-        return ResponseEntity.ok().body(updatedAuthor);
+        return authorService.update(authorDto)
+                .map(updatedAuthor -> ResponseEntity.ok().body(updatedAuthor));
     }
 
     @DeleteMapping("/api/v1/author/{id}")
-    public ResponseEntity<Void> deleteAuthorById(@PathVariable String id) {
-        authorService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public Mono<ResponseEntity<Void>> deleteAuthorById(@PathVariable String id) {
+        return authorService.deleteById(id)
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }
