@@ -45,29 +45,6 @@ public class DatabaseChangelog {
         ));
     }
 
-//    @ChangeSet(order = "004", id = "createBooksInitial", author = "nadenisov")
-//    public void createBooksInitial(BookRepository bookRepository,
-//                                   AuthorRepository authorRepository,
-//                                   GenreRepository genreRepository) {
-//        var authors = authorRepository.findAll();
-//        var genres = genreRepository.findAll();
-//
-//        Book book1 = new Book("Бессонница");
-//        book1.setAuthor(authors.get(0));
-//        book1.setGenres(List.of(genres.get(0), genres.get(1)));
-//
-//        Book book2 = new Book("Осень в Пекине");
-//        book2.setAuthor(authors.get(1));
-//        book2.setGenres(List.of(genres.get(2), genres.get(3)));
-//
-//        Book book3 = new Book("Камера");
-//        book3.setAuthor(authors.get(2));
-//        book3.setGenres(List.of(genres.get(4), genres.get(5)));
-//
-//        bookRepository.saveAll(List.of(book1, book2, book3));
-//    }
-
-
     @ChangeSet(order = "004", id = "createBooksInitial", author = "nadenisov")
     public Flux<Book> createBooksInitial(BookRepository bookRepository,
                                          AuthorRepository authorRepository,
