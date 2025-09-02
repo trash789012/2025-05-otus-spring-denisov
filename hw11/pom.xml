@@ -48,10 +48,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-web</artifactId>-->
-<!--        </dependency>-->
 
         <!-- Shell -->
         <dependency>
@@ -59,23 +55,6 @@
             <artifactId>spring-shell-starter</artifactId>
             <version>${spring.shell.version}</version>
         </dependency>
-
-        <!-- Mongock Reactive Driver -->
-<!--        <dependency>-->
-<!--            <groupId>io.mongock</groupId>-->
-<!--            <artifactId>mongock-springboot</artifactId>-->
-<!--            <version>5.5.1</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.mongock</groupId>-->
-<!--            <artifactId>mongodb-springdata-v4-driver</artifactId>-->
-<!--            <version>5.5.1</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.mongock</groupId>-->
-<!--            <artifactId>mongodb-reactive-driver</artifactId>-->
-<!--            <version>5.5.1</version>-->
-<!--        </dependency>-->
 
         <!-- Utilities -->
         <dependency>
