@@ -4,36 +4,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.services.AuthorService;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@WebMvcTest(AuthorController.class)
+@WebFluxTest(AuthorController.class)
 @Import({LocalValidatorFactoryBean.class})
 class AuthorControllerTest {
 
     @Autowired
-    private MockMvc mvc;
+    private WebTestClient webClient;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -48,41 +38,46 @@ class AuthorControllerTest {
                 new AuthorDto("2", "Author2")
         );
 
-        when(authorService.findAll()).thenReturn(authors);
+        Mockito.when(authorService.findAll()).thenReturn(Flux.fromIterable(authors));
 
-        mvc.perform(get("/api/v1/author"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(content().json(objectMapper.writeValueAsString(authors)));
+        webClient.get().uri("/api/v1/author")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .json(objectMapper.writeValueAsString(authors));
     }
 
     @Test
     void shouldReturnEmptyAuthorsList() throws Exception {
-        when(authorService.findAll()).thenReturn(List.of());
+        Mockito.when(authorService.findAll()).thenReturn(Flux.empty());
 
-        mvc.perform(get("/api/v1/author"))
-                .andExpect(status().isOk());
+        webClient.get().uri("/api/v1/author")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(AuthorDto.class).hasSize(0);
     }
 
     @Test
     void shouldReturnAuthorById() throws Exception {
         AuthorDto author = new AuthorDto("1", "Author1");
-        when(authorService.findById("1")).thenReturn(Optional.of(author));
+        Mockito.when(authorService.findById("1")).thenReturn(Mono.just(author));
 
-        mvc.perform(get("/api/v1/author/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is("1")))
-                .andExpect(jsonPath("$.fullName", is("Author1")));
+        webClient.get().uri("/api/v1/author/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .json(objectMapper.writeValueAsString(author));
     }
 
     @Test
     void shouldReturnNotFoundWhenAuthorNotExist() throws Exception {
-        when(authorService.findById("100")).thenReturn(Optional.empty());
+        Mockito.when(authorService.findById("100")).thenReturn(Mono.empty());
 
-        mvc.perform(get("/api/v1/author/100"))
-                .andExpect(status().isNotFound());
+        webClient.get().uri("/api/v1/author/100")
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
@@ -90,67 +85,88 @@ class AuthorControllerTest {
         AuthorDto authorToCreate = new AuthorDto(null, "NewAuthor");
         AuthorDto createdAuthor = new AuthorDto("1", "NewAuthor");
 
-        when(authorService.insert(any(AuthorDto.class))).thenReturn(createdAuthor);
+        Mockito.when(authorService.insert(Mockito.any(AuthorDto.class))).thenReturn(Mono.just(createdAuthor));
 
-        mvc.perform(post("/api/v1/author")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authorToCreate)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("1")))
-                .andExpect(jsonPath("$.fullName", is("NewAuthor")));
+        webClient.post().uri("/api/v1/author")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(authorToCreate)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .json(objectMapper.writeValueAsString(createdAuthor));
     }
 
     @Test
     void shouldValidateWhenCreatingInvalidAuthor() throws Exception {
         AuthorDto invalidDto = new AuthorDto(null, null);
 
-        mvc.perform(post("/api/v1/author")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].defaultMessage").exists());
+        webClient.post().uri("/api/v1/author")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(invalidDto)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Map.class)
+                .value(errors -> {
+                    assert !errors.isEmpty();
+
+                    errors.forEach((field, message) -> {
+                        assert message != null && !message.toString().isBlank();
+                    });
+                });
     }
 
     @Test
-    void shouldValidateWhenUpdatingInvalidAuthor() throws Exception {
+    void shouldValidateWhenUpdatingInvalidAuthor() {
         AuthorDto invalidDto = new AuthorDto("1", null);
 
-        mvc.perform(put("/api/v1/author/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].defaultMessage").exists());
+        webClient.put().uri("/api/v1/author/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(invalidDto)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Map.class)
+                .value(errors -> {
+                    assert !errors.isEmpty();
+
+                    errors.forEach((field, message) -> {
+                        assert message != null && !message.toString().isBlank();
+                    });
+                });
     }
+
 
     @Test
     void shouldUpdateAuthor() throws Exception {
         AuthorDto authorToUpdate = new AuthorDto("1", "UpdatedAuthor");
-        when(authorService.update(any(AuthorDto.class))).thenReturn(authorToUpdate);
+        Mockito.when(authorService.update(Mockito.any(AuthorDto.class))).thenReturn(Mono.just(authorToUpdate));
 
-        mvc.perform(put("/api/v1/author/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authorToUpdate)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("1")))
-                .andExpect(jsonPath("$.fullName", is("UpdatedAuthor")));
+        webClient.put().uri("/api/v1/author/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(authorToUpdate)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .json(objectMapper.writeValueAsString(authorToUpdate));
     }
 
     @Test
-    void shouldReturnBadRequestWhenIdsMismatch() throws Exception {
+    void shouldReturnBadRequestWhenIdsMismatch() {
         AuthorDto authorToUpdate = new AuthorDto("2", "UpdatedAuthor");
 
-        mvc.perform(put("/api/v1/author/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authorToUpdate)))
-                .andExpect(status().isBadRequest());
+        webClient.put().uri("/api/v1/author/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(authorToUpdate)
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
     void shouldDeleteAuthor() throws Exception {
-        mvc.perform(delete("/api/v1/author/1"))
-                .andExpect(status().isNoContent());
+        Mockito.when(authorService.deleteById("1")).thenReturn(Mono.empty());
+
+        webClient.delete().uri("/api/v1/author/1")
+                .exchange()
+                .expectStatus().isNoContent();
 
         Mockito.verify(authorService).deleteById("1");
     }

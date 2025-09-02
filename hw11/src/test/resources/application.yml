@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       port: 0
-      database: book_lib_test
+      database: book_lib_react_test
       event-listeners:
         enabled: true
   autoconfigure:
@@ -12,10 +12,3 @@ de:
     mongodb:
       embedded:
         version: 4.0.2
-
-  shell:
-    interactive:
-      enabled: false
-
-mongock:
-  enabled: false

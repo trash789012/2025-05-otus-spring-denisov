@@ -4,18 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 @Component
 public class GlobalExceptionHandler implements WebExceptionHandler {
 
+    @Nonnull
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         HttpStatus status;

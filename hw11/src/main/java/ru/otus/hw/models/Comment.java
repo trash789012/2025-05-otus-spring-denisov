@@ -36,7 +36,6 @@ public class Comment {
 
     private Book book;
 
-
     public Comment(String text) {
         this.text = text;
     }

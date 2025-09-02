@@ -81,8 +81,7 @@ public class DataFiller implements ApplicationRunner {
         Comment comment5 = new Comment("Загадочная история, требующая внимания к деталям...");
         comment5.setBook(books.get(2));
         comment5.setBookId(books.get(2).getId());
-        Comments comments = new Comments(comment1, comment2, comment3, comment4, comment5);
-        return comments;
+        return new Comments(comment1, comment2, comment3, comment4, comment5);
     }
 
     private record Comments(Comment comment1, Comment comment2, Comment comment3, Comment comment4, Comment comment5) {
@@ -96,7 +95,7 @@ public class DataFiller implements ApplicationRunner {
                 )
                 .publishOn(workerPool)
                 .flatMapMany(tuple -> {
-                    GenerateBooks result = getGenerateBooks(tuple);
+                    GenerateBooks result = generateBooks(tuple);
 
                     return bookRepository.saveAll(List.of(result.book1(), result.book2(), result.book3()));
                 })
@@ -118,8 +117,7 @@ public class DataFiller implements ApplicationRunner {
         Book book3 = new Book("Камера");
         book3.setAuthor(authors.get(2));
         book3.setGenres(List.of(genres.get(4), genres.get(5)));
-        GenerateBooks result = new GenerateBooks(book1, book2, book3);
-        return result;
+        return new GenerateBooks(book1, book2, book3);
     }
 
     private record GenerateBooks(Book book1, Book book2, Book book3) {
