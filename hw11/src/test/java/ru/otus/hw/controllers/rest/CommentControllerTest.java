@@ -13,6 +13,7 @@ import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.services.CommentService;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -94,7 +95,13 @@ public class CommentControllerTest {
                 .bodyValue(emptyComment)
                 .exchange()
                 .expectStatus().isBadRequest()
-                .expectBody()
-                .json(objectMapper.writeValueAsString(emptyComment));
+                .expectBody(Map.class)
+                .value(errors -> {
+                    assert !errors.isEmpty();
+
+                    errors.forEach((field, message) -> {
+                        assert message != null && !message.toString().isBlank();
+                    });
+                });
     }
 }
