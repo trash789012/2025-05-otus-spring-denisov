@@ -81,7 +81,6 @@ public class AuthorController {
                 });
     }
 
-
     @DeleteMapping("/api/v1/author/{id}")
     public Mono<ResponseEntity<Void>> deleteAuthorById(@PathVariable String id) {
         return authorService.deleteById(id)

@@ -76,6 +76,7 @@ class AuthorControllerTest {
         Mockito.when(authorService.findById("100")).thenReturn(Mono.empty());
 
         webClient.get().uri("/api/v1/author/100")
+                .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound();
     }
