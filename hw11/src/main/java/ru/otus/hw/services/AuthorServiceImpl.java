@@ -2,7 +2,6 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.converters.AuthorConverter;
@@ -31,13 +30,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    @Transactional
     public Mono<AuthorDto> insert(AuthorDto authorDto) {
         return save(authorDto);
     }
 
     @Override
-    @Transactional
     public Mono<AuthorDto> update(AuthorDto authorDto) {
         return save(authorDto);
     }

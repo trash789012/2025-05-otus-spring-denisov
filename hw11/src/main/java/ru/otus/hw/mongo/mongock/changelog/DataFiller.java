@@ -54,18 +54,23 @@ public class DataFiller implements ApplicationRunner {
 
                     Comment comment1 = new Comment("Вымышленный мир снов");
                     comment1.setBook(books.get(0));
+                    comment1.setBookId(books.get(0).getId());
 
                     Comment comment2 = new Comment("Борьба с абортами");
                     comment2.setBook(books.get(0));
+                    comment2.setBookId(books.get(0).getId());
 
                     Comment comment3 = new Comment("Абсурдный вымысел!");
                     comment3.setBook(books.get(1));
+                    comment3.setBookId(books.get(1).getId());
 
                     Comment comment4 = new Comment("Смешные имена персонажей ))");
                     comment4.setBook(books.get(1));
+                    comment4.setBookId(books.get(1).getId());
 
                     Comment comment5 = new Comment("Загадочная история, требующая внимания к деталям...");
                     comment5.setBook(books.get(2));
+                    comment5.setBookId(books.get(2).getId());
 
                     return commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
                 })

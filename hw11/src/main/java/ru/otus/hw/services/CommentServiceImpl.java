@@ -2,7 +2,6 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.converters.CommentConverter;
@@ -44,7 +43,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
+    public Mono<CommentDto> update(CommentDto commentDto) {
+        return save(commentDto);
+    }
+
+    @Override
+    public Mono<Void> deleteById(String id) {
+        return commentRepository.deleteById(id);
+    }
+
+    @Override
     public Mono<CommentDto> insert(CommentDto commentDto) {
         if (commentDto.bookId() == null) {
             return Mono.error(new IllegalArgumentException("Book id is empty"));
@@ -52,76 +60,28 @@ public class CommentServiceImpl implements CommentService {
         return save(commentDto);
     }
 
-    @Override
-    @Transactional
-    public Mono<CommentDto> update(CommentDto commentDto) {
-        return save(commentDto);
-    }
-
-    @Override
-    @Transactional
-    public Mono<Void> deleteById(String id) {
-        return commentRepository.deleteById(id);
-    }
-
-//    private Mono<CommentDto> save(CommentDto commentDto) {
-//        if (commentDto.text() == null || commentDto.text().isBlank()) {
-//            return Mono.error(new IllegalArgumentException("Comment text is empty"));
-//        }
-//
-//        Mono<Book> bookMono = commentDto.bookId() != null
-//                ? bookRepository.findById(commentDto.bookId())
-//                .switchIfEmpty(Mono.error(
-//                        new EntityNotFoundException("Book with id %s not found".formatted(commentDto.bookId()))
-//                ))
-//                : Mono.empty();
-//
-//        Mono<Comment> commentMono;
-//        if (commentDto.id() == null) {
-//            commentMono = Mono.just(new Comment());
-//        } else {
-//            commentMono = commentRepository.findById(commentDto.id())
-//                    .switchIfEmpty(Mono.error(
-//                            new EntityNotFoundException("Comment with id %s not found".formatted(commentDto.id()))
-//                    ));
-//        }
-//
-//        return Mono.zip(commentMono, bookMono.defaultIfEmpty(null))
-//                .flatMap(tuple -> {
-//                    Comment comment = tuple.getT1();
-//                    Book book = tuple.getT2();
-//
-//                    comment.setText(commentDto.text());
-//                    if (book != null) {
-//                        comment.setBook(book);
-//                    }
-//
-//                    return commentRepository.save(comment);
-//                })
-//                .map(commentConverter::commentToDto);
-//    }
-
     private Mono<CommentDto> save(CommentDto commentDto) {
         return validateCommentText(commentDto)
-                .zipWith(getBookForComment(commentDto))
-                .flatMap(tuple -> getComment(commentDto)
-                        .flatMap(comment -> assembleComment(comment, tuple.getT2(), commentDto))
+                .flatMap(validationResult -> getBookForComment(commentDto))
+                .flatMap(book -> getComment(commentDto)
+                        .flatMap(comment -> assembleComment(comment, book, commentDto))
                 )
                 .flatMap(commentRepository::save)
                 .map(commentConverter::commentToDto);
     }
 
-    private Mono<Void> validateCommentText(CommentDto commentDto) {
+    private Mono<Boolean> validateCommentText(CommentDto commentDto) {
         if (commentDto.text() == null || commentDto.text().isBlank()) {
             return Mono.error(new IllegalArgumentException("Comment text is empty"));
         }
-        return Mono.empty();
+        return Mono.just(true);
     }
 
     private Mono<Book> getBookForComment(CommentDto commentDto) {
-        if (commentDto.bookId() == null) {
-            return Mono.empty();
+        if (commentDto.bookId() == null || commentDto.bookId().isBlank()) {
+            return Mono.error(new IllegalArgumentException("Book ID is null or empty"));
         }
+
         return bookRepository.findById(commentDto.bookId())
                 .switchIfEmpty(Mono.error(
                         new EntityNotFoundException("Book with id %s not found".formatted(commentDto.bookId()))
@@ -132,6 +92,7 @@ public class CommentServiceImpl implements CommentService {
         if (commentDto.id() == null) {
             return Mono.just(new Comment());
         }
+
         return commentRepository.findById(commentDto.id())
                 .switchIfEmpty(Mono.error(
                         new EntityNotFoundException("Comment with id %s not found".formatted(commentDto.id()))
@@ -140,9 +101,8 @@ public class CommentServiceImpl implements CommentService {
 
     private Mono<Comment> assembleComment(Comment comment, Book book, CommentDto commentDto) {
         comment.setText(commentDto.text());
-        if (book != null) {
-            comment.setBook(book);
-        }
+        comment.setBook(book);
+        comment.setBookId(book.getId());
         return Mono.just(comment);
     }
 

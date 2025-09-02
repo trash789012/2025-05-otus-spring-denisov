@@ -50,21 +50,6 @@ public class BookController {
 
 
     @PostMapping("/api/v1/book")
-//    public Mono<ResponseEntity<?>> createBook(
-//            @Valid @RequestBody BookFormDto bookDto,
-//            BindingResult bindingResult) {
-//
-//        if (bindingResult.hasErrors()) {
-//            return Mono.just(
-//                    ResponseEntity.badRequest()
-//                            .body(bindingResult.getAllErrors())
-//            );
-//        }
-//
-//        return bookService.insert(bookDto)
-//                .map(savedBook -> ResponseEntity.ok().body(savedBook));
-//    }
-
     public Mono<ResponseEntity<Object>> createBook(@Valid @RequestBody Mono<BookFormDto> bookDtoMono) {
         return bookDtoMono
                 .flatMap(bookDto -> bookService.insert(bookDto)

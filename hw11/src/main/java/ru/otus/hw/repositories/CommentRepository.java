@@ -1,6 +1,5 @@
 package ru.otus.hw.repositories;
 
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,6 +12,5 @@ public interface CommentRepository extends ReactiveMongoRepository<Comment, Stri
     @Nonnull
     Flux<Comment> findByBookId(String bookId);
 
-    @Query(value = "{ 'book': ?0 }", delete = true)
     Mono<Void> deleteAllByBookId(String bookId);
 }

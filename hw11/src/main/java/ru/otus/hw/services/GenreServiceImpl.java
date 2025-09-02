@@ -2,7 +2,6 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.converters.GenreConverter;
@@ -33,19 +32,16 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    @Transactional
     public Mono<GenreDto> insert(GenreDto genreDto) {
         return save(genreDto);
     }
 
     @Override
-    @Transactional
     public Mono<GenreDto> update(GenreDto genreDto) {
         return save(genreDto);
     }
 
     @Override
-    @Transactional
     public Mono<Void> deleteById(String id) {
         return genreRepository.deleteById(id);
     }
