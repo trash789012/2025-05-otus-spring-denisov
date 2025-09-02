@@ -28,6 +28,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     private final BookConverter bookConverter;
+
     private final CommentRepository commentRepository;
 
     @Override
