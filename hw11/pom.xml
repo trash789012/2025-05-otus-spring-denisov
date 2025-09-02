@@ -49,13 +49,6 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- Shell -->
-        <dependency>
-            <groupId>org.springframework.shell</groupId>
-            <artifactId>spring-shell-starter</artifactId>
-            <version>${spring.shell.version}</version>
-        </dependency>
-
         <!-- Utilities -->
         <dependency>
             <groupId>org.projectlombok</groupId>
