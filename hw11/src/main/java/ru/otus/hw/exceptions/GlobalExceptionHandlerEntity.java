@@ -26,9 +26,10 @@ public class GlobalExceptionHandlerEntity {
         return handleError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
 
-    private static Mono<ResponseEntity<ErrorResponse>> handleError(HttpStatus internalServerError, String Internal_server_error) {
-        ErrorResponse error = new ErrorResponse(internalServerError.value(), Internal_server_error);
-        return Mono.just(ResponseEntity.status(internalServerError).body(error));
+    private static Mono<ResponseEntity<ErrorResponse>> handleError(HttpStatus status,
+                                                                   String internalStatus) {
+        ErrorResponse error = new ErrorResponse(status.value(), internalStatus);
+        return Mono.just(ResponseEntity.status(status).body(error));
     }
 
     public record ErrorResponse(int status, String message) {
