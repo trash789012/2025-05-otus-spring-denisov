@@ -39,7 +39,7 @@ public class CommentController {
 
         return commentDtoMono
                 .flatMap(commentDto -> commentService.insert(commentDto)
-                        .switchIfEmpty(Mono.error(new BadRequestException("Failed to save comment")))
+//                        .switchIfEmpty(Mono.error(new BadRequestException("Failed to save comment")))
                         .map(savedComment -> ResponseEntity.ok().<Object>body(savedComment))
                 )
                 .onErrorResume(WebExchangeBindException.class, ex -> {

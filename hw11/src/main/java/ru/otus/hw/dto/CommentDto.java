@@ -1,4 +1,9 @@
 package ru.otus.hw.dto;
 
-public record CommentDto(String id, String text, String bookId) {
+import jakarta.validation.constraints.NotEmpty;
+
+public record CommentDto(String id,
+                         @NotEmpty(message = "заполните текст комментария")
+                         String text,
+                         String bookId) {
 }
