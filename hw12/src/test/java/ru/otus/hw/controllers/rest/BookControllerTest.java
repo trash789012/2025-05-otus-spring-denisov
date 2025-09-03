@@ -3,6 +3,7 @@ package ru.otus.hw.controllers.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BookController.class)
 @Import({BookConverter.class, AuthorConverter.class, GenreConverter.class,
         LocalValidatorFactoryBean.class})
+@AutoConfigureMockMvc(addFilters = false)
 public class BookControllerTest {
     @Autowired
     private MockMvc mvc;
