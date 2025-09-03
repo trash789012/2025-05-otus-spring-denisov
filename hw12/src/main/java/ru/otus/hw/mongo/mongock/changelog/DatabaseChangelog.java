@@ -7,10 +7,12 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.User;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
 import ru.otus.hw.repositories.GenreRepository;
+import ru.otus.hw.repositories.UserRepository;
 
 import java.util.List;
 
@@ -85,4 +87,18 @@ public class DatabaseChangelog {
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
     }
 
+    @ChangeSet(order = "006", id = "createUsersInitial", author = "nadenisov")
+    public void createUsersInitial(UserRepository userRepository) {
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setPassword("$2a$10$b.fzuJt6/2MuoWJbTjkfROKnWgEtOEL4ptZZQ34cMaCmKoero7WRi"); //admin
+        admin.setRoles(List.of("ADMIN", "USER"));
+
+        User user = new User();
+        user.setUsername("user");
+        user.setPassword("$2a$10$fEDUfr3CGdsykk4KwP7LWuW3v577oIEgqgcQcYcBcL1aOJpV5cdX6"); //user
+        user.setRoles(List.of("USER"));
+
+        userRepository.saveAll(List.of(admin, user));
+    }
 }
