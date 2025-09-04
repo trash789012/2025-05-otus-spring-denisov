@@ -152,7 +152,6 @@ public class AllControllerSecurityTest {
     @MethodSource("getEndpoints")
     @WithMockUser(username = "user")
     void shouldAllGetEndpointWithAuthorizedUserReturnOk(Endpoint endpoint) throws Exception {
-        ///
         mockMvc.perform(request(endpoint.method(), endpoint.uri()))
                 .andExpect(status().isOk());
     }
