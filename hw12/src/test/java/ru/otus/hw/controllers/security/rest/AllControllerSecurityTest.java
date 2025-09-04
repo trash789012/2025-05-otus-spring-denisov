@@ -20,6 +20,7 @@ import ru.otus.hw.controllers.rest.CommentController;
 import ru.otus.hw.controllers.rest.GenreController;
 import ru.otus.hw.converters.AuthorConverter;
 import ru.otus.hw.converters.BookConverter;
+import ru.otus.hw.converters.GenreConverter;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
@@ -54,6 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         BookService.class,
         BookConverter.class,
         AuthorConverter.class,
+        GenreConverter.class,
         GlobalExceptionHandler.class,
         SecurityConfig.class,
         UserDetailService.class
@@ -67,9 +69,6 @@ public class AllControllerSecurityTest {
     private AuthorService authorService;
 
     @MockitoBean
-    private AuthorConverter authorConverter;
-
-    @MockitoBean
     private GenreService genreService;
 
     @MockitoBean
@@ -79,9 +78,6 @@ public class AllControllerSecurityTest {
     private BookService bookService;
 
     @MockitoBean
-    private BookConverter bookConverter;
-
-    @MockitoBean
     private UserDetailService userDetailService;
 
     @Autowired
@@ -89,12 +85,12 @@ public class AllControllerSecurityTest {
 
     static Stream<Endpoint> getEndpoints() {
         return Stream.of(
-//                new Endpoint(HttpMethod.GET, "/api/v1/author"),
-//                new Endpoint(HttpMethod.GET, "/api/v1/author/1"),
-//                new Endpoint(HttpMethod.GET, "/api/v1/genre"),
-//                new Endpoint(HttpMethod.GET, "/api/v1/genre/1"),
-//                new Endpoint(HttpMethod.GET, "/api/v1/book/1/comment"),
-//                new Endpoint(HttpMethod.GET, "/api/v1/book"),
+                new Endpoint(HttpMethod.GET, "/api/v1/author"),
+                new Endpoint(HttpMethod.GET, "/api/v1/author/1"),
+                new Endpoint(HttpMethod.GET, "/api/v1/genre"),
+                new Endpoint(HttpMethod.GET, "/api/v1/genre/1"),
+                new Endpoint(HttpMethod.GET, "/api/v1/book/1/comment"),
+                new Endpoint(HttpMethod.GET, "/api/v1/book"),
                 new Endpoint(HttpMethod.GET, "/api/v1/book/1")
         );
     }
