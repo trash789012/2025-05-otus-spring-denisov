@@ -27,7 +27,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Optional<AuthorDto> findById(String id) {
+    public Optional<AuthorDto> findById(long id) {
         return authorRepository.findById(id)
                 .map(authorConverter::authorToDto);
     }
@@ -46,7 +46,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void deleteById(String id) {
+    public void deleteById(long id) {
         authorRepository.deleteById(id);
     }
 
@@ -56,7 +56,7 @@ public class AuthorServiceImpl implements AuthorService {
         }
 
         Author author;
-        if (authorDto.id() == null) {
+        if (authorDto.id() == 0) {
             author = new Author();
         } else {
             author = authorRepository.findById(authorDto.id())

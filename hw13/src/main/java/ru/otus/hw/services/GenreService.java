@@ -8,11 +8,11 @@ import java.util.Set;
 public interface GenreService {
     List<GenreDto> findAll();
 
-    List<GenreDto> findByIds(Set<String> ids);
+    List<GenreDto> findByIds(Set<Long> ids);
 
     GenreDto insert(GenreDto genreDto);
 
     GenreDto update(GenreDto genreDto);
 
-    void deleteById(String id);
+    void deleteById(long id);
 }

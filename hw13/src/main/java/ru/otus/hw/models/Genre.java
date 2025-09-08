@@ -1,23 +1,30 @@
 package ru.otus.hw.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Setter
 @Getter
+@Entity
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "genres")
+@Table(name = "genres")
 public class Genre {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
+    @Column(name = "name")
     private String name;
 
     public Genre(String name) {

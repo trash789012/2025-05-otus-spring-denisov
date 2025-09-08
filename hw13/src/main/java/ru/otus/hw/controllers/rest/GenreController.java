@@ -30,7 +30,7 @@ public class GenreController {
     }
 
     @GetMapping("/api/v1/genre/{id}")
-    public ResponseEntity<GenreDto> getGenreById(@PathVariable String id) {
+    public ResponseEntity<GenreDto> getGenreById(@PathVariable Long id) {
         return genreService.findByIds(Set.of(id))
                 .stream().findFirst()
                 .map(ResponseEntity::ok)
@@ -50,7 +50,7 @@ public class GenreController {
     }
 
     @PutMapping("/api/v1/genre/{id}")
-    public ResponseEntity<?> updateGenre(@PathVariable String id,
+    public ResponseEntity<?> updateGenre(@PathVariable Long id,
                                                 @Valid @RequestBody GenreDto genreDto,
                                                 BindingResult bindingResult) {
         if (!id.equals(genreDto.id())) {
@@ -67,7 +67,7 @@ public class GenreController {
     }
 
     @DeleteMapping("/api/v1/genre/{id}")
-    public ResponseEntity<GenreDto> deleteGenre(@PathVariable String id) {
+    public ResponseEntity<GenreDto> deleteGenre(@PathVariable Long id) {
         genreService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

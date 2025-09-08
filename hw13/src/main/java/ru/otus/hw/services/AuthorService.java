@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface AuthorService {
     List<AuthorDto> findAll();
 
-    Optional<AuthorDto> findById(String id);
+    Optional<AuthorDto> findById(long id);
 
     AuthorDto insert(AuthorDto authorDto);
 
     AuthorDto update(AuthorDto authorDto);
 
-    void deleteById(String id);
+    void deleteById(long id);
 }

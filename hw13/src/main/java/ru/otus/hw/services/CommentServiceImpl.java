@@ -25,13 +25,13 @@ public class CommentServiceImpl implements CommentService {
     private final BookRepository bookRepository;
 
     @Override
-    public Optional<CommentDto> findById(String id) {
+    public Optional<CommentDto> findById(long id) {
         return commentRepository.findById(id)
                 .map(commentConverter::commentToDto);
     }
 
     @Override
-    public List<CommentDto> findByBookId(String bookId) {
+    public List<CommentDto> findByBookId(long bookId) {
 
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException(
@@ -47,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto insert(CommentDto commentDto) {
-        if (commentDto.bookId() == null) {
+        if (commentDto.bookId() == 0) {
             throw new IllegalArgumentException("Book id is empty");
         }
 
@@ -62,13 +62,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteById(String id) {
+    public void deleteById(long id) {
         commentRepository.deleteById(id);
     }
 
     private CommentDto save(CommentDto commentDto) {
         Book book = null;
-        if (commentDto.bookId() != null) {
+        if (commentDto.bookId() != 0) {
             book = bookRepository.findById(commentDto.bookId()).orElseThrow(
                     () -> new EntityNotFoundException("Book with id %d not found".formatted(commentDto.bookId()))
             );
@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
 
     private Comment prepareComment(CommentDto commentDto, Book book) {
         Comment comment;
-        if (commentDto.id() == null) {
+        if (commentDto.id() == 0) {
             comment = new Comment();
         } else {
             comment = commentRepository.findById(commentDto.id())

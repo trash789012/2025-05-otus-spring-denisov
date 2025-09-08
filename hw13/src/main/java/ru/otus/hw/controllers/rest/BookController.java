@@ -33,7 +33,7 @@ public class BookController {
     }
 
     @GetMapping("/api/v1/book/{id}")
-    public ResponseEntity<BookFormDto> getBookById(@PathVariable String id) {
+    public ResponseEntity<BookFormDto> getBookById(@PathVariable Long id) {
         return bookService.findById(id)
                 .map(bookConverter::bookDtoToBookFormDto)
                 .map(ResponseEntity::ok)
@@ -55,7 +55,7 @@ public class BookController {
     }
 
     @PutMapping("/api/v1/book/{id}")
-    public ResponseEntity<?> updateBook(@PathVariable String id,
+    public ResponseEntity<?> updateBook(@PathVariable Long id,
                                         @Valid @RequestBody BookFormDto bookDto,
                                         BindingResult bindingResult) {
         if (!id.equals(bookDto.id())) {
@@ -72,7 +72,7 @@ public class BookController {
     }
 
     @DeleteMapping("/api/v1/book/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable String id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

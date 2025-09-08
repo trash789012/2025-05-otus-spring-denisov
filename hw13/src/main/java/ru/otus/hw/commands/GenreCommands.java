@@ -25,7 +25,7 @@ public class GenreCommands {
     }
 
     @ShellMethod(value = "Find genres by ids", key = "gbids")
-    public String findGenresByIds(Set<String> ids) {
+    public String findGenresByIds(Set<Long> ids) {
         return genreService.findByIds(ids).stream()
                 .map(genreConverter::genreDtoToString)
                 .collect(Collectors.joining("," + System.lineSeparator()));

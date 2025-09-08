@@ -32,7 +32,7 @@ public class AuthorController {
     }
 
     @GetMapping("/api/v1/author/{id}")
-    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable String id) {
+    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable Long id) {
         return authorService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundRequestException("Author with id %s not found!".formatted(id)));
@@ -53,9 +53,9 @@ public class AuthorController {
     }
 
     @PutMapping("/api/v1/author/{id}")
-    public ResponseEntity<?> updateAuthor(@PathVariable String id,
-                                                  @Valid @RequestBody AuthorDto authorDto,
-                                                  BindingResult bindingResult) {
+    public ResponseEntity<?> updateAuthor(@PathVariable Long id,
+                                          @Valid @RequestBody AuthorDto authorDto,
+                                          BindingResult bindingResult) {
         if (!id.equals(authorDto.id())) {
             throw new BadRequestException("Author id %s mismatch".formatted(id));
         }
@@ -70,7 +70,7 @@ public class AuthorController {
     }
 
     @DeleteMapping("/api/v1/author/{id}")
-    public ResponseEntity<Void> deleteAuthorById(@PathVariable String id) {
+    public ResponseEntity<Void> deleteAuthorById(@PathVariable Long id) {
         authorService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

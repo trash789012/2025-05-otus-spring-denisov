@@ -20,7 +20,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/api/v1/book/{id}/comment")
-    public List<CommentDto> getCommentsByBookId(@PathVariable("id") String bookId) {
+    public List<CommentDto> getCommentsByBookId(@PathVariable("id") Long bookId) {
         return commentService.findByBookId(bookId);
     }
 
@@ -38,8 +38,8 @@ public class CommentController {
     }
 
     @DeleteMapping("/api/v1/book/{bookId}/comment/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("bookId") String bookId,
-                                              @PathVariable("commentId") String commentId) {
+    public ResponseEntity<Void> deleteComment(@PathVariable("bookId") Long bookId,
+                                              @PathVariable("commentId") Long commentId) {
         commentService.deleteById(commentId);
         return ResponseEntity.noContent().build();
     }

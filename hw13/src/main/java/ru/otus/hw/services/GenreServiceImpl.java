@@ -27,7 +27,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public List<GenreDto> findByIds(Set<String> ids) {
+    public List<GenreDto> findByIds(Set<Long> ids) {
         return genreRepository.findAllById(ids).stream()
                 .map(genreConverter::genreToDto)
                 .toList();
@@ -47,7 +47,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public void deleteById(String id) {
+    public void deleteById(long id) {
         genreRepository.deleteById(id);
     }
 
@@ -57,7 +57,7 @@ public class GenreServiceImpl implements GenreService {
         }
 
         Genre genre;
-        if (genreDto.id() == null) {
+        if (genreDto.id() == 0) {
             genre = new Genre();
         } else {
             genre = genreRepository.findById(genreDto.id())

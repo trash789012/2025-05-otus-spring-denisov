@@ -8,6 +8,7 @@ import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
+import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
@@ -29,7 +30,7 @@ public class BookServiceImpl implements BookService {
     private final BookConverter bookConverter;
 
     @Override
-    public Optional<BookDto> findById(String id) {
+    public Optional<BookDto> findById(long id) {
         return bookRepository.findById(id)
                 .map(bookConverter::bookToBookDto);
     }
@@ -44,7 +45,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookDto insert(BookFormDto bookDto) {
-        if (bookDto.authorId() == null) {
+        if (bookDto.authorId() == 0) {
             throw new IllegalArgumentException("Book id must not be null");
         }
         return save(bookDto);
@@ -58,7 +59,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void deleteById(String id) {
+    public void deleteById(long id) {
         bookRepository.deleteById(id);
     }
 
@@ -72,9 +73,9 @@ public class BookServiceImpl implements BookService {
         return bookConverter.bookToBookDto(bookRepository.save(book));
     }
 
-    private Book prepareBook(BookFormDto bookDto, List<String> genresIds) {
+    private Book prepareBook(BookFormDto bookDto, List<Long> genresIds) {
         Book book;
-        if (bookDto.id() == null || bookDto.id().isEmpty()) {
+        if (bookDto.id() == 0) {
             book = new Book();
         } else {
             book = bookRepository.findById(bookDto.id()).orElseThrow(
@@ -84,7 +85,7 @@ public class BookServiceImpl implements BookService {
         var author = authorRepository.findById(bookDto.authorId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Author with id %s not found".formatted(bookDto.authorId())));
-        var genres = genreRepository.findAllById(genresIds);
+        List<Genre> genres = genreRepository.findAllById(genresIds);
         if (isEmpty(genres) || genresIds.size() != genres.size()) {
             throw new EntityNotFoundException("One or all genres with ids %s not found".formatted(genresIds));
         }
