@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<style th:fragment="table-styles">
+    .content-container {
+        margin-top: 50px; /* Отступ под меню */
+        padding: 20px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Общие стили для таблиц */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-family: Arial, sans-serif;
+    }
+
+    table th, table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    table tr:hover td {
+        background-color: #f5f5f5;
+    }
+</style>
+
+<style th:fragment="global-styles">
+    body {
+        padding: 50px;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-link {
+        background: none;
+        border: none;
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+        padding: 0;
+        font: inherit;
+    }
+
+    .btn-link:hover {
+        color: #0056b3;
+    }
+
+     /*.   для listReport страниц*/
+    /* Стили для заголовка таблицы */
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    /* Стиль кнопки создания */
+    .create-button-action {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+
+    .create-button-action:hover {
+        background-color: #45a049;
+    }
+
+    /* Дополнительно: иконка перед текстом */
+    .create-button-action::before {
+        content: "+";
+        margin-right: 5px;
+        font-weight: bold;
+    }
+
+    /*    общие стили для редактируемых страниц */
+    /* Общие стили формы */
+    #edit-form {
+        max-width: 600px;
+        margin: 40px auto 0;
+        padding: 30px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .row {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        margin-top: 10px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    input[type="text"] {
+        width: 96%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+
+    input[readonly] {
+        background-color: #f5f5f5;
+        color: #666;
+    }
+
+    select {
+        /*margin-top: 10px;*/
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        background-color: white;
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    select:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+
+    select[multiple] {
+        min-height: 120px;
+        background-image: none;
+        padding: 8px;
+    }
+
+    select[multiple] option {
+        padding: 8px;
+        margin: 4px 0;
+        border-radius: 4px;
+    }
+
+    select[multiple] option:hover {
+        background-color: #f0f7ff;
+    }
+
+    button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-right: 10px;
+    }
+
+    button[type="submit"] {
+        background-color: #4a90e2;
+        color: white;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #3a7bc8;
+    }
+
+    button[type="button"] {
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    button[type="button"]:hover {
+        background-color: #e9e9e9;
+    }
+
+    /*    группировки */
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group h3 {
+        margin-bottom: 15px;
+        color: #444;
+        font-size: 18px;
+    }
+
+    /* Стили для секции комментариев */
+    .comments-section {
+        margin: 40px auto 0;
+        max-width: 600px;
+        /*margin-top: 40px;*/
+        padding: 25px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .comments-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .comments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .comment-card {
+        background: white;
+        border-radius: 8px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        position: relative;
+        border: 1px solid #eee;
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .comment-text {
+        margin: 0;
+        color: #333;
+        line-height: 1.5;
+        padding-right: 25px;
+    }
+
+    .comment-date {
+        font-size: 0.85rem;
+        color: #777;
+    }
+
+    .delete-comment-btn {
+        position: absolute;
+        top: 8px;
+        right: 15px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        /*align-items: center;*/
+        justify-content: center;
+        background: #f8f9fa;
+        border: 1px solid #eee;
+        /*border-radius: 50%;*/
+        color: #dc3545;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+    }
+
+    .delete-comment-btn:hover {
+        background: #dc3545;
+        color: white;
+        border-color: #dc3545;
+    }
+
+    .add-comment-form {
+        margin-top: 25px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+    }
+
+    .comment-input {
+        width: 98%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        resize: vertical;
+        min-height: 100px;
+        margin-bottom: 12px;
+        font-family: inherit;
+        font-size: 0.95rem;
+    }
+
+    .comment-input:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+
+    .add-comment-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: background-color 0.2s;
+    }
+
+    .add-comment-btn:hover {
+        background-color: #218838;
+    }
+
+</style>
+</body>
+</html>
