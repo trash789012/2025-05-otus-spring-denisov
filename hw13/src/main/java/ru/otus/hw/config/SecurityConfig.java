@@ -32,11 +32,12 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/book/**").hasAnyRole("ADMIN", "USER")
-                                .requestMatchers("/h2-console/**").permitAll()
-                                .requestMatchers("/access-denied").permitAll()
-                                .requestMatchers("/**").authenticated()
-                                .anyRequest().authenticated()
+                        .requestMatchers("/book/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/genres/**").hasRole("ADMIN")
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/access-denied").permitAll()
+                        .requestMatchers("/**").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .defaultSuccessUrl("/", true)
