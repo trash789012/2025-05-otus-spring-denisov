@@ -1,6 +1,9 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.CommentConverter;
@@ -66,7 +69,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.Comment', 'DELETE')")
+    public void deleteById(@P("id") long id) {
         commentRepository.deleteById(id);
     }
 
@@ -79,6 +83,12 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment comment = prepareComment(commentDto, book);
+
+        if (comment.getId() == 0) {
+            aclServiceWrapperService.createPermission(comment, BasePermission.DELETE);
+            aclServiceWrapperService.createPermission(comment, BasePermission.WRITE);
+            aclServiceWrapperService.createAdminPermission(comment);
+        }
 
         return commentConverter.commentToDto(commentRepository.save(comment));
     }

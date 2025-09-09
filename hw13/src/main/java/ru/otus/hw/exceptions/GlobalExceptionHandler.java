@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -14,7 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @ControllerAdvice
@@ -51,6 +54,34 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
 
         return handleError(ex, request, HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(
+            AccessDeniedException ex,
+            WebRequest request) {
+
+        ServletWebRequest servletRequest = (ServletWebRequest) request;
+
+        if (shouldReturnJsonResponse(servletRequest)) {
+            Map<String, Object> body = Map.of(
+                    "error", "ACCESS_DENIED",
+                    "status", HttpStatus.FORBIDDEN.value(),
+                    "redirect", "/access-denied"
+            );
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body);
+        }
+
+        try {
+            Objects.requireNonNull(servletRequest.getResponse())
+                    .sendRedirect(servletRequest.getRequest().getContextPath() + "/access-denied");
+        } catch (IOException e) {
+            log.error("Redirect failed", e);
+        }
+        return null;
     }
 
     @ExceptionHandler(Exception.class)

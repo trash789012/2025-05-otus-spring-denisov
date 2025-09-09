@@ -86,6 +86,12 @@ export async function del(url) {
     });
 
     if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        if (data?.redirect) {
+            window.location.href = data.redirect;
+            return;
+        }
+
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
 }
