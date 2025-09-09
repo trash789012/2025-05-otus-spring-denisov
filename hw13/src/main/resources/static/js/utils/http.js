@@ -52,7 +52,7 @@ export async function post(url, data, options = {}) {
                 return;
             }
 
-            const errors = await response.json();
+            const errors = data;
             console.error('Ошибка валидации:', errors);
             return { success: false, errors};
         }
@@ -82,7 +82,7 @@ export async function put(url, data, options = {}) {
                 return;
             }
 
-            const errors = await response.json();
+            const errors = data;
             console.error('Ошибка валидации:', errors);
             return { success: false, errors};
         }

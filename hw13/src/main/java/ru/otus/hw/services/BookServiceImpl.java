@@ -1,6 +1,9 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.BookConverter;
@@ -29,6 +32,8 @@ public class BookServiceImpl implements BookService {
 
     private final BookConverter bookConverter;
 
+    private final AclServiceWrapperService aclService;
+
     @Override
     @Transactional(readOnly = true)
     public Optional<BookDto> findById(long id) {
@@ -55,24 +60,35 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#bookDto.id(), 'ru.otus.hw.models.Book', 'WRITE')")
     public BookDto update(BookFormDto bookDto) {
         return save(bookDto);
     }
 
     @Override
     @Transactional
-    public void deleteById(long id) {
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.Book', 'DELETE')")
+    public void deleteById(@P("id") long id) {
         bookRepository.deleteById(id);
     }
 
     private BookDto save(BookFormDto bookFormDto) {
+        boolean isCreate = bookFormDto.id() == 0;
+
         if (isEmpty(bookFormDto.genreIds())) {
             throw new IllegalArgumentException("Genres ids must not be null");
         }
 
         Book book;
         book = prepareBook(bookFormDto, bookFormDto.genreIds());
-        return bookConverter.bookToBookDto(bookRepository.save(book));
+
+        var savedBook = bookRepository.save(book);
+        if (isCreate) {
+            aclService.createPermission(savedBook, BasePermission.WRITE);
+            aclService.createPermission(savedBook, BasePermission.DELETE);
+            aclService.createAdminPermission(savedBook);
+        }
+        return bookConverter.bookToBookDto(savedBook);
     }
 
     private Book prepareBook(BookFormDto bookDto, List<Long> genresIds) {

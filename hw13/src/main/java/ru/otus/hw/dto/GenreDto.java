@@ -1,8 +1,8 @@
 package ru.otus.hw.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
 public record GenreDto(long id,
-                       @NotEmpty(message = "заполните наименование жанра")
+                       @NotBlank(message = "заполните наименование жанра")
                        String name) {
 }

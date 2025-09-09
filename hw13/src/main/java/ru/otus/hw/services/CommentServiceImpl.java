@@ -53,6 +53,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public CommentDto insert(CommentDto commentDto) {
         if (commentDto.bookId() == 0) {
             throw new IllegalArgumentException("Book id is empty");
@@ -63,6 +64,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public CommentDto update(CommentDto commentDto) {
         return save(commentDto);
     }

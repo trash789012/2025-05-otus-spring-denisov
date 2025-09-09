@@ -1,8 +1,8 @@
 package ru.otus.hw.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
 public record AuthorDto(long id,
-                        @NotEmpty(message = "Заполните имя автора")
+                        @NotBlank(message = "Заполните имя автора")
                         String fullName) {
 }
