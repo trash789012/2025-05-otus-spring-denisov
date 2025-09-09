@@ -68,10 +68,17 @@
         </dependency>
 
         <!--  DB      -->
+<!--        <dependency>-->
+<!--            <groupId>com.h2database</groupId>-->
+<!--            <artifactId>h2</artifactId>-->
+<!--&lt;!&ndash;            <version>1.4.200</version>&ndash;&gt;-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-<!--            <version>1.4.200</version>-->
+            <version>1.4.200</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>

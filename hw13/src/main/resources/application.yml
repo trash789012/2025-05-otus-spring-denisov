@@ -11,7 +11,8 @@ spring:
       enabled: always
 
   datasource:
-    url: jdbc:h2:mem:maindb;MODE=LEGACY
+#    url: jdbc:h2:mem:maindb; MODE=LEGACY
+    url: jdbc:h2:mem:maindb;
     username: sa
     driver-class-name: org.h2.Driver
   sql:
