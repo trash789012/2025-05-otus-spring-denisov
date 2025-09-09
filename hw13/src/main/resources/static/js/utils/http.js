@@ -14,6 +14,12 @@ export async function get(url, options = {}) {
     });
 
     if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        if (data?.redirect) {
+            window.location.href = data.redirect;
+            return;
+        }
+
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -40,6 +46,12 @@ export async function post(url, data, options = {}) {
         });
 
         if (!response.ok) {
+            const data = await response.json().catch(() => null);
+            if (data?.redirect) {
+                window.location.href = data.redirect;
+                return;
+            }
+
             const errors = await response.json();
             console.error('Ошибка валидации:', errors);
             return { success: false, errors};
@@ -64,6 +76,12 @@ export async function put(url, data, options = {}) {
         });
 
         if (!response.ok) {
+            const data = await response.json().catch(() => null);
+            if (data?.redirect) {
+                window.location.href = data.redirect;
+                return;
+            }
+
             const errors = await response.json();
             console.error('Ошибка валидации:', errors);
             return { success: false, errors};

@@ -27,7 +27,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final BookRepository bookRepository;
 
-    private final AclServiceWrapperService aclServiceWrapperService;
+    private final AclServiceWrapperService aclService;
 
     @Override
     @Transactional(readOnly = true)
@@ -75,6 +75,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDto save(CommentDto commentDto) {
+        boolean isCreate = commentDto.id() == 0;
+
         Book book = null;
         if (commentDto.bookId() != 0) {
             book = bookRepository.findById(commentDto.bookId()).orElseThrow(
@@ -83,14 +85,15 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment comment = prepareComment(commentDto, book);
+        var savedComment = commentRepository.save(comment);
 
-        if (comment.getId() == 0) {
-            aclServiceWrapperService.createPermission(comment, BasePermission.DELETE);
-            aclServiceWrapperService.createPermission(comment, BasePermission.WRITE);
-            aclServiceWrapperService.createAdminPermission(comment);
+        if (isCreate) {
+            aclService.createPermission(savedComment, BasePermission.DELETE);
+            aclService.createPermission(savedComment, BasePermission.WRITE);
+            aclService.createAdminPermission(savedComment);
         }
 
-        return commentConverter.commentToDto(commentRepository.save(comment));
+        return commentConverter.commentToDto(savedComment);
     }
 
     private Comment prepareComment(CommentDto commentDto, Book book) {
