@@ -54,17 +54,17 @@ public class BookControllerTest {
     void shouldGetAllBooks() throws Exception {
 
         BookDto book1 = new BookDto(
-                "1",
+                1L,
                 "Book Title 1",
-                new AuthorDto("1", "Author 1"),
-                List.of(new GenreDto("1", "Genre 1"))
+                new AuthorDto(1L, "Author 1"),
+                List.of(new GenreDto(1L, "Genre 1"))
         );
 
         BookDto book2 = new BookDto(
-                "2",
+                2L,
                 "Book Title 2",
-                new AuthorDto("2", "Author 2"),
-                List.of(new GenreDto("2", "Genre 2"))
+                new AuthorDto(2L, "Author 2"),
+                List.of(new GenreDto(2L, "Genre 2"))
         );
 
         List<BookDto> books = List.of(book1, book2);
@@ -81,26 +81,26 @@ public class BookControllerTest {
     @Test
     void shouldGetBookById() throws Exception {
         BookDto bookDto = new BookDto(
-                "1",
+                1L,
                 "Book Title",
-                new AuthorDto("1", "Author"),
-                List.of(new GenreDto("1", "Genre"))
+                new AuthorDto(1L, "Author"),
+                List.of(new GenreDto(1L, "Genre"))
         );
 
-        given(bookService.findById("1")).willReturn(java.util.Optional.of(bookDto));
+        given(bookService.findById(1L)).willReturn(java.util.Optional.of(bookDto));
 
         mvc.perform(get("/api/v1/book/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.title").value("Book Title"))
-                .andExpect(jsonPath("$.authorId").value("1"))
-                .andExpect(jsonPath("$.genreIds[0]").value("1"));
+                .andExpect(jsonPath("$.authorId").value(1L))
+                .andExpect(jsonPath("$.genreIds[0]").value(1L));
     }
 
     @Test
     void shouldReturnNotFoundWhenBookNotExist() throws Exception {
-        given(bookService.findById("1")).willReturn(java.util.Optional.empty());
+        given(bookService.findById(1L)).willReturn(java.util.Optional.empty());
 
         mvc.perform(get("/api/v1/book/1"))
                 .andExpect(status().isNotFound());
@@ -109,17 +109,17 @@ public class BookControllerTest {
     @Test
     void shouldCreateBook() throws Exception {
         BookDto bookDto = new BookDto(
-                null,
+                0L,
                 "New Book",
-                new AuthorDto("1", "author1"),
-                List.of(new GenreDto("1", "genre1"))
+                new AuthorDto(1L, "author1"),
+                List.of(new GenreDto(1L, "genre1"))
         );
         BookFormDto requestDto = bookConverter.bookDtoToBookFormDto(bookDto);
         BookDto responseDto = new BookDto(
-                "1",
+                1L,
                 "New Book",
-                new AuthorDto("1", "author1"),
-                List.of(new GenreDto("1", "genre1"))
+                new AuthorDto(1L, "author1"),
+                List.of(new GenreDto(1L, "genre1"))
         );
 
         given(bookService.insert(any(BookFormDto.class))).willReturn(responseDto);
@@ -133,7 +133,7 @@ public class BookControllerTest {
 
     @Test
     void shouldValidateWhenCreatingInvalidBook() throws Exception {
-        BookFormDto invalidDto = new BookFormDto(null, "", null, null);
+        BookFormDto invalidDto = new BookFormDto(0L, "", 0L, null);
 
         mvc.perform(post("/api/v1/book")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,7 +145,7 @@ public class BookControllerTest {
 
     @Test
     void shouldValidateWhenUpdatingInvalidBook() throws Exception {
-        BookFormDto invalidDto = new BookFormDto("1", "", null, null);
+        BookFormDto invalidDto = new BookFormDto(1L, "", 0L, null);
 
         mvc.perform(put("/api/v1/book/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -158,17 +158,17 @@ public class BookControllerTest {
     @Test
     void shouldUpdateBook() throws Exception {
         BookDto bookDto = new BookDto(
-                "1",
+                1L,
                 "New Book",
-                new AuthorDto("1", "author1"),
-                List.of(new GenreDto("1", "genre1"))
+                new AuthorDto(1L, "author1"),
+                List.of(new GenreDto(1L, "genre1"))
         );
         BookFormDto requestDto = bookConverter.bookDtoToBookFormDto(bookDto);
         BookDto responseDto = new BookDto(
-                "1",
+                1L,
                 "Updated Book",
-                new AuthorDto("1", "author1"),
-                List.of(new GenreDto("1", "genre1"))
+                new AuthorDto(1L, "author1"),
+                List.of(new GenreDto(1L, "genre1"))
         );
         given(bookService.update(any(BookFormDto.class))).willReturn(responseDto);
 
@@ -181,7 +181,7 @@ public class BookControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenIdsMismatch() throws Exception {
-        BookFormDto requestDto = new BookFormDto("2", "Book Title", "author1", List.of("genre1"));
+        BookFormDto requestDto = new BookFormDto(2L, "Book Title", 2L, List.of(1L));
 
         mvc.perform(put("/api/v1/book/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -194,6 +194,6 @@ public class BookControllerTest {
         mvc.perform(delete("/api/v1/book/1"))
                 .andExpect(status().isNoContent());
 
-        verify(bookService).deleteById("1");
+        verify(bookService).deleteById(1L);
     }
 }

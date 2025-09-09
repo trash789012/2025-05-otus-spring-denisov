@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -126,18 +127,18 @@ public class AllControllerSecurityTest {
 
     @BeforeEach
     void setUpData() {
-        AuthorDto authorDto = new AuthorDto("1", "Test Author");
-        GenreDto genreDto = new GenreDto("1", "Test Genre");
-        CommentDto commentDto = new CommentDto("1", "Comment", "1");
+        AuthorDto authorDto = new AuthorDto(1L, "Test Author");
+        GenreDto genreDto = new GenreDto(1L, "Test Genre");
+        CommentDto commentDto = new CommentDto(1L, "Comment", 1L);
 
         when(authorService.findAll()).thenReturn(List.of(authorDto));
-        when(authorService.findById(any())).thenReturn(Optional.of(authorDto));
+        when(authorService.findById(anyLong())).thenReturn(Optional.of(authorDto));
         when(genreService.findAll()).thenReturn(List.of(genreDto));
         when(genreService.findByIds(any())).thenReturn(List.of(genreDto));
-        when(commentService.findById(any())).thenReturn(Optional.of(commentDto));
+        when(commentService.findById(anyLong())).thenReturn(Optional.of(commentDto));
 
-        BookDto bookDto = new BookDto("1", "Book", authorDto, List.of(genreDto));
-        when(bookService.findById("1")).thenReturn(Optional.of(bookDto));
+        BookDto bookDto = new BookDto(1L, "Book", authorDto, List.of(genreDto));
+        when(bookService.findById(1L)).thenReturn(Optional.of(bookDto));
         when(bookService.findAll()).thenReturn(List.of(bookDto));
     }
 
@@ -167,8 +168,8 @@ public class AllControllerSecurityTest {
     @Test
     @WithMockUser("user")
     void shouldCreateAuthorWithAuthorizedUserReturnOk() throws Exception {
-        AuthorDto author = new AuthorDto(null, "Test Author");
-        AuthorDto insertedAuthor = new AuthorDto("1", "Test Author");
+        AuthorDto author = new AuthorDto(0L, "Test Author");
+        AuthorDto insertedAuthor = new AuthorDto(1L, "Test Author");
 
         when(authorService.insert(author)).thenReturn(insertedAuthor);
 
@@ -179,10 +180,10 @@ public class AllControllerSecurityTest {
     }
 
     @Test
-    @WithMockUser("user")
+    @WithMockUser(username = "user")
     void shouldUpdateAuthorWithAuthorizedUserReturnOk() throws Exception {
-        AuthorDto authorDto = new AuthorDto(null, "Test Author");
-        AuthorDto updatedAuthorDto = new AuthorDto("1", "Test Author");
+        AuthorDto authorDto = new AuthorDto(0L, "Test Author");
+        AuthorDto updatedAuthorDto = new AuthorDto(1L, "Test Author");
 
         when(authorService.update(authorDto)).thenReturn(updatedAuthorDto);
 
@@ -193,10 +194,10 @@ public class AllControllerSecurityTest {
     }
 
     @Test
-    @WithMockUser("user")
+    @WithMockUser(username = "user")
     void shouldCreateGenreWithAuthorizedUserReturnOk() throws Exception {
-        GenreDto genre = new GenreDto(null, "Test Genre");
-        GenreDto insertedGenre = new GenreDto("1", "Test Genre");
+        GenreDto genre = new GenreDto(0L, "Test Genre");
+        GenreDto insertedGenre = new GenreDto(1L, "Test Genre");
 
         when(genreService.insert(genre)).thenReturn(insertedGenre);
 
@@ -209,8 +210,8 @@ public class AllControllerSecurityTest {
     @Test
     @WithMockUser("user")
     void shouldUpdateGenreWithAuthorizedUserReturnOk() throws Exception {
-        GenreDto genre = new GenreDto(null, "Test Genre");
-        GenreDto updatedGenre = new GenreDto("1", "Test Genre");
+        GenreDto genre = new GenreDto(0L, "Test Genre");
+        GenreDto updatedGenre = new GenreDto(1L, "Test Genre");
 
         when(genreService.update(genre)).thenReturn(updatedGenre);
 
@@ -223,8 +224,8 @@ public class AllControllerSecurityTest {
     @Test
     @WithMockUser("user")
     void shouldCreateCommentWithAuthorizedUserReturnOk() throws Exception {
-        CommentDto comment = new CommentDto(null, "Comment", "1");
-        CommentDto insertedComment = new CommentDto("1", "Comment", "1");
+        CommentDto comment = new CommentDto(0L, "Comment", 1L);
+        CommentDto insertedComment = new CommentDto(1L, "Comment", 1L);
 
         when(commentService.insert(comment)).thenReturn(insertedComment);
 
@@ -237,11 +238,11 @@ public class AllControllerSecurityTest {
     @Test
     @WithMockUser()
     void shouldCreateBookWithAuthorizedUserReturnOk() throws Exception {
-        AuthorDto authorDto = new AuthorDto("1", "Test Author");
-        GenreDto genreDto = new GenreDto("1", "Test Genre");
+        AuthorDto authorDto = new AuthorDto(1L, "Test Author");
+        GenreDto genreDto = new GenreDto(1L, "Test Genre");
 
-        BookFormDto bookFormDto = new BookFormDto(null, "Title", "1", List.of("1"));
-        BookDto insertedBook = new BookDto("1", "Title", authorDto, List.of(genreDto));
+        BookFormDto bookFormDto = new BookFormDto(0L, "Title", 1L, List.of(1L));
+        BookDto insertedBook = new BookDto(1L, "Title", authorDto, List.of(genreDto));
 
         when(bookService.insert(bookFormDto)).thenReturn(insertedBook);
 
@@ -254,11 +255,11 @@ public class AllControllerSecurityTest {
     @Test
     @WithMockUser("user")
     void shouldUpdateBookWithAuthorizedUserReturnOk() throws Exception {
-        AuthorDto authorDto = new AuthorDto("1", "Test Author");
-        GenreDto genreDto = new GenreDto("1", "Test Genre");
+        AuthorDto authorDto = new AuthorDto(1L, "Test Author");
+        GenreDto genreDto = new GenreDto(1L, "Test Genre");
 
-        BookFormDto bookFormDto = new BookFormDto("1", "Title", "1", List.of("1"));
-        BookDto updatedBook = new BookDto("1", "Title Updated", authorDto, List.of(genreDto));
+        BookFormDto bookFormDto = new BookFormDto(1L, "Title", 1L, List.of(1L));
+        BookDto updatedBook = new BookDto(1L, "Title Updated", authorDto, List.of(genreDto));
 
         when(bookService.update(bookFormDto)).thenReturn(updatedBook);
 

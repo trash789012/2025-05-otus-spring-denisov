@@ -46,8 +46,8 @@ class AuthorControllerTest {
     @Test
     void shouldReturnAllAuthors() throws Exception {
         List<AuthorDto> authors = List.of(
-                new AuthorDto("1", "Author1"),
-                new AuthorDto("2", "Author2")
+                new AuthorDto(1L, "Author1"),
+                new AuthorDto(2L, "Author2")
         );
 
         when(authorService.findAll()).thenReturn(authors);
@@ -69,19 +69,19 @@ class AuthorControllerTest {
 
     @Test
     void shouldReturnAuthorById() throws Exception {
-        AuthorDto author = new AuthorDto("1", "Author1");
-        when(authorService.findById("1")).thenReturn(Optional.of(author));
+        AuthorDto author = new AuthorDto(1L, "Author1");
+        when(authorService.findById(1L)).thenReturn(Optional.of(author));
 
         mvc.perform(get("/api/v1/author/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.fullName", is("Author1")));
     }
 
     @Test
     void shouldReturnNotFoundWhenAuthorNotExist() throws Exception {
-        when(authorService.findById("100")).thenReturn(Optional.empty());
+        when(authorService.findById(100L)).thenReturn(Optional.empty());
 
         mvc.perform(get("/api/v1/author/100"))
                 .andExpect(status().isNotFound());
@@ -89,8 +89,8 @@ class AuthorControllerTest {
 
     @Test
     void shouldCreateAuthor() throws Exception {
-        AuthorDto authorToCreate = new AuthorDto(null, "NewAuthor");
-        AuthorDto createdAuthor = new AuthorDto("1", "NewAuthor");
+        AuthorDto authorToCreate = new AuthorDto(0L, "NewAuthor");
+        AuthorDto createdAuthor = new AuthorDto(1L, "NewAuthor");
 
         when(authorService.insert(any(AuthorDto.class))).thenReturn(createdAuthor);
 
@@ -98,13 +98,13 @@ class AuthorControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorToCreate)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.fullName", is("NewAuthor")));
     }
 
     @Test
     void shouldValidateWhenCreatingInvalidAuthor() throws Exception {
-        AuthorDto invalidDto = new AuthorDto(null, null);
+        AuthorDto invalidDto = new AuthorDto(0L, null);
 
         mvc.perform(post("/api/v1/author")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ class AuthorControllerTest {
 
     @Test
     void shouldValidateWhenUpdatingInvalidAuthor() throws Exception {
-        AuthorDto invalidDto = new AuthorDto("1", null);
+        AuthorDto invalidDto = new AuthorDto(1L, null);
 
         mvc.perform(put("/api/v1/author/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -128,20 +128,20 @@ class AuthorControllerTest {
 
     @Test
     void shouldUpdateAuthor() throws Exception {
-        AuthorDto authorToUpdate = new AuthorDto("1", "UpdatedAuthor");
+        AuthorDto authorToUpdate = new AuthorDto(1L, "UpdatedAuthor");
         when(authorService.update(any(AuthorDto.class))).thenReturn(authorToUpdate);
 
         mvc.perform(put("/api/v1/author/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorToUpdate)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.fullName", is("UpdatedAuthor")));
     }
 
     @Test
     void shouldReturnBadRequestWhenIdsMismatch() throws Exception {
-        AuthorDto authorToUpdate = new AuthorDto("2", "UpdatedAuthor");
+        AuthorDto authorToUpdate = new AuthorDto(2L, "UpdatedAuthor");
 
         mvc.perform(put("/api/v1/author/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -154,6 +154,6 @@ class AuthorControllerTest {
         mvc.perform(delete("/api/v1/author/1"))
                 .andExpect(status().isNoContent());
 
-        Mockito.verify(authorService).deleteById("1");
+        Mockito.verify(authorService).deleteById(1L);
     }
 }

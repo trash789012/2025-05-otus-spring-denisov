@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.config.SecurityConfig;
@@ -16,7 +17,6 @@ import ru.otus.hw.services.UserDetailService;
 
 import java.util.stream.Stream;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,8 +50,9 @@ public class GenrePageControllerSecurityTest {
 
     @ParameterizedTest
     @MethodSource("endpoints")
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void shouldOkPagesEndpointAuthorized(String endpoint) throws Exception {
-        mockMvc.perform(get(endpoint).with(user("user")))
+        mockMvc.perform(get(endpoint))
                 .andExpect(status().isOk());
     }
 

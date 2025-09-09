@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(GenreController.class)
 @Import({LocalValidatorFactoryBean.class})
 @AutoConfigureMockMvc(addFilters = false)
@@ -46,8 +45,8 @@ public class GenreControllerTest {
     @Test
     void shouldReturnAllGenres() throws Exception {
         List<GenreDto> genres = List.of(
-                new GenreDto("1", "Genre1"),
-                new GenreDto("2", "Genre2")
+                new GenreDto(1L, "Genre1"),
+                new GenreDto(2L, "Genre2")
         );
 
         when(genreService.findAll()).thenReturn(genres);
@@ -69,19 +68,19 @@ public class GenreControllerTest {
 
     @Test
     void shouldReturnGenreById() throws Exception {
-        GenreDto genre = new GenreDto("1", "Genre1");
-        when(genreService.findByIds(Set.of("1"))).thenReturn(List.of(genre));
+        GenreDto genre = new GenreDto(1L, "Genre1");
+        when(genreService.findByIds(Set.of(1L))).thenReturn(List.of(genre));
 
         mvc.perform(get("/api/v1/genre/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Genre1")));
     }
 
     @Test
     void shouldReturnNotFoundWhenGenreNotExist() throws Exception {
-        when(genreService.findByIds(Set.of("1"))).thenReturn(List.of());
+        when(genreService.findByIds(Set.of(1L))).thenReturn(List.of());
 
         mvc.perform(get("/api/v1/genre/1"))
                 .andExpect(status().isNotFound());
@@ -89,8 +88,8 @@ public class GenreControllerTest {
 
     @Test
     void shouldCreateGenre() throws Exception {
-        GenreDto genreToCreate = new GenreDto(null, "NewGenre");
-        GenreDto createdGenre = new GenreDto("1", "NewGenre");
+        GenreDto genreToCreate = new GenreDto(1L, "NewGenre");
+        GenreDto createdGenre = new GenreDto(1L, "NewGenre");
 
         when(genreService.insert(any(GenreDto.class))).thenReturn(createdGenre);
 
@@ -98,26 +97,26 @@ public class GenreControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(genreToCreate)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("NewGenre")));
     }
 
     @Test
     void shouldUpdateGenre() throws Exception {
-        GenreDto genreToUpdate = new GenreDto("1", "UpdatedGenre");
+        GenreDto genreToUpdate = new GenreDto(1L, "UpdatedGenre");
         when(genreService.update(any(GenreDto.class))).thenReturn(genreToUpdate);
 
         mvc.perform(put("/api/v1/genre/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(genreToUpdate)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("UpdatedGenre")));
     }
 
     @Test
     void shouldValidateWhenCreatingInvalidGenre() throws Exception {
-        GenreDto invalidDto = new GenreDto(null, null);
+        GenreDto invalidDto = new GenreDto(0L, null);
 
         mvc.perform(post("/api/v1/genre")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +128,7 @@ public class GenreControllerTest {
 
     @Test
     void shouldValidateWhenUpdatingInvalidGenre() throws Exception {
-        GenreDto invalidDto = new GenreDto("1", null);
+        GenreDto invalidDto = new GenreDto(1L, null);
 
         mvc.perform(put("/api/v1/genre/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -141,7 +140,7 @@ public class GenreControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenIdsMismatch() throws Exception {
-        GenreDto genreToUpdate = new GenreDto("2", "UpdatedGenre");
+        GenreDto genreToUpdate = new GenreDto(2L, "UpdatedGenre");
 
         mvc.perform(put("/api/v1/genre/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +153,7 @@ public class GenreControllerTest {
         mvc.perform(delete("/api/v1/genre/1"))
                 .andExpect(status().isNoContent());
 
-        Mockito.verify(genreService).deleteById("1");
+        Mockito.verify(genreService).deleteById(1L);
     }
 
 }

@@ -6,10 +6,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.dto.CommentDto;
+import ru.otus.hw.exceptions.GlobalExceptionHandler;
 import ru.otus.hw.services.CommentService;
 
 import java.util.List;
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CommentController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@Import({GlobalExceptionHandler.class})
 public class CommentControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -41,14 +44,11 @@ public class CommentControllerTest {
     @Test
     void shouldGetCommentsByBookId() throws Exception {
         List<CommentDto> comments = List.of(
-                new CommentDto("1", "Comment 1", "book1"),
-                new CommentDto("2", "Comment 2", "book1")
+                new CommentDto(1L, "Comment 1", 1L),
+                new CommentDto(2L, "Comment 2", 1L)
         );
 
-        when(commentService.findByBookId("1")).thenReturn(comments);
-
-        String URI = "/api/v1/book/1/comment";
-        var status = mvc.perform(get(URI)).andReturn();
+        when(commentService.findByBookId(1L)).thenReturn(comments);
 
         mvc.perform(get("/api/v1/book/1/comment"))
                 .andExpect(status().isOk())
@@ -59,9 +59,9 @@ public class CommentControllerTest {
 
     @Test
     void shouldReturnEmptyListWhenNoCommentsForBook() throws Exception {
-        when(commentService.findByBookId("book1")).thenReturn(List.of());
+        when(commentService.findByBookId(1)).thenReturn(List.of());
 
-        mvc.perform(get("/api/v1/book/book1/comment"))
+        mvc.perform(get("/api/v1/book/1/comment"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", empty()));
@@ -69,8 +69,8 @@ public class CommentControllerTest {
 
     @Test
     void shouldCreateCommentForBook() throws Exception {
-        CommentDto commentToCreate = new CommentDto(null, "New Comment", "book1");
-        CommentDto createdComment = new CommentDto("1", "New Comment", "book1");
+        CommentDto commentToCreate = new CommentDto(0L, "New Comment", 1L);
+        CommentDto createdComment = new CommentDto(1L, "New Comment", 1L);
 
         when(commentService.insert(any(CommentDto.class))).thenReturn(createdComment);
 
@@ -78,22 +78,22 @@ public class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentToCreate)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.text", is("New Comment")))
-                .andExpect(jsonPath("$.bookId", is("book1")));
+                .andExpect(jsonPath("$.bookId", is(1)));
     }
 
     @Test
     void shouldDeleteComment() throws Exception {
-        mvc.perform(delete("/api/v1/book/book1/comment/comment1"))
+        mvc.perform(delete("/api/v1/book/1/comment/1"))
                 .andExpect(status().isNoContent());
 
-        Mockito.verify(commentService).deleteById("comment1");
+        Mockito.verify(commentService).deleteById(1);
     }
 
     @Test
     void shouldValidateCommentTextNotEmpty() throws Exception {
-        CommentDto emptyComment = new CommentDto(null, "", "book1");
+        CommentDto emptyComment = new CommentDto(0L, "", 1L);
 
         mvc.perform(post("/api/v1/book/book1/comment")
                         .contentType(MediaType.APPLICATION_JSON)
