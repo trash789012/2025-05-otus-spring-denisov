@@ -20,6 +20,7 @@ public class GenreServiceImpl implements GenreService {
     private final GenreConverter genreConverter;
 
     @Override
+    @Transactional(readOnly = true)
     public List<GenreDto> findAll() {
         return genreRepository.findAll().stream()
                 .map(genreConverter::genreToDto)
@@ -27,6 +28,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GenreDto> findByIds(Set<Long> ids) {
         return genreRepository.findAllById(ids).stream()
                 .map(genreConverter::genreToDto)

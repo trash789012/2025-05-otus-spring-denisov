@@ -24,13 +24,17 @@ public class CommentServiceImpl implements CommentService {
 
     private final BookRepository bookRepository;
 
+    private final AclServiceWrapperService aclServiceWrapperService;
+
     @Override
+    @Transactional(readOnly = true)
     public Optional<CommentDto> findById(long id) {
         return commentRepository.findById(id)
                 .map(commentConverter::commentToDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> findByBookId(long bookId) {
 
         if (!bookRepository.existsById(bookId)) {

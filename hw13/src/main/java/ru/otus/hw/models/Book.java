@@ -25,9 +25,10 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "books")
 public class Book {
     @Id

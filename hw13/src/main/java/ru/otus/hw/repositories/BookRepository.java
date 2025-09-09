@@ -1,7 +1,9 @@
 package ru.otus.hw.repositories;
 
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import ru.otus.hw.models.Book;
 
 import javax.annotation.Nonnull;
@@ -16,4 +18,8 @@ public interface BookRepository extends CrudRepository<Book, Long> {
     @Nonnull
     @EntityGraph(attributePaths = {"author"})
     List<Book> findAll();
+
+    @Query("select b from Book b where b.id = :id")
+    Optional<Book> findByIdLazy(@Param("id") long id);
+
 }
