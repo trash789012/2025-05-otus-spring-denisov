@@ -33,7 +33,7 @@ public class SecurityConfig {
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/book/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/genres/**").hasRole("ADMIN")
+                        .requestMatchers("/genres/**", "/genre/**").hasRole("ADMIN")
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/access-denied").permitAll()
                         .requestMatchers("/**").authenticated()
