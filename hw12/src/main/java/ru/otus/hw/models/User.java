@@ -26,6 +26,5 @@ public class User {
 
     private String password;
 
-//    @DocumentReference(lazy = true)
     private List<String> roles;
 }
