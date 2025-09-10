@@ -97,7 +97,7 @@ public class GenreControllerTest {
         mvc.perform(post("/api/v1/genre")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(genreToCreate)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is("1")))
                 .andExpect(jsonPath("$.name", is("NewGenre")));
     }
@@ -152,7 +152,7 @@ public class GenreControllerTest {
     @Test
     void shouldDeleteGenre() throws Exception {
         mvc.perform(delete("/api/v1/genre/1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         Mockito.verify(genreService).deleteById("1");
     }
