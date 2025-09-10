@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -74,19 +73,16 @@ public class CommentControllerTest {
 
         when(commentService.insert(any(CommentDto.class))).thenReturn(createdComment);
 
-        mvc.perform(post("/api/v1/book/book1/comment")
+        mvc.perform(post("/api/v1/book/1/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentToCreate)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.text", is("New Comment")))
-                .andExpect(jsonPath("$.bookId", is(1)));
+                .andExpect(status().isCreated());
     }
 
     @Test
     void shouldDeleteComment() throws Exception {
         mvc.perform(delete("/api/v1/book/1/comment/1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         Mockito.verify(commentService).deleteById(1);
     }

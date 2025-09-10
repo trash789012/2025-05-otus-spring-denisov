@@ -127,7 +127,7 @@ public class BookControllerTest {
         mvc.perform(post("/api/v1/book")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(responseDto)));
     }
 
@@ -192,7 +192,7 @@ public class BookControllerTest {
     @Test
     void shouldDeleteBook() throws Exception {
         mvc.perform(delete("/api/v1/book/1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         verify(bookService).deleteById(1L);
     }

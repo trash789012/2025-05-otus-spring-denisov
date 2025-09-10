@@ -97,7 +97,7 @@ class AuthorControllerTest {
         mvc.perform(post("/api/v1/author")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorToCreate)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.fullName", is("NewAuthor")));
     }
@@ -152,7 +152,7 @@ class AuthorControllerTest {
     @Test
     void shouldDeleteAuthor() throws Exception {
         mvc.perform(delete("/api/v1/author/1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         Mockito.verify(authorService).deleteById(1L);
     }
