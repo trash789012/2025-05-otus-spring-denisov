@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,29 +39,16 @@ public class AuthorController {
 
     @PostMapping("/api/v1/author")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorDto authorDto,
-                                          BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
-        }
-
+    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorDto authorDto) {
         var savedAuthor = authorService.insert(authorDto);
         return ResponseEntity.ok().body(savedAuthor);
     }
 
     @PutMapping("/api/v1/author/{id}")
     public ResponseEntity<?> updateAuthor(@PathVariable String id,
-                                                  @Valid @RequestBody AuthorDto authorDto,
-                                                  BindingResult bindingResult) {
+                                                  @Valid @RequestBody AuthorDto authorDto) {
         if (!id.equals(authorDto.id())) {
             throw new BadRequestException("Author id %s mismatch".formatted(id));
-        }
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
         }
 
         AuthorDto updatedAuthor = authorService.update(authorDto);

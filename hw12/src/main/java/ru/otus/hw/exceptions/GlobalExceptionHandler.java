@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -60,6 +61,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         logError(ex, request);
         return handleError(ex, request, HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        return ResponseEntity.badRequest()
+                .body(ex.getBindingResult().getAllErrors());
     }
 
     private void logError(Exception ex, WebRequest request) {

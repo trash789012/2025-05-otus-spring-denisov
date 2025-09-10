@@ -3,7 +3,6 @@ package ru.otus.hw.controllers.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,14 +40,7 @@ public class BookController {
     }
 
     @PostMapping("/api/v1/book")
-    public ResponseEntity<?> createBook(
-            @Valid @RequestBody BookFormDto bookDto,
-            BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
-        }
+    public ResponseEntity<?> createBook(@Valid @RequestBody BookFormDto bookDto) {
 
         var savedBook = bookService.insert(bookDto);
         return ResponseEntity.ok(savedBook);
@@ -56,15 +48,9 @@ public class BookController {
 
     @PutMapping("/api/v1/book/{id}")
     public ResponseEntity<?> updateBook(@PathVariable String id,
-                                        @Valid @RequestBody BookFormDto bookDto,
-                                        BindingResult bindingResult) {
+                                        @Valid @RequestBody BookFormDto bookDto) {
         if (!id.equals(bookDto.id())) {
             throw new BadRequestException("ID in path and body must match");
-        }
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
         }
 
         BookDto savedBook = bookService.update(bookDto);

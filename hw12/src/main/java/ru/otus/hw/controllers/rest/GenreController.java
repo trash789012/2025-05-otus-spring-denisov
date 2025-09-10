@@ -3,7 +3,6 @@ package ru.otus.hw.controllers.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,28 +37,16 @@ public class GenreController {
     }
 
     @PostMapping("/api/v1/genre")
-    public ResponseEntity<?> createGenre(@Valid @RequestBody GenreDto genreDto,
-                                                BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
-        }
-
+    public ResponseEntity<?> createGenre(@Valid @RequestBody GenreDto genreDto) {
         var savedGenre = genreService.insert(genreDto);
         return ResponseEntity.ok().body(savedGenre);
     }
 
     @PutMapping("/api/v1/genre/{id}")
     public ResponseEntity<?> updateGenre(@PathVariable String id,
-                                                @Valid @RequestBody GenreDto genreDto,
-                                                BindingResult bindingResult) {
+                                                @Valid @RequestBody GenreDto genreDto) {
         if (!id.equals(genreDto.id())) {
             throw new BadRequestException("ID in path and body must match");
-        }
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(bindingResult.getAllErrors());
         }
 
         GenreDto updatedGenre = genreService.update(genreDto);
