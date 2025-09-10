@@ -70,4 +70,12 @@ public class BookServiceImplSecurityTest {
         Optional<BookDto> deletedBook = bookService.findById(1L);
         assertThat(deletedBook).isEmpty();
     }
+
+    @Test
+    @WithMockUser(username = "test")
+    @DisplayName("должен запрещать пользователю без прав удалять книгу")
+    void shouldDenyDeleteBookWithUngrantedUser() {
+        assertThatThrownBy(() -> bookService.deleteById(1L))
+                .isInstanceOf(AccessDeniedException.class);
+    }
 }
