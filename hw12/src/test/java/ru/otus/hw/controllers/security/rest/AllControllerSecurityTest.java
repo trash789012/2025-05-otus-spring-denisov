@@ -161,7 +161,7 @@ public class AllControllerSecurityTest {
     @WithMockUser(username = "user")
     void shouldAllDeleteEndpointWithAuthorizedUserReturnOk(Endpoint endpoint) throws Exception {
         mockMvc.perform(request(endpoint.method(), endpoint.uri()))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -175,7 +175,7 @@ public class AllControllerSecurityTest {
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/author")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(insertedAuthor)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -203,7 +203,7 @@ public class AllControllerSecurityTest {
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/genre")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(insertedGenre)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -231,7 +231,7 @@ public class AllControllerSecurityTest {
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/book/1/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(insertedComment)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -248,7 +248,7 @@ public class AllControllerSecurityTest {
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/book")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookFormDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test

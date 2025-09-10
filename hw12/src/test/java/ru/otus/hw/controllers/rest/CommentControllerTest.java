@@ -77,7 +77,7 @@ public class CommentControllerTest {
         mvc.perform(post("/api/v1/book/book1/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentToCreate)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is("1")))
                 .andExpect(jsonPath("$.text", is("New Comment")))
                 .andExpect(jsonPath("$.bookId", is("book1")));
@@ -86,7 +86,7 @@ public class CommentControllerTest {
     @Test
     void shouldDeleteComment() throws Exception {
         mvc.perform(delete("/api/v1/book/book1/comment/comment1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         Mockito.verify(commentService).deleteById("comment1");
     }

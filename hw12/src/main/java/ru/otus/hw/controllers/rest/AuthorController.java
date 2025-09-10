@@ -3,7 +3,6 @@ package ru.otus.hw.controllers.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,33 +30,29 @@ public class AuthorController {
     }
 
     @GetMapping("/api/v1/author/{id}")
-    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable String id) {
+    public AuthorDto getAuthorById(@PathVariable String id) {
         return authorService.findById(id)
-                .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundRequestException("Author with id %s not found!".formatted(id)));
     }
 
     @PostMapping("/api/v1/author")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorDto authorDto) {
-        var savedAuthor = authorService.insert(authorDto);
-        return ResponseEntity.ok().body(savedAuthor);
+    public AuthorDto createAuthor(@Valid @RequestBody AuthorDto authorDto) {
+        return authorService.insert(authorDto);
     }
 
     @PutMapping("/api/v1/author/{id}")
-    public ResponseEntity<?> updateAuthor(@PathVariable String id,
-                                                  @Valid @RequestBody AuthorDto authorDto) {
+    public AuthorDto updateAuthor(@PathVariable String id,
+                                           @Valid @RequestBody AuthorDto authorDto) {
         if (!id.equals(authorDto.id())) {
             throw new BadRequestException("Author id %s mismatch".formatted(id));
         }
 
-        AuthorDto updatedAuthor = authorService.update(authorDto);
-        return ResponseEntity.ok().body(updatedAuthor);
+        return authorService.update(authorDto);
     }
 
     @DeleteMapping("/api/v1/author/{id}")
-    public ResponseEntity<Void> deleteAuthorById(@PathVariable String id) {
+    public void deleteAuthorById(@PathVariable String id) {
         authorService.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }
