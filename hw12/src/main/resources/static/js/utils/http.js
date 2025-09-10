@@ -30,11 +30,14 @@ export async function get(url, options = {}) {
 
 export async function post(url, data, options = {}) {
     try {
+        const xsrf = await getCsrf();
+
         const response = await fetch(`${API_BASE}${url}`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': xsrf,
                 ...options.headers
             },
         });
@@ -54,11 +57,14 @@ export async function post(url, data, options = {}) {
 
 export async function put(url, data, options = {}) {
     try {
+        const xsrf = await getCsrf();
+
         const response = await fetch(`${API_BASE}${url}`, {
             method: 'PUT',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': xsrf,
                 ...options.headers
             }
         });
@@ -77,15 +83,24 @@ export async function put(url, data, options = {}) {
 }
 
 export async function del(url) {
+    const xsrf = await getCsrf();
+
     const response = await fetch(`${API_BASE}${url}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': xsrf
         }
     });
 
     if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
+}
+
+export async function getCsrf() {
+    const response = await fetch('/api/v1/csrf');
+    const data = await response.json();
+    return data.token;
 }
