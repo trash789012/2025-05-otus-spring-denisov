@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -144,7 +145,7 @@ public class AllControllerSecurityTest {
     @ParameterizedTest
     @MethodSource({"getEndpoints", "postEndpoints", "deleteEndpoints", "putEndpoints"})
     void shouldAllAnyEndpointWithUnauthorizedUserReturnRedirect(Endpoint endpoint) throws Exception {
-        mockMvc.perform(request(endpoint.method(), endpoint.uri()))
+        mockMvc.perform(request(endpoint.method(), endpoint.uri()).with(csrf()))
                 .andExpect(status().is3xxRedirection());
     }
 
@@ -160,7 +161,7 @@ public class AllControllerSecurityTest {
     @MethodSource("deleteEndpoints")
     @WithMockUser(username = "user")
     void shouldAllDeleteEndpointWithAuthorizedUserReturnOk(Endpoint endpoint) throws Exception {
-        mockMvc.perform(request(endpoint.method(), endpoint.uri()))
+        mockMvc.perform(request(endpoint.method(), endpoint.uri()).with(csrf()))
                 .andExpect(status().isOk());
     }
 
@@ -173,6 +174,7 @@ public class AllControllerSecurityTest {
         when(authorService.insert(author)).thenReturn(insertedAuthor);
 
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/author")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(insertedAuthor)))
                 .andExpect(status().isCreated());
@@ -187,6 +189,7 @@ public class AllControllerSecurityTest {
         when(authorService.update(authorDto)).thenReturn(updatedAuthorDto);
 
         mockMvc.perform(request(HttpMethod.PUT, "/api/v1/author/1")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedAuthorDto)))
                 .andExpect(status().isOk());
@@ -201,6 +204,7 @@ public class AllControllerSecurityTest {
         when(genreService.insert(genre)).thenReturn(insertedGenre);
 
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/genre")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(insertedGenre)))
                 .andExpect(status().isCreated());
@@ -215,6 +219,7 @@ public class AllControllerSecurityTest {
         when(genreService.update(genre)).thenReturn(updatedGenre);
 
         mockMvc.perform(request(HttpMethod.PUT, "/api/v1/genre/1")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedGenre)))
                 .andExpect(status().isOk());
@@ -229,6 +234,7 @@ public class AllControllerSecurityTest {
         when(commentService.insert(comment)).thenReturn(insertedComment);
 
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/book/1/comment")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(insertedComment)))
                 .andExpect(status().isCreated());
@@ -246,6 +252,7 @@ public class AllControllerSecurityTest {
         when(bookService.insert(bookFormDto)).thenReturn(insertedBook);
 
         mockMvc.perform(request(HttpMethod.POST, "/api/v1/book")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookFormDto)))
                 .andExpect(status().isCreated());
@@ -263,6 +270,7 @@ public class AllControllerSecurityTest {
         when(bookService.update(bookFormDto)).thenReturn(updatedBook);
 
         mockMvc.perform(request(HttpMethod.PUT, "/api/v1/book/1")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookFormDto)))
                 .andExpect(status().isOk());
