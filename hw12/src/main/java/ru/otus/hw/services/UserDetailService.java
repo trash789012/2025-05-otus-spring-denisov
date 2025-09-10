@@ -11,7 +11,6 @@ import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.UserRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +38,6 @@ public class UserDetailService implements UserDetailsService {
         return dbUser.getRoles().stream()
                 .map(role -> "ROLE_" + role)
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
