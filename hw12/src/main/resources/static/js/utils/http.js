@@ -37,19 +37,20 @@ export async function post(url, data, options = {}) {
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
-                'X-XSRF-TOKEN': xsrf,
+                 'X-XSRF-TOKEN': xsrf,
                 ...options.headers
             },
+            credentials: "include",
         });
 
         if (!response.ok) {
             const errors = await response.json();
             console.error('Ошибка валидации:', errors);
-            return { success: false, errors};
+            return {success: false, errors};
         }
 
         const result = await response.json();
-        return { success: true, result };
+        return {success: true, result};
     } catch (error) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -72,11 +73,11 @@ export async function put(url, data, options = {}) {
         if (!response.ok) {
             const errors = await response.json();
             console.error('Ошибка валидации:', errors);
-            return { success: false, errors};
+            return {success: false, errors};
         }
 
         const result = await response.json();
-        return { success: true, result };
+        return {success: true, result};
     } catch (error) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -100,7 +101,21 @@ export async function del(url) {
 }
 
 export async function getCsrf() {
-    const response = await fetch('/api/v1/csrf');
-    const data = await response.json();
-    return data.token;
+    // const response = await fetch('/api/v1/csrf');
+    // const data = await response.json();
+    // return data.token;
+
+    const name = "XSRF-TOKEN=";
+    const decodedCookies = decodeURIComponent(document.cookie);
+    const cookies = decodedCookies.split(';');
+
+    for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name)) {
+            return cookie.substring(name.length);
+        }
+    }
+
+    return null; // если кука не найдена
+
 }

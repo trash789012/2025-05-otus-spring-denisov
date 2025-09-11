@@ -14,7 +14,6 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
-
 de:
   flapdoodle:
     mongodb:
@@ -30,3 +29,10 @@ mongock:
     write-concern:
       journal: false
     read-concern: local
+logging:
+  level:
+    org:
+      springframework:
+        security:
+          web:
+            csrf: debug
