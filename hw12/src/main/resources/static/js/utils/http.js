@@ -101,10 +101,6 @@ export async function del(url) {
 }
 
 export async function getCsrf() {
-    // const response = await fetch('/api/v1/csrf');
-    // const data = await response.json();
-    // return data.token;
-
     const name = "XSRF-TOKEN=";
     const decodedCookies = decodeURIComponent(document.cookie);
     const cookies = decodedCookies.split(';');
@@ -116,6 +112,6 @@ export async function getCsrf() {
         }
     }
 
-    return null; // если кука не найдена
+    return null;
 
 }
