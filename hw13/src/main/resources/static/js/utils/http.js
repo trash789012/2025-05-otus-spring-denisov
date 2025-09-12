@@ -124,7 +124,16 @@ export async function del(url) {
 }
 
 export async function getCsrf() {
-    const response = await fetch('/api/v1/csrf');
-    const data = await response.json();
-    return data.token;
+    const name = "XSRF-TOKEN=";
+    const decodedCookies = decodeURIComponent(document.cookie);
+    const cookies = decodedCookies.split(';');
+
+    for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name)) {
+            return cookie.substring(name.length);
+        }
+    }
+
+    return null;
 }
