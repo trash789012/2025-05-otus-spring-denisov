@@ -1,9 +1,6 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.BookConverter;
@@ -32,8 +29,6 @@ public class BookServiceImpl implements BookService {
 
     private final BookConverter bookConverter;
 
-    private final AclServiceWrapperService aclService;
-
     @Override
     @Transactional(readOnly = true)
     public Optional<BookDto> findById(long id) {
@@ -60,15 +55,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#bookDto.id(), 'ru.otus.hw.models.h2.Book', 'WRITE')")
     public BookDto update(BookFormDto bookDto) {
         return save(bookDto);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.h2.Book', 'DELETE')")
-    public void deleteById(@P("id") long id) {
+    public void deleteById(long id) {
         bookRepository.deleteById(id);
     }
 
@@ -83,11 +76,7 @@ public class BookServiceImpl implements BookService {
         book = prepareBook(bookFormDto, bookFormDto.genreIds());
 
         var savedBook = bookRepository.save(book);
-        if (isCreate) {
-            aclService.createPermission(savedBook, BasePermission.WRITE);
-            aclService.createPermission(savedBook, BasePermission.DELETE);
-            aclService.createAdminPermission(savedBook);
-        }
+
         return bookConverter.bookToBookDto(savedBook);
     }
 

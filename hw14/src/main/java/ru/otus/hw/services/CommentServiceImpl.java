@@ -1,9 +1,6 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.CommentConverter;
@@ -26,8 +23,6 @@ public class CommentServiceImpl implements CommentService {
     private final CommentConverter commentConverter;
 
     private final BookRepository bookRepository;
-
-    private final AclServiceWrapperService aclService;
 
     @Override
     @Transactional(readOnly = true)
@@ -53,7 +48,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public CommentDto insert(CommentDto commentDto) {
         if (commentDto.bookId() == 0) {
             throw new IllegalArgumentException("Book id is empty");
@@ -64,15 +58,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public CommentDto update(CommentDto commentDto) {
         return save(commentDto);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.h2.Comment', 'DELETE')")
-    public void deleteById(@P("id") long id) {
+    public void deleteById(long id) {
         commentRepository.deleteById(id);
     }
 
@@ -88,12 +80,6 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = prepareComment(commentDto, book);
         var savedComment = commentRepository.save(comment);
-
-        if (isCreate) {
-            aclService.createPermission(savedComment, BasePermission.DELETE);
-            aclService.createPermission(savedComment, BasePermission.WRITE);
-            aclService.createAdminPermission(savedComment);
-        }
 
         return commentConverter.commentToDto(savedComment);
     }
