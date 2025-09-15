@@ -2,7 +2,7 @@ package ru.otus.hw.converters;
 
 import org.springframework.stereotype.Component;
 import ru.otus.hw.dto.AuthorDto;
-import ru.otus.hw.models.Author;
+import ru.otus.hw.models.h2.Author;
 
 @Component
 public class AuthorConverter {

@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.CommentConverter;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Comment;
-import ru.otus.hw.repositories.BookRepository;
-import ru.otus.hw.repositories.CommentRepository;
+import ru.otus.hw.models.h2.Book;
+import ru.otus.hw.models.h2.Comment;
+import ru.otus.hw.repositories.h2.BookRepository;
+import ru.otus.hw.repositories.h2.CommentRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.Comment', 'DELETE')")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.h2.Comment', 'DELETE')")
     public void deleteById(@P("id") long id) {
         commentRepository.deleteById(id);
     }

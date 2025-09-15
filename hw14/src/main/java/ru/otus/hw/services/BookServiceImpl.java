@@ -10,11 +10,11 @@ import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookFormDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Genre;
-import ru.otus.hw.repositories.AuthorRepository;
-import ru.otus.hw.repositories.BookRepository;
-import ru.otus.hw.repositories.GenreRepository;
+import ru.otus.hw.models.h2.Book;
+import ru.otus.hw.models.h2.Genre;
+import ru.otus.hw.repositories.h2.AuthorRepository;
+import ru.otus.hw.repositories.h2.BookRepository;
+import ru.otus.hw.repositories.h2.GenreRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,14 +60,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#bookDto.id(), 'ru.otus.hw.models.Book', 'WRITE')")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#bookDto.id(), 'ru.otus.hw.models.h2.Book', 'WRITE')")
     public BookDto update(BookFormDto bookDto) {
         return save(bookDto);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.Book', 'DELETE')")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.h2.Book', 'DELETE')")
     public void deleteById(@P("id") long id) {
         bookRepository.deleteById(id);
     }

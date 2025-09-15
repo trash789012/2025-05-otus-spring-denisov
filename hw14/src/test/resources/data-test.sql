@@ -55,8 +55,8 @@ values (0, 'ROLE_ADMIN'),
 --идентифицирует тип сущности
 --обозначаем класс, для которого будем разграничивать полномочия
 insert into ACL_CLASS (CLASS)
-values ('ru.otus.hw.models.Book'),
-       ('ru.otus.hw.models.Comment');
+values ('ru.otus.hw.models.h2.Book'),
+       ('ru.otus.hw.models.h2.Comment');
 
 --содержит информацию о всех сущностях системы
 --конкретный объект класса c установкой владельца и наследования

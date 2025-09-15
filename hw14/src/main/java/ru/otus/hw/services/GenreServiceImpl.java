@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.GenreConverter;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.models.Genre;
-import ru.otus.hw.repositories.GenreRepository;
+import ru.otus.hw.models.h2.Genre;
+import ru.otus.hw.repositories.h2.GenreRepository;
 
 import java.util.List;
 import java.util.Set;
