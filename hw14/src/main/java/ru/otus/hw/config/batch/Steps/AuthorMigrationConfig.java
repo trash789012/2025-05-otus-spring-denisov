@@ -46,7 +46,7 @@ public class AuthorMigrationConfig {
 
     @Bean
     @StepScope
-    public ItemProcessor<Author, AuthorMongo> auhthorProcessor() {
+    public ItemProcessor<Author, AuthorMongo> authorProcessor() {
         return author -> {
             String mongoId = new ObjectId().toString();
             mappingCache.addAuthorMapping(author.getId(), mongoId);
