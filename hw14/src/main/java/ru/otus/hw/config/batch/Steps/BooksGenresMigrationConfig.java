@@ -1,6 +1,5 @@
 package ru.otus.hw.config.batch.Steps;
 
-import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -11,7 +10,6 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.hw.config.batch.MappingCache;
 import ru.otus.hw.models.BookGenre;
@@ -21,11 +19,8 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class BooksGenresMigrationConfig {
-    private final MongoTemplate mongoTemplate;
 
     private final JobRepository jobRepository;
-
-    private final EntityManagerFactory entityManagerFactory;
 
     private final PlatformTransactionManager transactionManager;
 
