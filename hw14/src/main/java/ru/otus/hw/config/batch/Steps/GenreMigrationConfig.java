@@ -17,12 +17,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.hw.config.batch.MappingCache;
-import ru.otus.hw.models.h2.Author;
-import ru.otus.hw.models.mongo.AuthorMongo;
+import ru.otus.hw.models.h2.Genre;
+import ru.otus.hw.models.mongo.GenreMongo;
 
 @Configuration
 @RequiredArgsConstructor
-public class AuthorMigrationConfig {
+public class GenreMigrationConfig {
 
     private final MongoTemplate mongoTemplate;
 
@@ -34,46 +34,48 @@ public class AuthorMigrationConfig {
 
     private final MappingCache mappingCache;
 
+
     @Bean
     @StepScope
-    public JpaCursorItemReader<Author> reader() {
-        JpaCursorItemReader<Author> reader = new JpaCursorItemReader<>();
-        reader.setName("authorsReader");
+    public JpaCursorItemReader<Genre> reader() {
+        JpaCursorItemReader<Genre> reader = new JpaCursorItemReader<>();
+        reader.setName("genresReader");
         reader.setEntityManagerFactory(entityManagerFactory);
-        reader.setQueryString("select a from Author a");
+        reader.setQueryString("select g from Genre g");
         return reader;
     }
 
     @Bean
     @StepScope
-    public ItemProcessor<Author, AuthorMongo> processor() {
-        return author -> {
+    public ItemProcessor<Genre, GenreMongo> processor() {
+        return genre -> {
             String mongoId = new ObjectId().toString();
-            mappingCache.addAuthorMapping(author.getId(), mongoId);
-            return new AuthorMongo(mongoId, author.getFullName());
+            mappingCache.addGenreMapping(genre.getId(), mongoId);
+            return new GenreMongo(mongoId, genre.getName());
         };
     }
 
     @Bean
     @StepScope
-    public MongoItemWriter<AuthorMongo> writer() {
-        MongoItemWriter<AuthorMongo> writer = new MongoItemWriter<>();
+    public MongoItemWriter<GenreMongo> writer() {
+        MongoItemWriter<GenreMongo> writer = new MongoItemWriter<>();
         writer.setTemplate(mongoTemplate);
-        writer.setCollection("authors");
+        writer.setCollection("genres");
         writer.setMode(MongoItemWriter.Mode.INSERT);
         return writer;
     }
 
     @Bean
-    public Step migrationStep(ItemReader<Author> reader,
-                                    ItemProcessor<Author, AuthorMongo> processor,
-                                    ItemWriter<AuthorMongo> writer) {
+    public Step migrationStep(ItemReader<Genre> reader,
+                                   ItemProcessor<Genre, GenreMongo> processor,
+                                   ItemWriter<GenreMongo> writer) {
         return new StepBuilder("authorMigrationStep", jobRepository)
-                .<Author, AuthorMongo>chunk(10, transactionManager)
+                .<Genre, GenreMongo>chunk(10, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
     }
+
 
 }
