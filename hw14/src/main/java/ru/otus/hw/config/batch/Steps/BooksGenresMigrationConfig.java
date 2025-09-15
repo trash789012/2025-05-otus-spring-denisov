@@ -59,7 +59,7 @@ public class BooksGenresMigrationConfig {
                 .<BookGenre, BookGenre>chunk(10, transactionManager)
                 .reader(reader)
                 .processor(processor)
-                .writer(i -> {})
+                .writer(i -> { })
                 .build();
     }
 }

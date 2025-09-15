@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       port: 27017
-      database: book_lib
+      database: book_lib-migration
       host: localhost
   datasource:
     url: jdbc:h2:mem:maindb;

@@ -43,7 +43,7 @@ public class BookMigrationConfig {
         JpaCursorItemReader<Book> reader = new JpaCursorItemReader<>();
         reader.setName("bookReader");
         reader.setEntityManagerFactory(entityManagerFactory);
-        reader.setQueryString("select b from Book a");
+        reader.setQueryString("select b from Book b");
         return reader;
     }
 

@@ -40,7 +40,7 @@ public class CommentMigrationConfig {
         JpaCursorItemReader<Comment> reader = new JpaCursorItemReader<>();
         reader.setName("commentsReader");
         reader.setEntityManagerFactory(entityManagerFactory);
-        reader.setQueryString("select c from Comments с");
+        reader.setQueryString("select c from Comment c");
         return reader;
     }
 
