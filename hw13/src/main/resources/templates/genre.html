@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Edit genre</title>
+  <style th:replace="~{fragments/menu :: menu-styles}"></style>
+  <style th:replace="~{fragments/styles :: global-styles}"></style>
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+  <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+  <form id="edit-form" action="genre.html" th:method="post">
+
+    <div class="row">
+      <label for="id-input-genre">ID:</label>
+      <input id="id-input-genre" type="text" readonly="readonly" name="id"/>
+    </div>
+
+    <div class="row">
+      <label for="genre-name-input">Name:</label>
+      <input id="genre-name-input" name="name" type="text"/>
+      <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
+    </div>
+
+    <div class="row">
+      <button type="button" id="genre-save">Save</button>
+      <a href="genre.html" th:href="@{/genres}">
+        <button type="button">Cancel</button>
+      </a>
+    </div>
+  </form>
+</div>
+
+<script type="module" src="../static/js/ui/view/genre.js" th:src="@{/js/ui/view/genre.js}"></script>
+
+</body>
+</html>
