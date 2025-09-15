@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/book/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/genres/**", "/genre/**").hasRole("ADMIN")
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/h2-console/**").hasRole("ADMIN")
                         .requestMatchers("/access-denied").permitAll()
                         .requestMatchers("/**").authenticated()
                         .anyRequest().authenticated()
