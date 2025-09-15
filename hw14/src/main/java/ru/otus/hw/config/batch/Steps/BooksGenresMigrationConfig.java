@@ -30,7 +30,7 @@ public class BooksGenresMigrationConfig {
 
     @Bean
     @StepScope
-    public JdbcCursorItemReader<BookGenre> reader() {
+    public JdbcCursorItemReader<BookGenre> bookGenresReader() {
         JdbcCursorItemReader<BookGenre> reader = new JdbcCursorItemReader<>();
         reader.setName("booksGenresReader");
         reader.setDataSource(dataSource);
@@ -45,7 +45,7 @@ public class BooksGenresMigrationConfig {
 
     @Bean
     @StepScope
-    public ItemProcessor<BookGenre, BookGenre> processor() {
+    public ItemProcessor<BookGenre, BookGenre> bookGenresProcessor() {
         return bookGenre -> {
             mappingCache.addBookGenreMapping(bookGenre.bookId(), bookGenre.genreId());
             return bookGenre;
@@ -53,7 +53,7 @@ public class BooksGenresMigrationConfig {
     }
 
     @Bean
-    public Step migrationStep(ItemReader<BookGenre> reader,
+    public Step bookGenresMigrationStep(ItemReader<BookGenre> reader,
                               ItemProcessor<BookGenre, BookGenre> processor) {
         return new StepBuilder("booksGenresMigrationStep", jobRepository)
                 .<BookGenre, BookGenre>chunk(10, transactionManager)

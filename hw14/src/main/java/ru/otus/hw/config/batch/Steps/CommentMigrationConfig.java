@@ -36,7 +36,7 @@ public class CommentMigrationConfig {
 
     @Bean
     @StepScope
-    public JpaCursorItemReader<Comment> reader() {
+    public JpaCursorItemReader<Comment> commentReader() {
         JpaCursorItemReader<Comment> reader = new JpaCursorItemReader<>();
         reader.setName("commentsReader");
         reader.setEntityManagerFactory(entityManagerFactory);
@@ -46,7 +46,7 @@ public class CommentMigrationConfig {
 
     @Bean
     @StepScope
-    public ItemProcessor<Comment, CommentMongo> processor() {
+    public ItemProcessor<Comment, CommentMongo> commentProcessor() {
         return comment -> {
             String mongoId = new ObjectId().toString();
             String mongoBookId = mappingCache.getBookId(comment.getBook().getId());
@@ -57,7 +57,7 @@ public class CommentMigrationConfig {
 
     @Bean
     @StepScope
-    public MongoItemWriter<CommentMongo> writer() {
+    public MongoItemWriter<CommentMongo> commentWriter() {
         MongoItemWriter<CommentMongo> writer = new MongoItemWriter<>();
         writer.setTemplate(mongoTemplate);
         writer.setCollection("comments");
@@ -66,7 +66,7 @@ public class CommentMigrationConfig {
     }
 
     @Bean
-    public Step migrationStep(ItemReader<Comment> reader,
+    public Step commentMigrationStep(ItemReader<Comment> reader,
                               ItemProcessor<Comment, CommentMongo> processor,
                               ItemWriter<CommentMongo> writer) {
         return new StepBuilder("commentMigrationStep", jobRepository)

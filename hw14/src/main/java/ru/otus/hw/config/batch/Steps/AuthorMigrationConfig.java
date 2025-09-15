@@ -36,7 +36,7 @@ public class AuthorMigrationConfig {
 
     @Bean
     @StepScope
-    public JpaCursorItemReader<Author> reader() {
+    public JpaCursorItemReader<Author> authorReader() {
         JpaCursorItemReader<Author> reader = new JpaCursorItemReader<>();
         reader.setName("authorsReader");
         reader.setEntityManagerFactory(entityManagerFactory);
@@ -46,7 +46,7 @@ public class AuthorMigrationConfig {
 
     @Bean
     @StepScope
-    public ItemProcessor<Author, AuthorMongo> processor() {
+    public ItemProcessor<Author, AuthorMongo> auhthorProcessor() {
         return author -> {
             String mongoId = new ObjectId().toString();
             mappingCache.addAuthorMapping(author.getId(), mongoId);
@@ -56,7 +56,7 @@ public class AuthorMigrationConfig {
 
     @Bean
     @StepScope
-    public MongoItemWriter<AuthorMongo> writer() {
+    public MongoItemWriter<AuthorMongo> authorWriter() {
         MongoItemWriter<AuthorMongo> writer = new MongoItemWriter<>();
         writer.setTemplate(mongoTemplate);
         writer.setCollection("authors");
@@ -65,7 +65,7 @@ public class AuthorMigrationConfig {
     }
 
     @Bean
-    public Step migrationStep(ItemReader<Author> reader,
+    public Step authorMigrationStep(ItemReader<Author> reader,
                                     ItemProcessor<Author, AuthorMongo> processor,
                                     ItemWriter<AuthorMongo> writer) {
         return new StepBuilder("authorMigrationStep", jobRepository)

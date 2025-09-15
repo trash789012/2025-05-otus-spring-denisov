@@ -37,7 +37,7 @@ public class GenreMigrationConfig {
 
     @Bean
     @StepScope
-    public JpaCursorItemReader<Genre> reader() {
+    public JpaCursorItemReader<Genre> genreReader() {
         JpaCursorItemReader<Genre> reader = new JpaCursorItemReader<>();
         reader.setName("genresReader");
         reader.setEntityManagerFactory(entityManagerFactory);
@@ -47,7 +47,7 @@ public class GenreMigrationConfig {
 
     @Bean
     @StepScope
-    public ItemProcessor<Genre, GenreMongo> processor() {
+    public ItemProcessor<Genre, GenreMongo> genreProcessor() {
         return genre -> {
             String mongoId = new ObjectId().toString();
             mappingCache.addGenreMapping(genre.getId(), mongoId);
@@ -57,7 +57,7 @@ public class GenreMigrationConfig {
 
     @Bean
     @StepScope
-    public MongoItemWriter<GenreMongo> writer() {
+    public MongoItemWriter<GenreMongo> genreWriter() {
         MongoItemWriter<GenreMongo> writer = new MongoItemWriter<>();
         writer.setTemplate(mongoTemplate);
         writer.setCollection("genres");
@@ -66,7 +66,7 @@ public class GenreMigrationConfig {
     }
 
     @Bean
-    public Step migrationStep(ItemReader<Genre> reader,
+    public Step genreMigrationStep(ItemReader<Genre> reader,
                                    ItemProcessor<Genre, GenreMongo> processor,
                                    ItemWriter<GenreMongo> writer) {
         return new StepBuilder("authorMigrationStep", jobRepository)
