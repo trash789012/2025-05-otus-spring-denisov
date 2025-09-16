@@ -21,6 +21,8 @@ import ru.otus.hw.models.h2.Comment;
 import ru.otus.hw.models.mongo.BookMongo;
 import ru.otus.hw.models.mongo.CommentMongo;
 
+import java.util.Map;
+
 @Configuration
 @RequiredArgsConstructor
 public class CommentMigrationConfig {
@@ -49,26 +51,41 @@ public class CommentMigrationConfig {
     public ItemProcessor<Comment, CommentMongo> commentProcessor() {
         return comment -> {
             String mongoId = new ObjectId().toString();
-            String mongoBookId = mappingCache.getBookId(comment.getBook().getId());
-            BookMongo bookRef = new BookMongo(mongoBookId, null, null, null);
-            return new CommentMongo(mongoId, comment.getText(), bookRef);
+            String mongoBookId = mappingCache.get("book", comment.getBook().getId())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Book mapping not found for id " + comment.getBook().getId()
+                    ));
+            BookMongo bookRef = new BookMongo(mongoBookId, null, null, null, null);
+            return new CommentMongo(mongoId, comment.getText(), bookRef, comment.getId());
         };
     }
 
     @Bean
     @StepScope
-    public MongoItemWriter<CommentMongo> commentWriter() {
-        MongoItemWriter<CommentMongo> writer = new MongoItemWriter<>();
-        writer.setTemplate(mongoTemplate);
-        writer.setCollection("comments");
-        writer.setMode(MongoItemWriter.Mode.INSERT);
-        return writer;
+    public ItemWriter<CommentMongo> commentWriter() {
+        MongoItemWriter<CommentMongo> mongoWriter = new MongoItemWriter<>();
+        mongoWriter.setTemplate(mongoTemplate);
+        mongoWriter.setCollection("comments");
+        mongoWriter.setMode(MongoItemWriter.Mode.INSERT);
+
+        return items -> {
+            if (items.isEmpty()) return;
+
+            mongoWriter.write(items);
+
+            Map<Long, String> commentMapping = new java.util.HashMap<>();
+            for (CommentMongo c : items) {
+                commentMapping.put(c.getOldId(), c.getId());
+            }
+
+            mappingCache.putAll("comment", commentMapping);
+        };
     }
 
     @Bean
     public Step commentMigrationStep(ItemReader<Comment> reader,
-                              ItemProcessor<Comment, CommentMongo> processor,
-                              ItemWriter<CommentMongo> writer) {
+                                     ItemProcessor<Comment, CommentMongo> processor,
+                                     ItemWriter<CommentMongo> writer) {
         return new StepBuilder("commentMigrationStep", jobRepository)
                 .<Comment, CommentMongo>chunk(10, transactionManager)
                 .reader(reader)

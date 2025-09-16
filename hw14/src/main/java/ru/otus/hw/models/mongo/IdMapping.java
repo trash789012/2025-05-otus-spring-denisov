@@ -1,26 +1,23 @@
 package ru.otus.hw.models.mongo;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Data
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
-@NoArgsConstructor
-@Document(collection = "genres")
-public class GenreMongo {
+@Document(collection = "id_mappings")
+@CompoundIndex(def = "{'entity': 1, 'oldId': 1}", name = "entity_oldid_idx", unique = true)
+public class IdMapping {
     @Id
     private String id;
-
-    private String name;
-
-    @Transient
+    private String entity;
     private Long oldId;
+    private String newId;
 }

@@ -20,6 +20,8 @@ import ru.otus.hw.config.batch.MappingCache;
 import ru.otus.hw.models.h2.Author;
 import ru.otus.hw.models.mongo.AuthorMongo;
 
+import java.util.Map;
+
 @Configuration
 @RequiredArgsConstructor
 public class AuthorMigrationConfig {
@@ -49,19 +51,30 @@ public class AuthorMigrationConfig {
     public ItemProcessor<Author, AuthorMongo> authorProcessor() {
         return author -> {
             String mongoId = new ObjectId().toString();
-            mappingCache.addAuthorMapping(author.getId(), mongoId);
-            return new AuthorMongo(mongoId, author.getFullName());
+            return new AuthorMongo(mongoId, author.getFullName(), author.getId());
         };
     }
 
     @Bean
     @StepScope
-    public MongoItemWriter<AuthorMongo> authorWriter() {
-        MongoItemWriter<AuthorMongo> writer = new MongoItemWriter<>();
-        writer.setTemplate(mongoTemplate);
-        writer.setCollection("authors");
-        writer.setMode(MongoItemWriter.Mode.INSERT);
-        return writer;
+    public ItemWriter<AuthorMongo> authorWriter() {
+        MongoItemWriter<AuthorMongo> mongoWriter = new MongoItemWriter<>();
+        mongoWriter.setTemplate(mongoTemplate);
+        mongoWriter.setCollection("authors");
+        mongoWriter.setMode(MongoItemWriter.Mode.INSERT);
+
+        return items -> {
+            if (items.isEmpty()) return;
+
+            mongoWriter.write(items);
+
+            Map<Long, String> authorMapping = new java.util.HashMap<>();
+            for (AuthorMongo authorMongo : items) {
+                authorMapping.put(authorMongo.getOldId(), authorMongo.getId());
+            }
+
+            mappingCache.putAll("author", authorMapping);
+        };
     }
 
     @Bean
@@ -75,5 +88,4 @@ public class AuthorMigrationConfig {
                 .writer(writer)
                 .build();
     }
-
 }

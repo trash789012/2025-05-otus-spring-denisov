@@ -22,7 +22,11 @@ import ru.otus.hw.models.mongo.AuthorMongo;
 import ru.otus.hw.models.mongo.BookMongo;
 import ru.otus.hw.models.mongo.GenreMongo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -52,34 +56,55 @@ public class BookMigrationConfig {
     public ItemProcessor<Book, BookMongo> bookProcessor() {
         return book -> {
             String mongoId = new ObjectId().toString();
-            String authorMongoId = mappingCache.getAuthorId(book.getAuthor().getId());
 
-            var genres = mappingCache.getBookGenreIds(book.getId());
-            List<GenreMongo> mongoGenres = genres.stream()
-                    .map(mappingCache::getGenreId)     // получаем Mongo-ID жанра
-                    .map(id -> {
-                        GenreMongo genreMongo = new GenreMongo();
-                        genreMongo.setId(id);
-                        return genreMongo;
-                    })
-                    .toList();
+            String authorMongoId = mappingCache.get("author", book.getAuthor().getId())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Author mapping not found for id " + book.getAuthor().getId()
+                    ));
+            AuthorMongo authorRef = new AuthorMongo(authorMongoId, null, null);
 
-            mappingCache.addBookMapping(book.getId(), mongoId);
+            Map<Long, List<String>> bookGenresMapping = mappingCache.getBatchList("book_genre", List.of(book.getId()));
+            List<GenreMongo> mongoGenres = new ArrayList<>();
+
+            List<String> genreIds = bookGenresMapping.getOrDefault(book.getId(), Collections.emptyList());
+            for (String genreId : genreIds) {
+                String mongoGenreId = mappingCache.get("genre", Long.parseLong(genreId))
+                        .orElseThrow(() -> new RuntimeException(
+                                "Genre mapping not found for id " + genreId
+                        ));
+                GenreMongo genreMongo = new GenreMongo();
+                genreMongo.setId(mongoGenreId);
+                mongoGenres.add(genreMongo);
+            }
+
             return new BookMongo(mongoId,
                     book.getTitle(),
-                    new AuthorMongo(authorMongoId, null),
-                    mongoGenres);
+                    authorRef,
+                    mongoGenres,
+                    book.getId());
         };
     }
 
     @Bean
     @StepScope
-    public MongoItemWriter<BookMongo> bookWriter() {
-        MongoItemWriter<BookMongo> writer = new MongoItemWriter<>();
-        writer.setTemplate(mongoTemplate);
-        writer.setCollection("books");
-        writer.setMode(MongoItemWriter.Mode.INSERT);
-        return writer;
+    public ItemWriter<BookMongo> bookWriter() {
+        MongoItemWriter<BookMongo> mongoWriter = new MongoItemWriter<>();
+        mongoWriter.setTemplate(mongoTemplate);
+        mongoWriter.setCollection("books");
+        mongoWriter.setMode(MongoItemWriter.Mode.INSERT);
+
+        return items -> {
+            if (items.isEmpty()) return;
+
+            mongoWriter.write(items);
+
+            Map<Long, String> bookMapping = new HashMap<>();
+            for (BookMongo b : items) {
+                bookMapping.put(b.getOldId(), b.getId());
+            }
+
+            mappingCache.putAll("book", bookMapping);
+        };
     }
 
     @Bean

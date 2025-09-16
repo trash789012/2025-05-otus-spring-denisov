@@ -1,60 +1,78 @@
 package ru.otus.hw.config.batch;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.otus.hw.models.mongo.IdMapping;
+import ru.otus.hw.repositories.mongo.IdMappingRepository;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class MappingCache {
-
-    private final Map<Long, String> authorIdMap = new ConcurrentHashMap<>();
-
-    private final Map<Long, String> genreIdMap = new ConcurrentHashMap<>();
-
-    private final Map<Long, String> bookIdMap = new ConcurrentHashMap<>();
-
-    private final Map<Long, List<Long>> booksGenresIdMap = new ConcurrentHashMap<>();
+    private final IdMappingRepository repository;
 
     public void clean() {
-        authorIdMap.clear();
-        genreIdMap.clear();
-        bookIdMap.clear();
-        booksGenresIdMap.clear();
+        repository.deleteAll();
     }
 
-    public void addAuthorMapping(Long id, String mongoId) {
-        authorIdMap.put(id, mongoId);
+    public void putAll(String entity, Map<Long, String> oldIdToNewIdMap) {
+        if (oldIdToNewIdMap == null || oldIdToNewIdMap.isEmpty()) return;
+
+        List<IdMapping> mappings = oldIdToNewIdMap.entrySet().stream()
+                .map(e -> new IdMapping(null, entity, e.getKey(), e.getValue()))
+                .toList();
+
+        repository.saveAll(mappings);
     }
 
-    public String getAuthorId(Long id) {
-        return authorIdMap.get(id);
+    public void putAllList(String entity, Map<Long, List<String>> oldIdToNewIdsMap) {
+        if (oldIdToNewIdsMap == null || oldIdToNewIdsMap.isEmpty()) return;
+
+        List<IdMapping> mappings = new ArrayList<>();
+        for (Map.Entry<Long, List<String>> entry : oldIdToNewIdsMap.entrySet()) {
+            Long oldId = entry.getKey();
+            for (String newId : entry.getValue()) {
+                mappings.add(new IdMapping(null, entity, oldId, newId));
+            }
+        }
+
+        repository.saveAll(mappings);
     }
 
-    public void addGenreMapping(Long id, String mongoId) {
-        genreIdMap.put(id, mongoId);
+    public Optional<String> get(String entity, Long oldId) {
+        return repository.findByEntityAndOldId(entity, oldId)
+                .map(IdMapping::getNewId);
     }
 
-    public String getGenreId(Long id) {
-        return genreIdMap.get(id);
+    public Map<Long, String> getBatch(String entity, Collection<Long> oldIds) {
+        if (oldIds == null || oldIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return repository.findByEntityAndOldIdIn(entity, oldIds)
+                .stream()
+                .collect(Collectors.toMap(IdMapping::getOldId, IdMapping::getNewId));
     }
 
-    public void addBookMapping(Long id, String mongoId) {
-        bookIdMap.put(id, mongoId);
-    }
+    public Map<Long, List<String>> getBatchList(String entity, Collection<Long> oldIds) {
+        if (oldIds == null || oldIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
 
-    public String getBookId(Long id) {
-        return bookIdMap.get(id);
-    }
+        Map<Long, List<String>> result = new HashMap<>();
+        repository.findByEntityAndOldIdIn(entity, oldIds)
+                .forEach(mapping -> {
+                    result.computeIfAbsent(mapping.getOldId(), k -> new ArrayList<>())
+                            .add(mapping.getNewId());
+                });
 
-    public void addBookGenreMapping(Long bookId, Long genreId) {
-        booksGenresIdMap.computeIfAbsent(bookId, k -> new ArrayList<>()).add(genreId);
+        return result;
     }
-
-    public List<Long> getBookGenreIds(Long id) {
-        return booksGenresIdMap.get(id);
-    }
-
 }

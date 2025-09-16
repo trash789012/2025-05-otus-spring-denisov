@@ -20,6 +20,8 @@ import ru.otus.hw.config.batch.MappingCache;
 import ru.otus.hw.models.h2.Genre;
 import ru.otus.hw.models.mongo.GenreMongo;
 
+import java.util.Map;
+
 @Configuration
 @RequiredArgsConstructor
 public class GenreMigrationConfig {
@@ -50,32 +52,41 @@ public class GenreMigrationConfig {
     public ItemProcessor<Genre, GenreMongo> genreProcessor() {
         return genre -> {
             String mongoId = new ObjectId().toString();
-            mappingCache.addGenreMapping(genre.getId(), mongoId);
-            return new GenreMongo(mongoId, genre.getName());
+            return new GenreMongo(mongoId, genre.getName(), genre.getId());
         };
     }
 
     @Bean
     @StepScope
-    public MongoItemWriter<GenreMongo> genreWriter() {
-        MongoItemWriter<GenreMongo> writer = new MongoItemWriter<>();
-        writer.setTemplate(mongoTemplate);
-        writer.setCollection("genres");
-        writer.setMode(MongoItemWriter.Mode.INSERT);
-        return writer;
+    public ItemWriter<GenreMongo> genreWriter() {
+        MongoItemWriter<GenreMongo> mongoWriter = new MongoItemWriter<>();
+        mongoWriter.setTemplate(mongoTemplate);
+        mongoWriter.setCollection("genres");
+        mongoWriter.setMode(MongoItemWriter.Mode.INSERT);
+
+        return items -> {
+            if (items.isEmpty()) return;
+
+            mongoWriter.write(items);
+
+            Map<Long, String> genreMapping = new java.util.HashMap<>();
+            for (GenreMongo genreMongo : items) {
+                genreMapping.put(genreMongo.getOldId(), genreMongo.getId());
+            }
+
+            mappingCache.putAll("genre", genreMapping);
+        };
     }
 
     @Bean
     public Step genreMigrationStep(ItemReader<Genre> reader,
                                    ItemProcessor<Genre, GenreMongo> processor,
                                    ItemWriter<GenreMongo> writer) {
-        return new StepBuilder("authorMigrationStep", jobRepository)
+        return new StepBuilder("genreMigrationStep", jobRepository)
                 .<Genre, GenreMongo>chunk(10, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
     }
-
-
 }
