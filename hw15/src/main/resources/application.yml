@@ -1,0 +1,9 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    root: info
+
+    org.springframework.integration: debug
