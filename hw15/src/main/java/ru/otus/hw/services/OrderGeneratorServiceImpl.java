@@ -16,8 +16,6 @@ import java.util.concurrent.ForkJoinPool;
 @RequiredArgsConstructor
 public class OrderGeneratorServiceImpl implements OrderGeneratorService {
 
-    private final DocumentGateway documentGateway;
-
     private static final String[] SALES_ORDER_ITEMS = {
             "Установка компрессорная",
             "Компрессор ВП0-УХЛ",
@@ -28,7 +26,10 @@ public class OrderGeneratorServiceImpl implements OrderGeneratorService {
             "Перчатки Arctics",
     };
 
+    private final DocumentGateway documentGateway;
+
     private final Random random = new Random();
+
 
     @Override
     public void startGenerateOrders() {

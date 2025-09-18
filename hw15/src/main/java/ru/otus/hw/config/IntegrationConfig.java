@@ -14,11 +14,9 @@ import ru.otus.hw.models.SalesOrder;
 import ru.otus.hw.services.DeliveryDocumentService;
 import ru.otus.hw.services.InvoiceDocumentService;
 
-import java.util.List;
-
 @Slf4j
 @Configuration
-public class ConfigurationConfig {
+public class IntegrationConfig {
 
     @Bean
     public MessageChannelSpec<?, ?> salesOrdersInput() {
@@ -54,34 +52,25 @@ public class ConfigurationConfig {
     public IntegrationFlow salesOrdersFlow(DeliveryDocumentService deliveryDocumentService,
                                            InvoiceDocumentService invoiceDocumentService) {
         return IntegrationFlow.from(salesOrdersInput())
-                //сплит по списку SalesOrders (заказы на поставку)
                 .split()
-                //только для заказов с непустыми позициями
                 .<SalesOrder>filter(order -> order.items() != null && !order.items().isEmpty(),
                         filter -> filter
                                 .discardChannel("nullChannel")
                                 .throwExceptionOnRejection(false))
                 .channel(filteredSalesOrders())
-                //создание заказа на поставку из каждого отдельного заказа
                 .handle(deliveryDocumentService, "generateDeliveryDocument")
-                //агрегация на поставки, а не на заказы
                 .aggregate(aggregator -> aggregator
-                        .outputProcessor(group -> {
-                            List<DeliveryDocument> deliveries = group.getMessages().stream()
-                                    .map(m -> (DeliveryDocument) m.getPayload())
-                                    .toList();
-                            return deliveries;
-                        })
+                        .outputProcessor(group -> group.getMessages().stream()
+                                .map(m -> (DeliveryDocument) m.getPayload())
+                                .toList())
                         .releaseStrategy(group -> true)
                         .expireGroupsUponCompletion(true)
                         .groupTimeout(1000L)
                 )
-                //создание инвойса на весь объем поставок
                 .channel(createInvoice())
                 .handle(invoiceDocumentService, "createInvoice")
                 .<InvoiceDocument, InvoiceDocument>transform(invoice ->
-                        new InvoiceDocument(invoice.invoiceId(),
-                                invoice.totalPrice(),
+                        new InvoiceDocument(invoice.invoiceId(), invoice.totalPrice(),
                                 "{invoiceId: %s, totalPrice: %s}".formatted(invoice.invoiceId(), invoice.totalPrice())))
                 .channel(invoiceOutput())
                 .get();
