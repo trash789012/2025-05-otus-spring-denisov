@@ -72,15 +72,4 @@ public class ConfigurationConfig {
                 .channel(invoiceOutput())
                 .get();
     }
-
-    @Bean
-    public IntegrationFlow errorHandlingFlow() {
-        return IntegrationFlow.from("errorChannel")
-                .handle(msg -> {
-                    log.error(msg.toString());
-                })
-                .get();
-    }
-
-
 }
