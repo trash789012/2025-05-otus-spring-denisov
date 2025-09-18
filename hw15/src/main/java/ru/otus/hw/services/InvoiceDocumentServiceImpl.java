@@ -16,11 +16,15 @@ public class InvoiceDocumentServiceImpl implements InvoiceDocumentService {
     @Override
     public InvoiceDocument createInvoice(List<DeliveryDocument> deliveryDocuments) {
 
+        if (deliveryDocuments.isEmpty()) {
+            return null;
+        }
+
         double sum = deliveryDocuments.stream()
                 .flatMap(delivery -> delivery.items().stream())
                 .mapToDouble(OrderItemDocument::price)
                 .sum();
 
-        return new InvoiceDocument(random.nextInt(), sum, null);
+        return new InvoiceDocument(random.nextInt(44000, 60000), sum, null);
     }
 }

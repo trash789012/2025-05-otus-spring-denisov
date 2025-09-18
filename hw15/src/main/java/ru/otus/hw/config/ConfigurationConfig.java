@@ -48,7 +48,9 @@ public class ConfigurationConfig {
                 .split()
                 //только для заказов с непустыми позициями
                 .<SalesOrder>filter(order -> order.items() != null && !order.items().isEmpty(),
-                        filter -> filter.discardChannel("nullChannel"))
+                        filter -> filter
+                                .discardChannel("nullChannel")
+                                .throwExceptionOnRejection(false))
                 //создание заказа на поставку из каждого отдельного заказа
                 .handle(deliveryDocumentService, "generateDeliveryDocument")
                 //агрегация на поставки, а не на заказы

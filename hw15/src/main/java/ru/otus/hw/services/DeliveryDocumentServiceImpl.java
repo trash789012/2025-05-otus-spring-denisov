@@ -24,7 +24,7 @@ public class DeliveryDocumentServiceImpl implements DeliveryDocumentService {
                         deliveryId,
                         order.orderId(),
                         item,
-                        Math.random() * 100)
+                        random.nextDouble(1, 1000))
                 )
                 .toList();
 
