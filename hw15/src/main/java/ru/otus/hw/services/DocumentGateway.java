@@ -5,11 +5,10 @@ import org.springframework.integration.annotation.MessagingGateway;
 import ru.otus.hw.models.InvoiceDocument;
 import ru.otus.hw.models.SalesOrder;
 
-import java.util.Collection;
 import java.util.List;
 
-@MessagingGateway(errorChannel = "errorChannel")
+@MessagingGateway
 public interface DocumentGateway {
     @Gateway(requestChannel = "salesOrdersInput", replyChannel = "invoiceOutput")
-    Collection<InvoiceDocument> process(List<SalesOrder> orders);
+    InvoiceDocument process(List<SalesOrder> orders);
 }

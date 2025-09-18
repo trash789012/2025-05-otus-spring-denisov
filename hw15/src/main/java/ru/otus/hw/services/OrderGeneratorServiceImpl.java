@@ -3,10 +3,10 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.otus.hw.models.InvoiceDocument;
 import ru.otus.hw.models.SalesOrder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
@@ -36,19 +36,28 @@ public class OrderGeneratorServiceImpl implements OrderGeneratorService {
 
         for (int i = 0; i < 10; i++) {
             pool.execute(() -> {
-                Collection<SalesOrder> orders = generateOrders();
+                List<SalesOrder> orders = generateOrders();
+                log.info("******* start create invoice document");
+                InvoiceDocument invoiceDocument = documentGateway.process(orders);
+                log.info("******* create invoice document: {}", invoiceDocument);
             });
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    private Collection<SalesOrder> generateOrders() {
+    private List<SalesOrder> generateOrders() {
 
         int orderCount = random.nextInt(10);
 
         List<SalesOrder> orders = new ArrayList<>();
 
         for (int i = 0; i < orderCount; i++) {
-            SalesOrder order = new SalesOrder(i, generateSalesOrderItems());
+            SalesOrder order = new SalesOrder(i + 1, generateSalesOrderItems());
             orders.add(order);
         }
 
@@ -56,6 +65,10 @@ public class OrderGeneratorServiceImpl implements OrderGeneratorService {
     }
 
     private List<String> generateSalesOrderItems() {
+        if (random.nextDouble() < 0.2) {
+            return null;
+        }
+
         int itemsCount = random.nextInt(5) + 2;
 
         List<String> items = new ArrayList<>();

@@ -1,6 +1,4 @@
 package ru.otus.hw.models;
 
-import java.math.BigDecimal;
-
-public record InvoiceDocument(String orderId, BigDecimal totalPrice) {
+public record InvoiceDocument(int invoiceId, double totalPrice, String notes) {
 }
