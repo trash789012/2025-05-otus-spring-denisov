@@ -26,6 +26,11 @@ public class ConfigurationConfig {
     }
 
     @Bean
+    public MessageChannelSpec<?, ?> filteredSalesOrders() {
+        return MessageChannels.direct();
+    }
+
+    @Bean
     public MessageChannelSpec<?, ?> createInvoice() {
         return MessageChannels.direct();
     }
@@ -33,6 +38,11 @@ public class ConfigurationConfig {
     @Bean
     public MessageChannelSpec<?, ?> invoiceOutput() {
         return MessageChannels.publishSubscribe();
+    }
+
+    @Bean
+    public MessageChannelSpec<?, ?> errorChannel() {
+        return MessageChannels.direct();
     }
 
     @Bean
@@ -51,6 +61,7 @@ public class ConfigurationConfig {
                         filter -> filter
                                 .discardChannel("nullChannel")
                                 .throwExceptionOnRejection(false))
+                .channel(filteredSalesOrders())
                 //создание заказа на поставку из каждого отдельного заказа
                 .handle(deliveryDocumentService, "generateDeliveryDocument")
                 //агрегация на поставки, а не на заказы
@@ -61,8 +72,9 @@ public class ConfigurationConfig {
                                     .toList();
                             return deliveries;
                         })
-                        .releaseStrategy(group -> group.size() >= 1)
+                        .releaseStrategy(group -> true)
                         .expireGroupsUponCompletion(true)
+                        .groupTimeout(1000L)
                 )
                 //создание инвойса на весь объем поставок
                 .channel(createInvoice())
@@ -72,6 +84,15 @@ public class ConfigurationConfig {
                                 invoice.totalPrice(),
                                 "{invoiceId: %s, totalPrice: %s}".formatted(invoice.invoiceId(), invoice.totalPrice())))
                 .channel(invoiceOutput())
+                .get();
+    }
+
+    @Bean
+    public IntegrationFlow errorHandlingFlow() {
+        return IntegrationFlow.from("errorChannel")
+                .handle(msg -> {
+                    log.error("***************** error msg: {}", msg.getPayload());
+                })
                 .get();
     }
 }

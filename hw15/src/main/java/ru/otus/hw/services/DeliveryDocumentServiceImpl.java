@@ -17,6 +17,10 @@ public class DeliveryDocumentServiceImpl implements DeliveryDocumentService {
 
     @Override
     public DeliveryDocument generateDeliveryDocument(SalesOrder order) {
+        if (order == null) {
+            return null;
+        }
+
         int deliveryId = random.nextInt(100);
 
         List<OrderItemDocument> items = order.items().stream()

@@ -10,7 +10,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.otus.hw.config.AppRunner;
 import ru.otus.hw.models.InvoiceDocument;
 import ru.otus.hw.models.SalesOrder;
-import ru.otus.hw.services.DocumentGateway;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class SalesOrdersFlowTest {
     private AppRunner appRunner;
 
     @Autowired
-    private DocumentGateway documentGateway;
+    private TestDocumentGateway documentGateway;
 
     private SalesOrder order1;
     private SalesOrder order2;
@@ -54,6 +53,7 @@ public class SalesOrdersFlowTest {
         InvoiceDocument invoice = documentGateway.process(List.of(emptyOrder));
 
         assertThat(invoice).isNull();
+
     }
 
     @Test
