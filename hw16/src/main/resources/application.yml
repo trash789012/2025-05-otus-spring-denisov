@@ -11,7 +11,6 @@ spring:
       enabled: always
 
   datasource:
-    #    url: jdbc:h2:mem:maindb; MODE=LEGACY
     url: jdbc:h2:mem:maindb;
     username: sa
     driver-class-name: org.h2.Driver
@@ -35,10 +34,31 @@ spring:
 
   shell:
     interactive:
-      enabled: true
+      enabled: false
   mvc:
     hiddenmethod:
       filter:
+        enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: "/actuator"
+  endpoint:
+    health:
+      show-components: always
+      show-details: always
+    metrics:
+      enabled: true
+    logfile:
+      enabled: true
+  health:
+    defaults:
+      enabled: true
+  metrics:
+    export:
+      simple:
         enabled: true
 logging:
   level:
