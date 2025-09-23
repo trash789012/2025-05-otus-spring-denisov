@@ -57,9 +57,3 @@ logging:
   file:
     name: application.log
     path: ./logs
-#  level:
-#    org:
-#      springframework:
-#        security:
-#          web:
-#            csrf: debug
