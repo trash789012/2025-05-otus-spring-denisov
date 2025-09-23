@@ -15,6 +15,7 @@ import java.util.Optional;
 public class CustomHealthIndicator implements HealthIndicator {
 
     public static final String ROOT_USER = "admin";
+
     private final UserRepository userRepository;
 
     @Override
