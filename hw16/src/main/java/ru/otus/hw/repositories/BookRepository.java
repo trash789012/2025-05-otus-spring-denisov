@@ -1,0 +1,30 @@
+package ru.otus.hw.repositories;
+
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
+import ru.otus.hw.models.Book;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Optional;
+
+@RepositoryRestResource(path = "book")
+public interface BookRepository extends CrudRepository<Book, Long> {
+    @EntityGraph(attributePaths = {"author", "genres"})
+    @RestResource(path = "IDs", rel = "IDs")
+    Optional<Book> findById(long id);
+
+    @Override
+    @Nonnull
+    @EntityGraph(attributePaths = {"author"})
+    @RestResource(path = "All", rel = "All")
+    List<Book> findAll();
+
+    @Query("select b from Book b where b.id = :id")
+    Optional<Book> findByIdLazy(@Param("id") long id);
+
+}
