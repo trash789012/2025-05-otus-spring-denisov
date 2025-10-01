@@ -4,6 +4,8 @@ HELP.md
 
 *.log
 
+*.env
+
 ### STS ###
 .apt_generated
 .classpath

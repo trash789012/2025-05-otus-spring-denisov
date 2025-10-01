@@ -4,9 +4,11 @@ spring:
       enabled: always
   data:
     mongodb:
-      port: 27017
-      database: book_lib
+      database: ${MONGO_DATABASE:book_lib}
+      username: ${MONGO_ROOT_USERNAME:admin}
+      password: ${MONGO_ROOT_PASSWORD:admin}
       host: localhost
+      authentication-database: admin
   shell:
     interactive:
       enabled: false

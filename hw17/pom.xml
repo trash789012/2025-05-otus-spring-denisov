@@ -162,6 +162,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--    Build        -->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <from>
+                        <image>openjdk:17-jdk-slim</image>
+<!--                        <image>eclipse-temurin:17-jre</image>-->
+<!--                        <image>eclipse-temurin:17-jdk-focal</image>-->
+                    </from>
+                    <to>
+                        <image>library:latest</image>
+                    </to>
+                    <container>
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+<!--                        <mainClass>org.springframework.boot.loader.launch.JarLauncher</mainClass>-->
+                    </container>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
