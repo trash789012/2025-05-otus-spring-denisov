@@ -38,7 +38,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -109,6 +108,10 @@
             <version>${flapdoodle.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -169,20 +172,17 @@
                 <version>3.4.0</version>
                 <configuration>
                     <from>
-                        <image>eclipse-temurin:17-jre</image>
+                        <image>openjdk:17-jdk-slim</image>
                     </from>
                     <to>
                         <image>library:latest</image>
                     </to>
                     <container>
+                        <mainClass>ru.otus.hw.Application</mainClass>
                         <ports>
                             <port>8080</port>
                         </ports>
-                        <environment>
-                            <SPRING_DATA_MONGODB_URI>${env.MONGO_URI}</SPRING_DATA_MONGODB_URI>
-                            <MONGO_INITDB_ROOT_USERNAME>${env.MONGO_INITDB_ROOT_USERNAME}</MONGO_INITDB_ROOT_USERNAME>
-                            <MONGO_INITDB_ROOT_PASSWORD>${env.MONGO_INITDB_ROOT_PASSWORD}</MONGO_INITDB_ROOT_PASSWORD>
-                        </environment>
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                     </container>
                 </configuration>
             </plugin>
