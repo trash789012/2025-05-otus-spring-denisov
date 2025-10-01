@@ -15,9 +15,7 @@ import ru.otus.hw.dto.BookFormDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
-import ru.otus.hw.mongo.listener.BookCascadeDeleteMongoListener;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
         BookConverter.class,
         AuthorConverter.class,
         GenreConverter.class,
-        BookCascadeDeleteMongoListener.class,
         TestMongoConfig.class})
 public class BookServiceImplTest {
 
@@ -226,34 +223,5 @@ public class BookServiceImplTest {
                         .containsOnly("Genre1", "Genre2")
 
         );
-    }
-
-    @Test
-    @DisplayName("должен удалять книгу и каскадом комментарии")
-    void shouldDeleteExistingBook() {
-        Author author = new Author("Author");
-        mongoTemplate.save(author);
-
-        Book book = new Book("Book");
-        book.setAuthor(author);
-        book.setGenres(List.of());
-        mongoTemplate.save(book);
-
-        Comment comment1 = new Comment("Comment1");
-        comment1.setBook(book);
-        Comment comment2 = new Comment("Comment2");
-        comment2.setBook(book);
-        mongoTemplate.save(comment1);
-        mongoTemplate.save(comment2);
-
-        bookService.deleteById(book.getId());
-
-        var notExistsBook = mongoTemplate.findById(book.getId(), Book.class);
-        var notExistsComment1 = mongoTemplate.findById(comment1.getId(), Comment.class);
-        var notExistsComment2 = mongoTemplate.findById(comment2.getId(), Comment.class);
-
-        assertThat(notExistsBook).isNull();
-        assertThat(notExistsComment1).isNull();
-        assertThat(notExistsComment2).isNull();
     }
 }

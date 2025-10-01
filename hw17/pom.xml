@@ -169,9 +169,7 @@
                 <version>3.4.0</version>
                 <configuration>
                     <from>
-<!--                        <image>openjdk:17-jdk-slim</image>-->
                         <image>eclipse-temurin:17-jre</image>
-<!--                        <image>eclipse-temurin:17-jdk-focal</image>-->
                     </from>
                     <to>
                         <image>library:latest</image>
@@ -180,7 +178,11 @@
                         <ports>
                             <port>8080</port>
                         </ports>
-<!--                        <mainClass>org.springframework.boot.loader.launch.JarLauncher</mainClass>-->
+                        <environment>
+                            <SPRING_DATA_MONGODB_URI>${env.MONGO_URI}</SPRING_DATA_MONGODB_URI>
+                            <MONGO_INITDB_ROOT_USERNAME>${env.MONGO_INITDB_ROOT_USERNAME}</MONGO_INITDB_ROOT_USERNAME>
+                            <MONGO_INITDB_ROOT_PASSWORD>${env.MONGO_INITDB_ROOT_PASSWORD}</MONGO_INITDB_ROOT_PASSWORD>
+                        </environment>
                     </container>
                 </configuration>
             </plugin>
