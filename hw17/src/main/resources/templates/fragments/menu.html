@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<div th:fragment="main-menu" class="nav-menu">
+    <a th:href="@{/}">Books</a>
+    <a th:href="@{/authors}">Authors</a>
+    <a th:href="@{/genres}">Genres</a>
+</div>
+
+<style th:fragment="menu-styles">
+    .nav-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f8f9fa;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+
+    .nav-menu {
+        background-color: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+
+    .nav-menu a {
+        margin-right: 15px;
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    .nav-menu a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+</style>
+</body>
+</html>

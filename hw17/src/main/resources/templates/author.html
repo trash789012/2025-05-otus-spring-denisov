@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit author</title>
+    <style th:replace="~{fragments/menu :: menu-styles}"></style>
+    <style th:replace="~{fragments/styles :: global-styles}"></style>
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+    <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+    <form id="edit-form" action="author.html" th:method="post">
+
+        <div class="row" id="id-row">
+            <label for="id-input">ID:</label>
+            <input id="id-input" type="text" readonly="readonly" name="id"/>
+        </div>
+
+        <div class="row">
+            <label for="author-name-input">Name:</label>
+            <input id="author-name-input" name="fullName" type="text" required/>
+            <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
+        </div>
+
+        <div class="row">
+            <button id="author-save" type="button">Save</button>
+            <a href="author.html" th:href="@{/authors}">
+                <button type="button">Cancel</button>
+            </a>
+        </div>
+    </form>
+</div>
+
+<script type="module" src="../static/js/ui/view/author.js" th:src="@{/js/ui/view/author.js}"></script>
+
+</body>
+</html>

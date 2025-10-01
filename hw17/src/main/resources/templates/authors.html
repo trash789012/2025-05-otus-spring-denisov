@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all authors</title>
+    <style th:replace="~{fragments/menu :: menu-styles}"></style>
+    <style th:replace="~{fragments/styles :: table-styles}"></style>
+    <style th:replace="~{fragments/styles :: global-styles}"></style>
+
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+    <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+    <div class="table-header">
+        <h2>List of authors</h2>
+        <a th:href="@{/author/new}" class="create-button-action">new</a>
+    </div>
+
+    <table class="authors">
+        <thead>
+        <tr>
+            <th>Author name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="authors-table-body">
+        <!-- insert from JS code -->
+        </tbody>
+    </table>
+</div>
+
+<script type="module" src="../static/js/ui/view/authors.js" th:src="@{/js/ui/view/authors.js}"></script>
+
+</body>
+</html>
