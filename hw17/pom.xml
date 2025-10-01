@@ -169,8 +169,8 @@
                 <version>3.4.0</version>
                 <configuration>
                     <from>
-                        <image>openjdk:17-jdk-slim</image>
-<!--                        <image>eclipse-temurin:17-jre</image>-->
+<!--                        <image>openjdk:17-jdk-slim</image>-->
+                        <image>eclipse-temurin:17-jre</image>
 <!--                        <image>eclipse-temurin:17-jdk-focal</image>-->
                     </from>
                     <to>

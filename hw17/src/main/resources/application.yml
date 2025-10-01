@@ -6,9 +6,14 @@ spring:
     mongodb:
       database: ${MONGO_DATABASE:book_lib}
       username: ${MONGO_ROOT_USERNAME:admin}
-      password: ${MONGO_ROOT_PASSWORD:admin}
-      host: localhost
+      password: ${MONGO_ROOT_PASSWORD:secret}
       authentication-database: admin
+      host: localhost
+      port: 27015
+      auto-index-creation: true
+      event-listeners:
+        enabled: true
+
   shell:
     interactive:
       enabled: false

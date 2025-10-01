@@ -3,6 +3,8 @@ spring:
     mongodb:
       port: 0
       database: book_lib_test
+      host: localhost
+      authentication-database: admin
       event-listeners:
         enabled: true
   autoconfigure:

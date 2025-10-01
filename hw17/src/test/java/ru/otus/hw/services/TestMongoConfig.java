@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class TestMongoConfig {
     @Bean
     public MongoTemplate mongoTemplate() throws Exception {
-        MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017/testdb");
+        MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017/book_lib_test?authSource=admin");
         return new MongoTemplate(mongoClient, "testdb");
     }
 }
