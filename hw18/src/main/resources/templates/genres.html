@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all genres</title>
+    <style th:replace="~{fragments/menu :: menu-styles}"></style>
+    <style th:replace="~{fragments/styles :: table-styles}"></style>
+    <style th:replace="~{fragments/styles :: global-styles}"></style>
+</head>
+<body>
+
+<!-- menu -->
+<div class="nav-container">
+    <div class="nav-menu" th:replace="~{fragments/menu :: main-menu}"></div>
+</div>
+
+<div class="content-container">
+    <div class="table-header">
+        <h2>List of genres</h2>
+        <a th:href="@{/genre/new}" class="create-button-action">new</a>
+    </div>
+
+    <table class="genres">
+        <thead>
+        <tr>
+            <th>Genre name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="genres-table-body">
+        <!--  insert from JS code -->
+        </tbody>
+    </table>
+</div>
+
+<script type="module" src="../static/js/ui/view/genres.js" th:src="@{/js/ui/view/genres.js}"></script>
+
+</body>
+</html>

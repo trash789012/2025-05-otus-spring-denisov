@@ -1,0 +1,63 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+      
+  # Resilience4j Configuration
+#  cloud:
+#    circuitbreaker:
+#      resilience4j:
+#        enabled: true
+#        instances:
+#          bookService:
+#            registerHealthIndicator: true
+#            slidingWindowSize: 10
+#            permitted-number-of-calls-in-half-open-state: 3
+#            sliding-window-type: COUNT_BASED
+#            minimum-number-of-calls: 5
+#            wait-duration-in-open-state: 10s
+#            failure-rate-threshold: 50
+#            event-consumer-buffer-size: 10
+#            automatic-transition-from-open-to-half-open-enabled: true
+#            record-exceptions:
+#              - org.springframework.web.client.HttpServerErrorException
+#              - java.io.IOException
+#              - java.util.concurrent.TimeoutException
+#              - org.springframework.web.client.ResourceAccessException
+#              - org.springframework.dao.DataAccessException
+          
+  data:
+    mongodb:
+      database: ${MONGO_DATABASE:book_lib}
+      username: ${MONGO_ROOT_USERNAME:admin}
+      password: ${MONGO_ROOT_PASSWORD:secret}
+      authentication-database: admin
+      host: localhost
+      port: 27015
+      auto-index-creation: true
+      event-listeners:
+        enabled: true
+
+  shell:
+    interactive:
+      enabled: false
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+mongock:
+#  runner-type: "ApplicationRunner" # default
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.hw.mongo.mongock.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
