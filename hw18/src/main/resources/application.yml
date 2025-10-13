@@ -2,30 +2,7 @@ spring:
   output:
     ansi:
       enabled: always
-      
-  # Resilience4j Configuration
-#  cloud:
-#    circuitbreaker:
-#      resilience4j:
-#        enabled: true
-#        instances:
-#          bookService:
-#            registerHealthIndicator: true
-#            slidingWindowSize: 10
-#            permitted-number-of-calls-in-half-open-state: 3
-#            sliding-window-type: COUNT_BASED
-#            minimum-number-of-calls: 5
-#            wait-duration-in-open-state: 10s
-#            failure-rate-threshold: 50
-#            event-consumer-buffer-size: 10
-#            automatic-transition-from-open-to-half-open-enabled: true
-#            record-exceptions:
-#              - org.springframework.web.client.HttpServerErrorException
-#              - java.io.IOException
-#              - java.util.concurrent.TimeoutException
-#              - org.springframework.web.client.ResourceAccessException
-#              - org.springframework.dao.DataAccessException
-          
+
   data:
     mongodb:
       database: ${MONGO_DATABASE:book_lib}
