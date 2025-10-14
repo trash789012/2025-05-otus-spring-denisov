@@ -1,0 +1,23 @@
+spring:
+  data:
+    mongodb:
+      port: 0
+      database: book_lib_test
+      host: localhost
+      authentication-database: admin
+      event-listeners:
+        enabled: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+  shell:
+    interactive:
+      enabled: false
+
+mongock:
+  enabled: false

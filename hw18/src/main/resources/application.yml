@@ -1,0 +1,40 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+
+  data:
+    mongodb:
+      database: ${MONGO_DATABASE:book_lib}
+      username: ${MONGO_ROOT_USERNAME:admin}
+      password: ${MONGO_ROOT_PASSWORD:secret}
+      authentication-database: admin
+      host: localhost
+      port: 27015
+      auto-index-creation: true
+      event-listeners:
+        enabled: true
+
+  shell:
+    interactive:
+      enabled: false
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+mongock:
+#  runner-type: "ApplicationRunner" # default
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.hw.mongo.mongock.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
