@@ -3,6 +3,7 @@ package ru.otus.hw.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -56,6 +57,10 @@ public class Group {
     )
     private List<User> members;
 
-    @OneToMany(mappedBy = "bookedBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "bookedBy",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    //TODO: lazy ?
     private List<Slot> slots;
 }
