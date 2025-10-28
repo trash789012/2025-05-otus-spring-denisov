@@ -1,7 +1,32 @@
 spring:
+  datasource:
+    url: jdbc:h2:mem:jamtime_db;
+    driverClassName: org.h2.Driver
+    username: sa
+    password: sa
+#  sql:
+#    init:
+#      mode: always
+#      data-locations: data.sql
+#      schema-locations: schema.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   output:
     ansi:
       enabled: always
   shell:
     interactive:
       enabled: false
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
