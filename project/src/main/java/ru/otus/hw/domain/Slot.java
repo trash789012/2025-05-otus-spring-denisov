@@ -14,6 +14,7 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ import java.time.LocalDateTime;
 @Table(name = "slots")
 @NamedEntityGraph(name = "slot-group",
         attributeNodes = @NamedAttributeNode("bookedBy"))
+@Builder
 public class Slot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
