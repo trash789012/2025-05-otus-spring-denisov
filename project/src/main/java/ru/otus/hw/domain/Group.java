@@ -53,7 +53,7 @@ public class Group {
     @ManyToMany
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
-            name = "group_members",
+            name = "user_groups",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )

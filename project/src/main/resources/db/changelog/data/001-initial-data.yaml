@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-initial-data
+      author: denisovNA
+      context: dev
+      runOnChange: true
+      changes:
+        - loadData:
+            tableName: users
+            file: initial/users.csv
+            separator: ";"
+            encoding: UTF-8
+            relativeToChangelogFile: true
+        - loadData:
+            tableName: groups
+            file: initial/groups.csv
+            separator: ";"
+            encoding: UTF-8
+            relativeToChangelogFile: true
+        - loadData:
+            tableName: user_roles
+            file: initial/user_roles.csv
+            separator: ";"
+            encoding: UTF-8
+            relativeToChangelogFile: true
+        - loadData:
+            tableName: user_groups
+            file: initial/user_groups.csv
+            separator: ";"
+            encoding: UTF-8
+            relativeToChangelogFile: true
+        - loadData:
+            tableName: slots
+            file: initial/slots.csv
+            separator: ";"
+            encoding: UTF-8
+            relativeToChangelogFile: true
