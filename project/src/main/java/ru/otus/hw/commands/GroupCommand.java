@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.repositories.GroupRepository;
 
@@ -15,6 +16,7 @@ public class GroupCommand {
 
     private final GroupRepository groupRepository;
 
+    @Transactional(readOnly = true) //TODO: убрать
     @ShellMethod(key = "list-groups", value = "Вывести все группы")
     public String listGroups() {
         List<Group> groups = groupRepository.findAll();

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.repositories.UserRepository;
 
@@ -15,6 +16,7 @@ public class UserCommand {
 
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     @ShellMethod(key = "list-users", value = "Вывести всех пользователей")
     public String listUsers() {
         List<User> users = userRepository.findAll();
