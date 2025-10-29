@@ -16,7 +16,7 @@ public class UserCommand {
 
     private final UserRepository userRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) //todo: убрать
     @ShellMethod(key = "list-users", value = "Вывести всех пользователей")
     public String listUsers() {
         List<User> users = userRepository.findAll();
