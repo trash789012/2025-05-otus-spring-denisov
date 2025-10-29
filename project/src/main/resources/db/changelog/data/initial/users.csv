@@ -1,4 +1,4 @@
-id;name;password
-1;admin;admin
-2;user;user
-3;user2;user
+name;password
+admin;admin
+user;user
+user2;user

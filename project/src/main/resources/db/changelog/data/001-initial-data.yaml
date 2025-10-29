@@ -11,12 +11,22 @@ databaseChangeLog:
             separator: ";"
             encoding: UTF-8
             relativeToChangelogFile: true
+            columns:
+                - column:
+                      name: name
+                - column:
+                      name: password
         - loadData:
             tableName: groups
             file: initial/groups.csv
             separator: ";"
             encoding: UTF-8
             relativeToChangelogFile: true
+            columns:
+                - column:
+                      name: name
+                - column:
+                      name: description
         - loadData:
             tableName: user_roles
             file: initial/user_roles.csv
@@ -35,3 +45,12 @@ databaseChangeLog:
             separator: ";"
             encoding: UTF-8
             relativeToChangelogFile: true
+            columns:
+                - column:
+                      name: start_time
+                - column:
+                      name: end_time
+                - column:
+                      name: status
+                - column:
+                      name: group_id
