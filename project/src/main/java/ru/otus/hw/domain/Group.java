@@ -50,7 +50,7 @@ public class Group {
     private String description;
 
     @ToString.Exclude
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
             name = "user_groups",

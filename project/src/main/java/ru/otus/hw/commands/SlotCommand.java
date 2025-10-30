@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.domain.Slot;
 import ru.otus.hw.domain.enums.SlotStatus;
 import ru.otus.hw.repositories.GroupRepository;
@@ -20,6 +21,7 @@ public class SlotCommand {
 
     private final GroupRepository groupRepository;
 
+    @Transactional(readOnly = true) //todo: убрать
     @ShellMethod(key = "list-slots", value = "Вывести все слоты")
     public String listSlots() {
         List<Slot> slots = slotRepository.findAll();
@@ -50,6 +52,7 @@ public class SlotCommand {
         return "✅ Слот создан: " + start + " - " + end;
     }
 
+    @ShellMethod(key = "book-slot", value = "Забронировать слот")
     public String bookSlot(@ShellOption long slotId, @ShellOption long groupId) {
         var slot = slotRepository.findById(slotId).orElse(null);
         var group = groupRepository.findById(groupId).orElse(null);

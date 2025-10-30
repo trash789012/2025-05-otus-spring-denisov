@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "slots")
-@NamedEntityGraph(name = "slot-group",
+@NamedEntityGraph(name = "slot-group-graph",
         attributeNodes = @NamedAttributeNode("bookedBy"))
 @Builder
 public class Slot {

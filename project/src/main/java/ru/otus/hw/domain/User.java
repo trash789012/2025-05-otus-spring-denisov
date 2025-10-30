@@ -57,6 +57,7 @@ public class User {
     @ToString.Exclude
     @ElementCollection(targetClass = UserRole.class, fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
+    @Fetch(FetchMode.SUBSELECT)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     private List<UserRole> roles;
