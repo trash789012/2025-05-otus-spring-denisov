@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SlotService {
-    Optional<SlotDto> findById(Long id);
+    SlotDto findById(Long id);
 
     List<SlotDto> findAll();
 
@@ -14,5 +14,5 @@ public interface SlotService {
 
     SlotDto update(SlotDto slotDto);
 
-    SlotDto delete(Long id);
+    void delete(Long id);
 }

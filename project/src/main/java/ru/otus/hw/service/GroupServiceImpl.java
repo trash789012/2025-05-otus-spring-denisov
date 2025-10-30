@@ -66,8 +66,8 @@ public class GroupServiceImpl implements GroupService {
             throw new IllegalArgumentException("Group id is null");
         }
         validateBeforeSave(groupDto);
-        var savedGroup = prepareGroup(groupDto);
-        return groupConverter.toDto(savedGroup);
+        var updatedGroup = prepareGroup(groupDto);
+        return groupConverter.toDto(updatedGroup);
     }
 
     @Override
