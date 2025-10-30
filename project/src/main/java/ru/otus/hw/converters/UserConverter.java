@@ -14,4 +14,15 @@ public class UserConverter {
         );
     }
 
+    public User toEntity(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
+
+        return User.builder()
+                .id(userDto.id())
+                .name(userDto.name())
+                .build();
+    }
+
 }

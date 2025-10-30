@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.dto.GroupDto;
+import ru.otus.hw.dto.GroupFormDto;
+import ru.otus.hw.dto.SlotDto;
+import ru.otus.hw.dto.UserDto;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +34,24 @@ public class GroupConverter {
                         group.getSlots().stream()
                                 .map(slotConverter::toDto)
                                 .toList() : null
+        );
+    }
+
+    public GroupFormDto toDto(GroupDto group) {
+        if (group == null) {
+            return null;
+        }
+
+        return new GroupFormDto(
+                group.id(),
+                group.name(),
+                group.description(),
+                group.members().stream()
+                        .map(UserDto::id)
+                        .toList(),
+                group.slots().stream()
+                        .map(SlotDto::id)
+                        .toList()
         );
     }
 }
