@@ -52,6 +52,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupDto insert(GroupFormDto groupDto) {
         validateBeforeSave(groupDto);
         var savedGroup = prepareGroup(groupDto);
@@ -59,6 +60,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupDto update(GroupFormDto groupDto) {
         if (groupDto.id() == null) {
             throw new IllegalArgumentException("Group id is null");
@@ -69,6 +71,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public void deleteById(long id) {
         groupRepository.findById(id);
     }
