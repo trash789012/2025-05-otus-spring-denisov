@@ -9,8 +9,6 @@ import ru.otus.hw.dto.SlotDto;
 @RequiredArgsConstructor
 public class SlotConverter {
 
-    private final GroupConverter groupConverter;
-
     public SlotDto toDto(Slot slot) {
         if (slot == null) {
             return null;
@@ -21,8 +19,7 @@ public class SlotConverter {
                 slot.getStartTime(),
                 slot.getEndTime(),
                 slot.getStatus(),
-                (slot.getBookedBy()) != null ?
-                        groupConverter.toDto(slot.getBookedBy()) : null
+                ((slot.getBookedBy()) != null ? slot.getBookedBy().getId() : null)
         );
     }
 }
