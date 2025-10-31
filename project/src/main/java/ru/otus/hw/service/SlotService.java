@@ -10,6 +10,8 @@ public interface SlotService {
 
     List<SlotDto> findAll();
 
+    List<SlotDto> findByBookedBy(Long bookedById);
+
     SlotDto insert(SlotDto slotDto);
 
     SlotDto update(SlotDto slotDto);

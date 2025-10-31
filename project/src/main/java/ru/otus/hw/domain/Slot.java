@@ -50,6 +50,7 @@ public class Slot {
     @Column(nullable = false)
     private SlotStatus status;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group bookedBy;

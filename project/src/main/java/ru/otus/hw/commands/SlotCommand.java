@@ -39,6 +39,23 @@ public class SlotCommand {
         return sb.toString();
     }
 
+    @ShellMethod(key = "sbb", value = "Вывести все слоты забронированные группой")
+    public String listSlotsByBookedBy(Long bookedById) {
+        List<Slot> slots = slotRepository.findAllByBookedBy_Id(bookedById);
+        if (slots.isEmpty()) {
+            return "Слотов у группы нет";
+        }
+
+        StringBuilder sb = new StringBuilder("=== SLOTS ===\n");
+        slots.forEach(s -> sb.append(s.getId())
+                .append(". ").append(s.getStartTime())
+                .append(" - ").append(s.getEndTime())
+                .append(" [status=").append(s.getStatus())
+                .append("]\n"));
+
+        return sb.toString();
+    }
+
     @ShellMethod(key = "create-slot", value = "Создать свободный слот (пример: 2025-10-23T18:00)")
     public String createSlot(@ShellOption String start, @ShellOption String end) {
         LocalDateTime st = LocalDateTime.parse(start);

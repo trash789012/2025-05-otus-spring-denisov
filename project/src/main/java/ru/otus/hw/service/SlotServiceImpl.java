@@ -43,6 +43,13 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    public List<SlotDto> findByBookedBy(Long bookedById) {
+        return slotRepository.findAllByBookedBy_Id(bookedById).stream()
+                .map(slotConverter::toDto)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public SlotDto insert(SlotDto slotDto) {
         validateBeforeSave(slotDto);

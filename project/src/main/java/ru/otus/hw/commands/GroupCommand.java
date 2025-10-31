@@ -47,5 +47,4 @@ public class GroupCommand {
         groupRepository.save(group);
         return "✅ Группа создана: " + name;
     }
-
 }
