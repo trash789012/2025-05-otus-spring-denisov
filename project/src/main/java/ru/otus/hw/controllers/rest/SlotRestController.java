@@ -51,7 +51,7 @@ public class SlotRestController {
     public SlotDto updateSlot(@PathVariable Long id,
                               @RequestBody SlotDto slotDto) {
         if (!id.equals(slotDto.id())) {
-            throw new BadRequestException("Id in path and bady must match");
+            throw new BadRequestException("Id in path and body must match");
         }
 
         return slotService.update(slotDto);

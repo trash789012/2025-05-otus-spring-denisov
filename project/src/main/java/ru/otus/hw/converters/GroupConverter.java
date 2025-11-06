@@ -46,12 +46,14 @@ public class GroupConverter {
                 group.id(),
                 group.name(),
                 group.description(),
-                group.members().stream()
-                        .map(UserDto::id)
-                        .toList(),
-                group.slots().stream()
-                        .map(SlotDto::id)
-                        .toList()
+                (group.members() != null) ?
+                        group.members().stream()
+                                .map(UserDto::id)
+                                .toList() : null,
+                (group.slots() != null) ?
+                        group.slots().stream()
+                                .map(SlotDto::id)
+                                .toList() : null
         );
     }
 }
