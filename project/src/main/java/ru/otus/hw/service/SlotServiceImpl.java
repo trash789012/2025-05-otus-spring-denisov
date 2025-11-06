@@ -43,6 +43,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SlotDto> findByBookedBy(Long bookedById) {
         return slotRepository.findAllByBookedBy_Id(bookedById).stream()
                 .map(slotConverter::toDto)
@@ -69,6 +70,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         slotRepository.deleteById(id);
     }

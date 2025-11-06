@@ -4,16 +4,16 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: sa
-#  sql:
-#    init:
-#      mode: always
-#      data-locations: data.sql
-#      schema-locations: schema.sql
+  #  sql:
+  #    init:
+  #      mode: always
+  #      data-locations: data.sql
+  #      schema-locations: schema.sql
   jpa:
     generate-ddl: false
     hibernate:
       ddl-auto: validate #не будем автоматически генерировать сущности
-#      ddl-auto: update
+    #      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
