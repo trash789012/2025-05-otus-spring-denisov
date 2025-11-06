@@ -29,6 +29,7 @@ public class GroupServiceImpl implements GroupService {
     private final GroupConverter groupConverter;
 
     private record groupNestedObjects(List<User> members, List<Slot> slots) {
+
     }
 
     @Override

@@ -4,11 +4,6 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: sa
-  #  sql:
-  #    init:
-  #      mode: always
-  #      data-locations: data.sql
-  #      schema-locations: schema.sql
   jpa:
     generate-ddl: false
     hibernate:
@@ -34,9 +29,20 @@ spring:
   shell:
     interactive:
       enabled: true
+
   mvc:
     servlet:
-      path: /api/v1
+      path: /api/v1 #базовый url для ENDPoints
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
