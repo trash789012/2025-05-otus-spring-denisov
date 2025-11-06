@@ -34,6 +34,9 @@ spring:
   shell:
     interactive:
       enabled: true
+  mvc:
+    servlet:
+      path: /api/v1
 logging:
   level:
     org.hibernate.SQL: DEBUG
