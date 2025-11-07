@@ -30,11 +30,11 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    private final PathConfig servletParameters;
+    private final PathConfig pathConfig;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        PathPatternRequestMatcher.Builder pathApi = withDefaults().basePath(servletParameters.getApiBasePath());
+        PathPatternRequestMatcher.Builder pathApi = withDefaults().basePath(pathConfig.getApiBasePath());
 
         http.
                 csrf(AbstractHttpConfigurer::disable)
@@ -43,9 +43,10 @@ public class SecurityConfig {
                                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
+                        .requestMatchers(pathApi.matcher("/auth/**")).permitAll()
                         .requestMatchers(
-                                pathApi.matcher(servletParameters.getSwaggerUiPath() + "/**"),
-                                pathApi.matcher(servletParameters.getOpenApiDocsPath() + "/**")
+                                pathApi.matcher(pathConfig.getSwaggerUiPath() + "/**"),
+                                pathApi.matcher(pathConfig.getOpenApiDocsPath() + "/**")
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
