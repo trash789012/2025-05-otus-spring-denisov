@@ -12,12 +12,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.config.web.PathPatternRequestMatcherBuilderFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import ru.otus.hw.config.PathConfig;
 import ru.otus.hw.config.security.jwt.JwtAuthenticationFilter;
 
 import static org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher.withDefaults;
@@ -30,9 +30,11 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
+    private final PathConfig servletParameters;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        PathPatternRequestMatcher.Builder pathApi = withDefaults().basePath("/api/v1");
+        PathPatternRequestMatcher.Builder pathApi = withDefaults().basePath(servletParameters.getApiBasePath());
 
         http.
                 csrf(AbstractHttpConfigurer::disable)
@@ -40,19 +42,17 @@ public class SecurityConfig {
                         sm ->
                                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers(
-                                        pathApi.matcher("/swagger-ui/**"),
-                                        pathApi.matcher("/api-docs/**")
-                                ).permitAll()
-                                .requestMatchers(pathApi.matcher("/**")).authenticated()
-                                .anyRequest().authenticated()
+                        .requestMatchers(PathRequest.toH2Console()).permitAll()
+                        .requestMatchers(
+                                pathApi.matcher(servletParameters.getSwaggerUiPath() + "/**"),
+                                pathApi.matcher(servletParameters.getOpenApiDocsPath() + "/**")
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(
                         HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }
