@@ -43,6 +43,10 @@ springdoc:
     tags-sorter: alpha
     display-request-duration: true
 
+jwt:
+  secret: "SuperSecretJamKey2025!jabjbedjahwdjahwbdjhwbdjahbjwdbh"  #сменить вынести в ENV
+  expiration: 3600000  # 1 час
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
