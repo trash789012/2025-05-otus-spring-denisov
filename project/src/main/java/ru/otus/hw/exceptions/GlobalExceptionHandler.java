@@ -41,13 +41,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleError(ex, request, HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-//    @ExceptionHandler(NotFoundRequestException.class)
-//    public ResponseEntity<Object> handleBadRequest(
-//            NotFoundRequestException ex,
-//            WebRequest request) {
-//
-//        return handleError(ex, request, HttpStatus.NOT_FOUND, ex.getMessage());
-//    }
+    @ExceptionHandler(NotFoundRequestException.class)
+    public ResponseEntity<Object> handleBadRequest(
+            NotFoundRequestException ex,
+            WebRequest request) {
+
+        return handleError(ex, request, HttpStatus.NOT_FOUND, ex.getMessage());
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Object> handleBadRequest(
