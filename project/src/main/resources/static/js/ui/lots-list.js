@@ -200,13 +200,24 @@ export class Lots {
         emptyHeader.textContent = 'День/Время';
         emptyHeader.className = 'text-center align-middle fw-bold sticky-header';
         headerRow.appendChild(emptyHeader);
-
-        this.lots.forEach(time => {
-            const th = document.createElement('th');
-            th.textContent = time;
-            th.className = 'text-center align-middle sticky-header';
-            headerRow.appendChild(th);
-        });
+        // Time slots headers
+        const timeSlots = [];
+        for (let hour = 8; hour <= 20; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) {
+                const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                timeSlots.push(time);
+                const th = document.createElement('th');
+                th.textContent = time;
+                th.className = 'text-center align-middle sticky-header';
+                headerRow.appendChild(th);
+            }
+        }
+        // this.lots.forEach(time => {
+        //     const th = document.createElement('th');
+        //     th.textContent = time;
+        //     th.className = 'text-center align-middle sticky-header';
+        //     headerRow.appendChild(th);
+        // });
 
         this.timeSlotsTable.appendChild(headerRow);
 
@@ -230,42 +241,42 @@ export class Lots {
             row.appendChild(dayCell);
 
             // Time slot cells for this day
-            for (let timeIndex = 0; timeIndex < this.lots.length; timeIndex++) {
+            for (let timeIndex = 0; timeIndex < timeSlots.length; timeIndex++) {
                 const timeCell = document.createElement('td');
                 timeCell.className = 'time-slot position-relative';
 
                 // Randomly book some slots for demo purposes
-                if (Math.random() > 0.8) {
-                    timeCell.classList.add('booked');
-
-                    const randomGroup = this.lots[timeIndex].bookedById
-                    // const randomGroup = groupNames[Math.floor(Math.random() * groupNames.length)];
-                    const duration = Math.floor(Math.random() * 3) + 1; // 1-3 slots (30-90 minutes)
-
-                    const slotInfo = document.createElement('div');
-                    slotInfo.className = 'slot-info';
-
-                    const groupSpan = document.createElement('span');
-                    groupSpan.className = 'slot-group';
-                    groupSpan.textContent = randomGroup;
-
-                    const startTime = this.lots[timeIndex].startTime;
-                    const endTime = this.lots[timeIndex].endTime;
-
-                    const timeSpan = document.createElement('span');
-                    timeSpan.className = 'slot-time d-block';
-                    timeSpan.textContent = `${startTime} - ${endTime}`;
-
-                    slotInfo.appendChild(groupSpan);
-                    slotInfo.appendChild(timeSpan);
-                    timeCell.appendChild(slotInfo);
-
-                    // Set column span based on duration
-                    timeCell.colSpan = duration;
-
-                    // Skip next slots that are covered by this booking
-                    timeIndex += (duration - 1);
-                }
+                // if (Math.random() > 0.8) {
+                //     timeCell.classList.add('booked');
+                //
+                //     const randomGroup = this.lots[timeIndex].bookedById
+                //     // const randomGroup = groupNames[Math.floor(Math.random() * groupNames.length)];
+                //     const duration = Math.floor(Math.random() * 3) + 1; // 1-3 slots (30-90 minutes)
+                //
+                //     const slotInfo = document.createElement('div');
+                //     slotInfo.className = 'slot-info';
+                //
+                //     const groupSpan = document.createElement('span');
+                //     groupSpan.className = 'slot-group';
+                //     groupSpan.textContent = randomGroup;
+                //
+                //     const startTime = this.lots[timeIndex].startTime;
+                //     const endTime = this.lots[timeIndex].endTime;
+                //
+                //     const timeSpan = document.createElement('span');
+                //     timeSpan.className = 'slot-time d-block';
+                //     timeSpan.textContent = `${startTime} - ${endTime}`;
+                //
+                //     slotInfo.appendChild(groupSpan);
+                //     slotInfo.appendChild(timeSpan);
+                //     timeCell.appendChild(slotInfo);
+                //
+                //     // Set column span based on duration
+                //     timeCell.colSpan = duration;
+                //
+                //     // Skip next slots that are covered by this booking
+                //     timeIndex += (duration - 1);
+                // }
                 row.appendChild(timeCell);
             }
             this.timeSlotsTable.appendChild(row);
