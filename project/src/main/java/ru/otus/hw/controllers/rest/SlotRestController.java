@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/slot")
+@RequestMapping("/api/v1/slot")
 @Tag(name = "Slots", description = "Операции с временными слотами репетиций")
 public class SlotRestController {
 

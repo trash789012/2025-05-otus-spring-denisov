@@ -16,7 +16,6 @@ spring:
   h2:
     console:
       enabled: true
-      path: /h2-console
 
   liquibase:
     enabled: true
@@ -29,10 +28,6 @@ spring:
   shell:
     interactive:
       enabled: true
-
-  mvc:
-    servlet:
-      path: /api/v1 #базовый url для ENDPoints
 
 springdoc:
   api-docs:

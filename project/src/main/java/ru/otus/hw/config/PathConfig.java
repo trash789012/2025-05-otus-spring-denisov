@@ -15,7 +15,7 @@ public class PathConfig {
     private final String openApiDocsPath;
 
     public PathConfig(
-            @Value("${spring.mvc.servlet.path}") String baseApiPath,
+            @Value("${spring.mvc.servlet.path:/api/v1}") String baseApiPath,
             @Value("${springdoc.api-docs.path}") String swaggerUIPath,
             @Value("${springdoc.swagger-ui.path}") String swaggerDocsPath
     ) {

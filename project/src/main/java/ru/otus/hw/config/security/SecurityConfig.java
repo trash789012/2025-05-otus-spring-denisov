@@ -16,11 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import ru.otus.hw.config.PathConfig;
 import ru.otus.hw.config.security.jwt.JwtAuthenticationFilter;
-
-import static org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -34,7 +31,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        PathPatternRequestMatcher.Builder pathApi = withDefaults().basePath(pathConfig.getApiBasePath());
 
         http.
                 csrf(AbstractHttpConfigurer::disable)
@@ -43,10 +39,10 @@ public class SecurityConfig {
                                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
-                        .requestMatchers(pathApi.matcher("/auth/**")).permitAll()
+                        .requestMatchers(pathConfig.getApiBasePath() +"/auth/**").permitAll()
                         .requestMatchers(
-                                pathApi.matcher(pathConfig.getSwaggerUiPath() + "/**"),
-                                pathApi.matcher(pathConfig.getOpenApiDocsPath() + "/**")
+                                pathConfig.getSwaggerUiPath() + "/**",
+                                pathConfig.getOpenApiDocsPath() + "/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/group")
+@RequestMapping("/api/v1/group")
 @Tag(name = "Groups", description = "Операции с музыкальными группами")
 public class GroupRestController {
 
