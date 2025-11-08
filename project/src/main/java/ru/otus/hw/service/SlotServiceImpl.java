@@ -72,6 +72,11 @@ public class SlotServiceImpl implements SlotService {
     @Override
     @Transactional
     public void delete(Long id) {
+        slotRepository.findById(id)
+                        .orElseThrow(
+                                () -> new EntityNotFoundException("Slot with id %d not found".formatted(id))
+                        );
+
         slotRepository.deleteById(id);
     }
 
