@@ -71,6 +71,8 @@ export class Lots {
                 // }
             }
         });
+
+        this.lots = [];
     }
 
     init = async () => {
@@ -80,7 +82,7 @@ export class Lots {
 
     loadLots = async () => {
         try {
-            this.lots = await fetchAllSlots(); //TODO: сделать нормально
+            this.lots = await fetchAllSlots();
             await this.initCalendar(this.currentView, this.currentOffset);
             console.log(this.lots);
         } catch (error) {
@@ -147,21 +149,30 @@ export class Lots {
 
     updateDateRange = async (view = 'week', offset = 0) => {
         if (view === 'week') {
-            const now = new Date();
-            const startOfWeek = new Date(now);
-            startOfWeek.setDate(now.getDate() - now.getDay() + 1 + (offset * 7)); // Monday
-
-            const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
+            const range = await this.getWeekRange(offset);
             const options = { day: 'numeric', month: 'long' };
-            const startDate = startOfWeek.toLocaleDateString('ru-RU', options);
-            const endDate = endOfWeek.toLocaleDateString('ru-RU', options);
+            const startDate = range.startOfWeek.toLocaleDateString('ru-RU', options);
+            const endDate = range.endOfWeek.toLocaleDateString('ru-RU', options);
             this.currentDateRange.textContent = `с ${startDate} по ${endDate}`;
         } else {
             const now = new Date();
             const monthDate = new Date(now.getFullYear(), now.getMonth() + offset, 1);
             this.currentDateRange.textContent = monthDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
         }
+    }
+
+    getWeekRange = async (offset = 0) => {
+        const now = new Date();
+        const startOfWeek = new Date(now);
+
+        // Базовая корректировка на понедельник
+        const dayCorrection = now.getDay() === 0 ? -6 : 1 - now.getDay();
+        startOfWeek.setDate(now.getDate() + dayCorrection + (offset * 7));
+
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        return { startOfWeek, endOfWeek };
     }
 
     showNewSlotModal = () => {
@@ -201,32 +212,25 @@ export class Lots {
         emptyHeader.className = 'text-center align-middle fw-bold sticky-header';
         headerRow.appendChild(emptyHeader);
         // Time slots headers
-        const timeSlots = [];
-        for (let hour = 8; hour <= 20; hour++) {
+        const emptyTimeSlots = [];
+        for (let hour = 8; hour <= 23; hour++) {
             for (let minute = 0; minute < 60; minute += 30) {
                 const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                timeSlots.push(time);
+                emptyTimeSlots.push(time);
                 const th = document.createElement('th');
                 th.textContent = time;
                 th.className = 'text-center align-middle sticky-header';
                 headerRow.appendChild(th);
             }
         }
-        // this.lots.forEach(time => {
-        //     const th = document.createElement('th');
-        //     th.textContent = time;
-        //     th.className = 'text-center align-middle sticky-header';
-        //     headerRow.appendChild(th);
-        // });
 
         this.timeSlotsTable.appendChild(headerRow);
 
         // Create rows for each day
         //
+        const weekRange = await this.getWeekRange(offset);
         const options = { day: 'numeric', month: 'numeric' };
-        const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay() + 1 + (offset * 7));
+        //
         for (let day = 0; day < 7; day++) {
             const row = document.createElement('tr');
 
@@ -234,55 +238,70 @@ export class Lots {
             const dayCell = document.createElement('th');
             dayCell.className = 'text-center align-middle fw-bold sticky-column';
             //
-            dayCell.textContent = '' + startOfWeek.toLocaleDateString('ru-RU', options);
+            dayCell.textContent = '' + weekRange.startOfWeek.toLocaleDateString('ru-RU', options);
             //
             dayCell.textContent += ' (' + daysOfWeek[day] + ')';
 
             row.appendChild(dayCell);
 
             // Time slot cells for this day
-            for (let timeIndex = 0; timeIndex < timeSlots.length; timeIndex++) {
+            for (let timeIndex = 0; timeIndex < emptyTimeSlots.length; timeIndex++) {
                 const timeCell = document.createElement('td');
                 timeCell.className = 'time-slot position-relative';
 
-                // Randomly book some slots for demo purposes
-                // if (Math.random() > 0.8) {
-                //     timeCell.classList.add('booked');
-                //
-                //     const randomGroup = this.lots[timeIndex].bookedById
-                //     // const randomGroup = groupNames[Math.floor(Math.random() * groupNames.length)];
-                //     const duration = Math.floor(Math.random() * 3) + 1; // 1-3 slots (30-90 minutes)
-                //
-                //     const slotInfo = document.createElement('div');
-                //     slotInfo.className = 'slot-info';
-                //
-                //     const groupSpan = document.createElement('span');
-                //     groupSpan.className = 'slot-group';
-                //     groupSpan.textContent = randomGroup;
-                //
-                //     const startTime = this.lots[timeIndex].startTime;
-                //     const endTime = this.lots[timeIndex].endTime;
-                //
-                //     const timeSpan = document.createElement('span');
-                //     timeSpan.className = 'slot-time d-block';
-                //     timeSpan.textContent = `${startTime} - ${endTime}`;
-                //
-                //     slotInfo.appendChild(groupSpan);
-                //     slotInfo.appendChild(timeSpan);
-                //     timeCell.appendChild(slotInfo);
-                //
-                //     // Set column span based on duration
-                //     timeCell.colSpan = duration;
-                //
-                //     // Skip next slots that are covered by this booking
-                //     timeIndex += (duration - 1);
-                // }
+                const searchTime = emptyTimeSlots[timeIndex];
+                const searchDateFormatted = weekRange.startOfWeek.toISOString().split('T')[0];
+                const searchDateTime = `${searchDateFormatted}T${searchTime}:00`;
+
+                const foundSlot = this.lots.find((slot) => {
+                    return slot.startTime === searchDateTime
+                });
+                if (foundSlot) {
+                    //нашли слот, добавим его
+                    timeCell.classList.add('booked');
+
+                    const randomGroup = foundSlot.bookedById;
+                    // const randomGroup = groupNames[Math.floor(Math.random() * groupNames.length)];
+                    const duration = Math.floor(Math.random() * 3) + 1; // 1-3 slots (30-90 minutes)
+
+                    const slotInfo = document.createElement('div');
+                    slotInfo.className = 'slot-info';
+
+                    const groupSpan = document.createElement('span');
+                    groupSpan.className = 'slot-group';
+                    groupSpan.textContent = randomGroup;
+
+                    const startTime = new Date(foundSlot.startTime).toLocaleTimeString('ru-RU', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const endTime = new Date(foundSlot.endTime).toLocaleTimeString('ru-RU', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const timeSpan = document.createElement('span');
+                    timeSpan.className = 'slot-time d-block';
+                    timeSpan.textContent = `${startTime} - ${endTime}`;
+
+                    slotInfo.appendChild(groupSpan);
+                    slotInfo.appendChild(timeSpan);
+                    timeCell.appendChild(slotInfo);
+
+                    // Set column span based on duration
+                    // timeCell.colSpan = duration;
+                    timeCell.colSpan = 1;
+
+                    // Skip next slots that are covered by this booking
+                    // timeIndex += (duration - 1);
+                }
                 row.appendChild(timeCell);
             }
             this.timeSlotsTable.appendChild(row);
 
             //
-            startOfWeek.setDate(startOfWeek.getDate() + 1);
+            weekRange.startOfWeek.setDate(weekRange.startOfWeek.getDate() + 1);
             //
         }
     }
