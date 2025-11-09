@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.dto.GroupDto;
 import ru.otus.hw.dto.GroupFormDto;
+import ru.otus.hw.dto.GroupSlotsDto;
 import ru.otus.hw.dto.SlotDto;
 import ru.otus.hw.dto.UserDto;
 

@@ -8,5 +8,5 @@ public record SlotDto(Long id,
                       LocalDateTime startTime,
                       LocalDateTime endTime,
                       SlotStatus status,
-                      Long bookedById) {
+                      GroupSlotsDto group) {
 }

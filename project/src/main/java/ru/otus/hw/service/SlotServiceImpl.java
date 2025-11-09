@@ -96,10 +96,10 @@ public class SlotServiceImpl implements SlotService {
         }
 
         Group bookedBy;
-        if (slotDto.bookedById() != null) {
-            bookedBy = groupRepository.findById(slotDto.bookedById())
+        if (slotDto.group() != null) {
+            bookedBy = groupRepository.findById(slotDto.group().id())
                     .orElseThrow(() ->
-                            new EntityNotFoundException("Group with id %d not found".formatted(slotDto.bookedById()))
+                            new EntityNotFoundException("Group with id %d not found".formatted(slotDto.group().id()))
                     );
 
             slot.setBookedBy(bookedBy);

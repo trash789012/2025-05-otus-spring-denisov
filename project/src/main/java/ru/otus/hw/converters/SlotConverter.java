@@ -3,6 +3,7 @@ package ru.otus.hw.converters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.Slot;
+import ru.otus.hw.dto.GroupSlotsDto;
 import ru.otus.hw.dto.SlotDto;
 
 @Component
@@ -19,7 +20,11 @@ public class SlotConverter {
                 slot.getStartTime(),
                 slot.getEndTime(),
                 slot.getStatus(),
-                ((slot.getBookedBy()) != null ? slot.getBookedBy().getId() : null)
+                ((slot.getBookedBy()) != null ? new GroupSlotsDto(
+                      slot.getBookedBy().getId(),
+                        slot.getBookedBy().getName(),
+                        slot.getBookedBy().getDescription()
+                ) : null)
         );
     }
 }
