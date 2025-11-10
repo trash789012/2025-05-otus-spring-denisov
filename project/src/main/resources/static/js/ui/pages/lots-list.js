@@ -38,11 +38,9 @@ export class Lots {
             slotDuration: 'slotDuration',
             groupSelector: 'slotGroup',
             saveSlotBtn: 'saveSlotBtn',
+            newSlotForm: 'newSlotForm',
             onSave: this.onSaveSlotBtnClick
         });
-
-        //form
-        this.newSlotForm = document.getElementById('newSlotForm');
 
         //selectors
         this.weekNextSelector = document.querySelector('.btn-next-week')
@@ -110,33 +108,21 @@ export class Lots {
     }
 
     onSaveSlotBtnClick = async () => {
-        if (!this.newSlotForm.checkValidity()) {
-            this.newSlotForm.classList.add('was-validated');
+        if (!this.slotModal.validateForm()){
             return null;
         }
 
-        const newSlot = this.slotModal.getSlotForApi();
         try {
-            await createSlot(newSlot)
+            const newSlot = this.slotModal.getSlotForApi();
+            await createSlot(newSlot);
+            //close modal
+            this.slotModal.close();
+            //reinit calendar
+            await this.loadLots();
         } catch (e) {
             console.error(e);
         }
-        // // In a real app, you would save to a database here
-        // const date = this.slotDate.value;
-        // const time = this.slotTime.value;
-        // const group = document.getElementById('slotGroup').value;
-        //
-        // console.log('New slot saved:', { date, time, duration, group });
-        //
-        // // Close modal and reset form
-        // const modal = bootstrap.Modal.getInstance(document.getElementById('newSlotModal'));
-        // modal.hide();
-        // form.reset();
-        // form.classList.remove('was-validated');
-        //
-        // // Refresh calendar to show new slot
-        // initCalendar();
-        //
+
         // // Show success message
         // alert('Time slot created successfully!');
     }
@@ -282,12 +268,6 @@ export class Lots {
             this.timeSlotsTable.appendChild(weekRow);
         }
     }
-}
-
-function getWeekNumber(date) {
-    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 }
 
 // function showEditSlotModal(slotElement) {

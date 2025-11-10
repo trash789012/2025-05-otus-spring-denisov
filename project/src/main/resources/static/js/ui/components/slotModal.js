@@ -16,6 +16,8 @@ export class SlotModal {
 
         this.slotId = 0;
 
+        this.newSlotForm = document.getElementById(parameters.newSlotForm);
+
         this.saveSlotBtn.onclick = () => {
             parameters.onSave();
         }
@@ -60,16 +62,6 @@ export class SlotModal {
         };
     }
 
-    // calculateEndTime(startDateTime, duration) {
-    //     const start = new Date(startDateTime);
-    //     const end = new Date(start);
-    //
-    //     end.setMinutes(end.getMinutes() + duration);
-    //
-    //     // Возвращаем в том же ISO формате (без UTC-сдвига)
-    //     return end.toISOString().slice(0, 19); // "2025-11-10T10:30:00"
-    // }
-
     calculateEndTime(startDateTime, durationMinutes) {
         const start = new Date(startDateTime);
         const end = new Date(start.getTime() + durationMinutes * 60000);
@@ -77,6 +69,22 @@ export class SlotModal {
         // Форматируем вручную в локальное ISO (YYYY-MM-DDTHH:mm:ss)
         const pad = n => n.toString().padStart(2, '0');
         return `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}T${pad(end.getHours())}:${pad(end.getMinutes())}:${pad(end.getSeconds())}`;
+    }
+
+    close() {
+        const modal = bootstrap.Modal.getInstance(this.newSlotModal);
+        modal.hide();
+        this.newSlotForm.reset();
+        this.newSlotForm.classList.remove('was-validated');
+    }
+
+    validateForm() {
+        if (!this.newSlotForm.checkValidity()) {
+            this.newSlotForm.classList.add('was-validated');
+            return false;
+        }
+
+        return true
     }
 
 }
