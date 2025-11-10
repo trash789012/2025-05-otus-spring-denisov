@@ -30,7 +30,8 @@ export class SlotModal {
         this.slotTime.readOnly = true;
 
         //продолжительность
-        this.slotDuration.value = timeSlotCell.dataset.duration * 30 - 30;
+        this.slotDuration.value = 120; //по дефолту
+        // this.slotDuration.value = timeSlotCell.dataset.duration * 30 - 30;
 
         //показываем
         this.modal.show();
