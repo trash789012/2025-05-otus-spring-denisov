@@ -8,6 +8,7 @@ import ru.otus.hw.domain.Group;
 import ru.otus.hw.domain.Slot;
 import ru.otus.hw.domain.enums.SlotStatus;
 import ru.otus.hw.dto.SlotDto;
+import ru.otus.hw.dto.SlotFormDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;
@@ -61,7 +62,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    public SlotDto insert(SlotDto slotDto) {
+    public SlotDto insert(SlotFormDto slotDto) {
         validateBeforeSave(slotDto);
         var savedSlot = prepareSlot(slotDto);
         return slotConverter.toDto(savedSlot);
@@ -69,7 +70,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    public SlotDto update(SlotDto slotDto) {
+    public SlotDto update(SlotFormDto slotDto) {
         if (slotDto.id() == null) {
             throw new IllegalArgumentException("Slot id is null");
         }
@@ -89,9 +90,9 @@ public class SlotServiceImpl implements SlotService {
         slotRepository.deleteById(id);
     }
 
-    private Slot prepareSlot(SlotDto slotDto) {
+    private Slot prepareSlot(SlotFormDto slotDto) {
         Slot slot;
-        if (slotDto.id() != null) {
+        if (slotDto.id() != 0) {
             slot = slotRepository.findById(slotDto.id())
                     .orElseThrow(() ->
                             new EntityNotFoundException("Slot with id %d not found".formatted(slotDto.id()))
@@ -105,20 +106,20 @@ public class SlotServiceImpl implements SlotService {
         }
 
         Group bookedBy;
-        if (slotDto.group() != null) {
-            bookedBy = groupRepository.findById(slotDto.group().id())
+        if (slotDto.groupId() != null) {
+            bookedBy = groupRepository.findById(slotDto.groupId())
                     .orElseThrow(() ->
-                            new EntityNotFoundException("Group with id %d not found".formatted(slotDto.group().id()))
+                            new EntityNotFoundException("Group with id %d not found".formatted(slotDto.groupId()))
                     );
 
             slot.setBookedBy(bookedBy);
             slot.setStatus(SlotStatus.BOOKED);
         }
 
-        return slot;
+        return slotRepository.save(slot);
     }
 
-    private void validateBeforeSave(SlotDto slotDto) {
+    private void validateBeforeSave(SlotFormDto slotDto) {
         if (slotDto.startTime() == null || slotDto.endTime() == null) {
             throw new IllegalArgumentException("Start time and end time must not be null");
         }

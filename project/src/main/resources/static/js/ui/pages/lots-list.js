@@ -1,4 +1,4 @@
-import {fetchAllSlots, fetchSlotsByPeriod} from "../../api/slotApi.js";
+import {createSlot, fetchAllSlots, fetchSlotsByPeriod} from "../../api/slotApi.js";
 import {SlotsTable} from "../components/slotsTable.js";
 import {fetchAllGroups} from "../../api/groupApi.js";
 import {SlotModal} from "../components/slotModal.js";
@@ -114,10 +114,16 @@ export class Lots {
             this.newSlotForm.classList.add('was-validated');
             return null;
         }
+
+        const newSlot = this.slotModal.getSlotForApi();
+        try {
+            await createSlot(newSlot)
+        } catch (e) {
+            console.error(e);
+        }
         // // In a real app, you would save to a database here
         // const date = this.slotDate.value;
         // const time = this.slotTime.value;
-        // const duration = parseInt(document.getElementById('slotDuration').value);
         // const group = document.getElementById('slotGroup').value;
         //
         // console.log('New slot saved:', { date, time, duration, group });

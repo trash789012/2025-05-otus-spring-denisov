@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.SlotDto;
+import ru.otus.hw.dto.SlotFormDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.SlotService;
 
@@ -54,14 +55,14 @@ public class SlotRestController {
     @Operation(summary = "Создать новый слот")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SlotDto createSlot(@RequestBody SlotDto slotDto) {
+    public SlotDto createSlot(@RequestBody SlotFormDto slotDto) {
         return slotService.insert(slotDto);
     }
 
     @Operation(summary = "Обновить существующий слот")
     @PutMapping("/{id}")
     public SlotDto updateSlot(@PathVariable Long id,
-                              @RequestBody SlotDto slotDto) {
+                              @RequestBody SlotFormDto slotDto) {
         if (!id.equals(slotDto.id())) {
             throw new BadRequestException("Id in path and body must match");
         }

@@ -10,8 +10,11 @@ export class SlotModal {
         this.slotDate = document.getElementById(parameters.dateSelector);
         this.slotTime = document.getElementById(parameters.timeSelector);
         this.slotDuration = document.getElementById(parameters.slotDuration);
-        this.groupSelector = new GroupSelector(parameters.groupSelector);
         this.saveSlotBtn = document.getElementById(parameters.saveSlotBtn);
+
+        this.groupSelector = new GroupSelector(parameters.groupSelector);
+
+        this.slotId = 0;
 
         this.saveSlotBtn.onclick = () => {
             parameters.onSave();
@@ -40,4 +43,40 @@ export class SlotModal {
         //показываем
         this.modal.show();
     }
+
+    getSlotForApi() {
+
+        const duration = this.slotDuration.value;
+        const startTime = `${this.slotDate.value}T${this.slotTime.value}:00`
+        const endTime = this.calculateEndTime(startTime, duration);
+        const groupId = this.groupSelector.getValue();
+
+        return {
+            id: this.slotId,
+            startTime: startTime,
+            endTime: endTime,
+            status: null,
+            groupId: groupId,
+        };
+    }
+
+    // calculateEndTime(startDateTime, duration) {
+    //     const start = new Date(startDateTime);
+    //     const end = new Date(start);
+    //
+    //     end.setMinutes(end.getMinutes() + duration);
+    //
+    //     // Возвращаем в том же ISO формате (без UTC-сдвига)
+    //     return end.toISOString().slice(0, 19); // "2025-11-10T10:30:00"
+    // }
+
+    calculateEndTime(startDateTime, durationMinutes) {
+        const start = new Date(startDateTime);
+        const end = new Date(start.getTime() + durationMinutes * 60000);
+
+        // Форматируем вручную в локальное ISO (YYYY-MM-DDTHH:mm:ss)
+        const pad = n => n.toString().padStart(2, '0');
+        return `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}T${pad(end.getHours())}:${pad(end.getMinutes())}:${pad(end.getSeconds())}`;
+    }
+
 }

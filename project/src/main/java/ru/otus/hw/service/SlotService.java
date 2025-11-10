@@ -1,6 +1,7 @@
 package ru.otus.hw.service;
 
 import ru.otus.hw.dto.SlotDto;
+import ru.otus.hw.dto.SlotFormDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,9 +15,9 @@ public interface SlotService {
 
     List<SlotDto> findByPeriod(LocalDateTime start, LocalDateTime end);
 
-    SlotDto insert(SlotDto slotDto);
+    SlotDto insert(SlotFormDto slotDto);
 
-    SlotDto update(SlotDto slotDto);
+    SlotDto update(SlotFormDto slotDto);
 
     void delete(Long id);
 }
