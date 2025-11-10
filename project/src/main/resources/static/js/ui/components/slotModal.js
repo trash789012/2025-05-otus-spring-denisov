@@ -10,8 +10,12 @@ export class SlotModal {
         this.slotDate = document.getElementById(parameters.dateSelector);
         this.slotTime = document.getElementById(parameters.timeSelector);
         this.slotDuration = document.getElementById(parameters.slotDuration);
-
         this.groupSelector = new GroupSelector(parameters.groupSelector);
+        this.saveSlotBtn = document.getElementById(parameters.saveSlotBtn);
+
+        this.saveSlotBtn.onclick = () => {
+            parameters.onSave();
+        }
     }
 
     showCreateNew(groups, timeSlotCell) {

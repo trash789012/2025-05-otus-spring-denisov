@@ -15,7 +15,6 @@ export class Lots {
         this.currentOffset = 0;
         this.weekViewBtn = document.getElementById('weekViewBtn');
         this.monthViewBtn = document.getElementById('monthViewBtn');
-        this.saveSlotBtn = document.getElementById('saveSlotBtn');
 
         //button handlers
         if (this.weekViewBtn) {
@@ -28,11 +27,6 @@ export class Lots {
                 this.onMonthBtnClick().catch(console.error);
             }
         }
-        if (this.saveSlotBtn) {
-            this.saveSlotBtn.onclick = () => {
-                this.onSaveSlotBtnClick().catch(console.error);
-            }
-        }
 
         this.currentDateRange = document.getElementById('currentDateRange');
 
@@ -43,6 +37,8 @@ export class Lots {
             timeSelector: 'slotTimeStart',
             slotDuration: 'slotDuration',
             groupSelector: 'slotGroup',
+            saveSlotBtn: 'saveSlotBtn',
+            onSave: this.onSaveSlotBtnClick
         });
 
         //form
@@ -72,11 +68,11 @@ export class Lots {
         document.addEventListener('click', function (e) {
             const timeSlot = e.target.closest('.time-slot');
             if (timeSlot) {
-                // if (timeSlot.classList.contains('booked')) {
-                //     showEditSlotModal(timeSlot);
-                // } else {
-                that.showNewSlotModal(timeSlot);
-                // }
+                if (timeSlot.classList.contains('booked')) {
+                    // showEditSlotModal(timeSlot);
+                } else {
+                   that.showNewSlotModal(timeSlot).catch(console.error);
+                }
             }
         });
 
