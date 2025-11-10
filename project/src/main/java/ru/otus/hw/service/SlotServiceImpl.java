@@ -12,6 +12,7 @@ import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -51,6 +52,14 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<SlotDto> findByPeriod(LocalDateTime start, LocalDateTime end) {
+        return slotRepository.findAllByStartTimeBetween(start, end).stream()
+                .map(slotConverter::toDto)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public SlotDto insert(SlotDto slotDto) {
         validateBeforeSave(slotDto);
@@ -73,9 +82,9 @@ public class SlotServiceImpl implements SlotService {
     @Transactional
     public void delete(Long id) {
         slotRepository.findById(id)
-                        .orElseThrow(
-                                () -> new EntityNotFoundException("Slot with id %d not found".formatted(id))
-                        );
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Slot with id %d not found".formatted(id))
+                );
 
         slotRepository.deleteById(id);
     }

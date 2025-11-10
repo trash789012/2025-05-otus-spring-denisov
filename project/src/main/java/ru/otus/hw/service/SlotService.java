@@ -2,6 +2,7 @@ package ru.otus.hw.service;
 
 import ru.otus.hw.dto.SlotDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SlotService {
@@ -10,6 +11,8 @@ public interface SlotService {
     List<SlotDto> findAll();
 
     List<SlotDto> findByBookedBy(Long bookedById);
+
+    List<SlotDto> findByPeriod(LocalDateTime start, LocalDateTime end);
 
     SlotDto insert(SlotDto slotDto);
 
