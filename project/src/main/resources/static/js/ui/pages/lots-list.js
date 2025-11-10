@@ -1,7 +1,9 @@
 import {fetchAllSlots, fetchSlotsByPeriod} from "../../api/slotApi.js";
-import {LotsTable} from "../components/lotsTable.js";
+import {SlotsTable} from "../components/slotsTable.js";
+import {fetchAllGroups} from "../../api/groupApi.js";
+import {SlotModal} from "../components/slotModal.js";
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const page = new Lots();
     page.init().catch(console.error);
 });
@@ -32,14 +34,19 @@ export class Lots {
             }
         }
 
-        //modal
         this.currentDateRange = document.getElementById('currentDateRange');
-        this.newSlotModal = document.getElementById('newSlotModal');
+
+        //modal
+        this.slotModal = new SlotModal({
+            selector: 'newSlotModal',
+            dateSelector: 'slotDate',
+            timeSelector: 'slotTimeStart',
+            slotDuration: 'slotDuration',
+            groupSelector: 'slotGroup',
+        });
 
         //form
         this.newSlotForm = document.getElementById('newSlotForm');
-        this.slotDate = document.getElementById('slotDate');
-        this.slotTime = document.getElementById('slotTime');
 
         //selectors
         this.weekNextSelector = document.querySelector('.btn-next-week')
@@ -58,17 +65,17 @@ export class Lots {
         }
 
         //table
-        this.lotsTable = new LotsTable(document.getElementById('timeSlotsTable'));
+        this.lotsTable = new SlotsTable(document.getElementById('timeSlotsTable'));
 
         // Handle time slot clicks
         let that = this;
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const timeSlot = e.target.closest('.time-slot');
             if (timeSlot) {
                 // if (timeSlot.classList.contains('booked')) {
                 //     showEditSlotModal(timeSlot);
                 // } else {
-                that.showNewSlotModal();
+                that.showNewSlotModal(timeSlot);
                 // }
             }
         });
@@ -84,7 +91,8 @@ export class Lots {
     loadLots = async () => {
         try {
             if (this.currentView === 'week') {
-                const range = await this.getWeekRange(this.currentOffset);
+                const range =  this.lotsTable.getWeekRange(this.currentOffset);
+
                 this.lots = await fetchSlotsByPeriod(range.startIso, range.endIso);
             } else {
                 this.lots = await fetchAllSlots();
@@ -110,7 +118,6 @@ export class Lots {
             this.newSlotForm.classList.add('was-validated');
             return null;
         }
-
         // // In a real app, you would save to a database here
         // const date = this.slotDate.value;
         // const time = this.slotTime.value;
@@ -154,51 +161,25 @@ export class Lots {
 
     updateDateRange = async (view = 'week', offset = 0) => {
         if (view === 'week') {
-            const range = await this.getWeekRange(offset);
-            const options = { day: 'numeric', month: 'long' };
+            const range = this.lotsTable.getWeekRange(offset);
+            const options = {day: 'numeric', month: 'long'};
             const startDate = range.startOfWeek.toLocaleDateString('ru-RU', options);
             const endDate = range.endOfWeek.toLocaleDateString('ru-RU', options);
             this.currentDateRange.textContent = `с ${startDate} по ${endDate}`;
         } else {
             const now = new Date();
             const monthDate = new Date(now.getFullYear(), now.getMonth() + offset, 1);
-            this.currentDateRange.textContent = monthDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+            this.currentDateRange.textContent = monthDate.toLocaleDateString('ru-RU', {month: 'long', year: 'numeric'});
         }
     }
 
-    getWeekRange = async (offset = 0) => {
-        const now = new Date();
-        const startOfWeek = new Date(now);
-
-        // Базовая корректировка на понедельник
-        const dayCorrection = now.getDay() === 0 ? -6 : 1 - now.getDay();
-        startOfWeek.setDate(now.getDate() + dayCorrection + (offset * 7));
-        startOfWeek.setHours(0, 0, 0, 0); // нижняя граница — 00:00:00
-
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999); // верхняя граница — 23:59:59.999
-
-        const toApiFormat = (date) => {
-            const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-            return local.toISOString().split('.')[0];
-        };
-
-        // return { startOfWeek, endOfWeek };
-        return {
-            startOfWeek,
-            endOfWeek,
-            startIso: toApiFormat(startOfWeek),
-            endIso: toApiFormat(endOfWeek),
-        };
-    }
-
-    showNewSlotModal = () => {
-        const modal = new bootstrap.Modal(this.newSlotModal);
-        modal.show();
-
-        // Set default date to today
-        this.slotDate.valueAsDate = new Date();
+    showNewSlotModal = async (timeSlot) => {
+        try {
+            const groups = await fetchAllGroups();
+            this.slotModal.showCreateNew(groups, timeSlot);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     initCalendar = async (view = 'week', offset = 0) => {

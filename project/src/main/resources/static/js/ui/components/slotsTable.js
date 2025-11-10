@@ -1,7 +1,7 @@
-export class LotsTable {
+export class SlotsTable {
     constructor(tableElement) {
         if (!tableElement) {
-            throw new Error('LotsTable requires a valid table element');
+            throw new Error('SlotsTable requires a valid table element');
         }
         this.timeSlotsTable = tableElement;
     }
@@ -38,7 +38,7 @@ export class LotsTable {
 
         // Рассчёт текущей недели
         const weekRange = this.getWeekRange(offset);
-        const options = { day: 'numeric', month: 'numeric' };
+        const options = {day: 'numeric', month: 'numeric'};
 
         for (let day = 0; day < 7; day++) {
             const row = document.createElement('tr');
@@ -61,7 +61,7 @@ export class LotsTable {
                     return slot.startTime === searchDateTime
                 });
 
-                const timeCell = this.createCell(foundSlot);
+                const timeCell = this.createCell(foundSlot, searchDateTime);
 
                 if (foundSlot) {
                     const start = new Date(foundSlot.startTime);
@@ -86,9 +86,15 @@ export class LotsTable {
 
     }
 
-    createCell(slot = null) {
+    createCell(slot = null, dateTime) {
         const timeCell = document.createElement('td');
         timeCell.className = 'time-slot position-relative';
+
+        if  (dateTime && !slot) {
+            timeCell.dataset.start = dateTime;
+            timeCell.dataset.end = null;
+            timeCell.dataset.duration = 1;
+        }
 
         if (slot) {
             timeCell.classList.add('booked');
@@ -114,6 +120,19 @@ export class LotsTable {
             timeSpan.className = 'slot-time d-block';
             timeSpan.textContent = `${startTime} - ${endTime}`;
 
+            //duration
+            const start = new Date(slot.startTime);
+            const end = new Date(slot.endTime);
+            const durationMinutes = (end - start) / 60000;
+            const durationSlots = durationMinutes / 30;
+
+            timeCell.colSpan = durationSlots + 1;
+
+            timeCell.dataset.start = slot.startTime;
+            timeCell.dataset.end = slot.endTime;
+            timeCell.dataset.duration = timeCell.colSpan;
+
+            //append cell elements
             slotInfo.appendChild(groupSpan);
             slotInfo.appendChild(timeSpan);
 
@@ -126,14 +145,30 @@ export class LotsTable {
     getWeekRange(offset = 0) {
         const now = new Date();
         const startOfWeek = new Date(now);
-
         // Базовая корректировка на понедельник
+
         const dayCorrection = now.getDay() === 0 ? -6 : 1 - now.getDay();
         startOfWeek.setDate(now.getDate() + dayCorrection + (offset * 7));
 
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-        return { startOfWeek, endOfWeek };
+        const startOfWeekIso = new Date(startOfWeek);
+        startOfWeekIso.setHours(0, 0, 0, 0); // нижняя граница — 00:00:00
+
+        const endOfWeekIso = new Date(endOfWeek);
+        endOfWeekIso.setHours(23, 59, 59, 999); // верхняя граница — 23:59:59.999
+
+        const toApiFormat = (date) => {
+            const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+            return local.toISOString().split('.')[0];
+        };
+
+        return {
+            startOfWeek,
+            endOfWeek,
+            startIso: toApiFormat(startOfWeekIso),
+            endIso: toApiFormat(endOfWeekIso),
+        };
     }
 }

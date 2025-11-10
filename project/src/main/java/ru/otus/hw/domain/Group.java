@@ -62,7 +62,8 @@ public class Group {
     @ToString.Exclude
     @OneToMany(mappedBy = "bookedBy",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    //TODO: lazy ?
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Slot> slots;
 }

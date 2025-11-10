@@ -1,4 +1,4 @@
-import {get} from "../utils/http.js";
+import {get, post} from "../utils/http.js";
 
 export async function fetchAllSlots() {
     return get(`/slot`);
@@ -24,4 +24,12 @@ export async function fetchSlotsByPeriod(startDate, endDate) {
     }
 
     return get(url);
+}
+
+export async function createSlot(slot) {
+    return post(`/slot`, slot,
+        {
+            headers: {'Content-Type': 'application/json'},
+        }
+    );
 }
