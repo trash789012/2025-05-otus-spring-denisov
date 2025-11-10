@@ -23,24 +23,32 @@ export class SlotModal {
         }
     }
 
-    showCreateNew(groups, timeSlotCell) {
+    show(groups, timeSlotCell) {
+        //id
+        this.slotId = timeSlotCell.dataset.id;
+
+        //init
         this.modal = new bootstrap.Modal(this.newSlotModal);
 
-        this.groupSelector.render(groups)
-
-        const startDateTime = new Date(timeSlotCell.dataset.start);
+        //группы
+        this.groupSelector.render(groups, timeSlotCell.dataset.groupId)
 
         //дата
+        const startDateTime = new Date(timeSlotCell.dataset.start);
+
         this.slotDate.value = startDateTime.toISOString().split('T')[0]; // yyyy-MM-dd
         this.slotDate.readOnly = true;
 
         //время начала
-        this.slotTime.value = startDateTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        this.slotTime.value = startDateTime.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
         this.slotTime.readOnly = true;
 
         //продолжительность
-        this.slotDuration.value = 120; //по дефолту
-        // this.slotDuration.value = timeSlotCell.dataset.duration * 30 - 30;
+        if (!timeSlotCell.dataset.id) {
+            this.slotDuration.value = 120; //по дефолту
+        } else {
+            this.slotDuration.value = timeSlotCell.dataset.duration * 30 - 30;
+        }
 
         //показываем
         this.modal.show();

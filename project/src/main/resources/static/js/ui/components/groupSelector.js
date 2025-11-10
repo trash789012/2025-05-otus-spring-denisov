@@ -4,17 +4,16 @@ export class GroupSelector {
         if (!this.groupSelector) {
             throw new Error(`GroupSelector not found: ${selector}`);
         }
-        this.groupId = groupId;
     }
 
-    render(groups) {
+    render(groups, groupId = 0) {
         this.groupSelector.innerHTML = '';
 
         groups.forEach(group => {
             const option = document.createElement('option');
             option.value = group.id;
             option.textContent = group.name;
-            option.selected = this.groupId === group.id;
+            option.selected = groupId == group.id;
 
             this.groupSelector.appendChild(option);
         });

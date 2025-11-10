@@ -92,18 +92,19 @@ public class SlotServiceImpl implements SlotService {
 
     private Slot prepareSlot(SlotFormDto slotDto) {
         Slot slot;
-        if (slotDto.id() != 0) {
+        if (slotDto.id() != null && slotDto.id() != 0) {
             slot = slotRepository.findById(slotDto.id())
                     .orElseThrow(() ->
                             new EntityNotFoundException("Slot with id %d not found".formatted(slotDto.id()))
                     );
         } else {
             slot = Slot.builder().
-                    startTime(slotDto.startTime()).
-                    endTime(slotDto.endTime()).
                     status(SlotStatus.FREE).
                     build();
         }
+
+        slot.setStartTime(slotDto.startTime());
+        slot.setEndTime(slotDto.endTime());
 
         Group bookedBy;
         if (slotDto.groupId() != null) {
@@ -114,6 +115,9 @@ public class SlotServiceImpl implements SlotService {
 
             slot.setBookedBy(bookedBy);
             slot.setStatus(SlotStatus.BOOKED);
+        } else {
+            slot.setStatus(SlotStatus.FREE);
+            slot.setBookedBy(null);
         }
 
         return slotRepository.save(slot);

@@ -1,4 +1,4 @@
-import {createSlot, fetchAllSlots, fetchSlotsByPeriod} from "../../api/slotApi.js";
+import {createSlot, fetchAllSlots, fetchSlotsByPeriod, updateSlot} from "../../api/slotApi.js";
 import {SlotsTable} from "../components/slotsTable.js";
 import {fetchAllGroups} from "../../api/groupApi.js";
 import {SlotModal} from "../components/slotModal.js";
@@ -67,9 +67,9 @@ export class Lots {
             const timeSlot = e.target.closest('.time-slot');
             if (timeSlot) {
                 if (timeSlot.classList.contains('booked')) {
-                    // showEditSlotModal(timeSlot);
+                    that.showSlotModal(timeSlot).catch(console.error);
                 } else {
-                   that.showNewSlotModal(timeSlot).catch(console.error);
+                   that.showSlotModal(timeSlot).catch(console.error);
                 }
             }
         });
@@ -113,18 +113,19 @@ export class Lots {
         }
 
         try {
-            const newSlot = this.slotModal.getSlotForApi();
-            await createSlot(newSlot);
+            const slotDto = this.slotModal.getSlotForApi();
+            if (slotDto.id == null) {
+                await createSlot(slotDto);
+            } else {
+                await updateSlot(slotDto.id, slotDto);
+            }
             //close modal
             this.slotModal.close();
             //reinit calendar
-            await this.loadLots();
+            this.loadLots().catch(console.error);
         } catch (e) {
             console.error(e);
         }
-
-        // // Show success message
-        // alert('Time slot created successfully!');
     }
 
     onWeekBtnClick = async () => {
@@ -161,10 +162,10 @@ export class Lots {
         }
     }
 
-    showNewSlotModal = async (timeSlot) => {
+    showSlotModal = async (timeSlot) => {
         try {
             const groups = await fetchAllGroups();
-            this.slotModal.showCreateNew(groups, timeSlot);
+            this.slotModal.show(groups, timeSlot);
         } catch (error) {
             console.error(error);
         }

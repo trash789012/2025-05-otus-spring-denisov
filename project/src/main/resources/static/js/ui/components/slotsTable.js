@@ -131,6 +131,8 @@ export class SlotsTable {
             timeCell.dataset.start = slot.startTime;
             timeCell.dataset.end = slot.endTime;
             timeCell.dataset.duration = timeCell.colSpan;
+            timeCell.dataset.id = slot.id;
+            timeCell.dataset.groupId = slot.group?.id;
 
             //append cell elements
             slotInfo.appendChild(groupSpan);
