@@ -9,6 +9,8 @@ export class ProfileTabs {
         this.saveProfileBtn.onclick = () => {
             params.saveBtnEvent();
         }
+
+        this.viewGroupMembersEvt = params.viewGroupMembersEvt;
     }
 
     renderUserInfo(user) {
@@ -64,7 +66,7 @@ export class ProfileTabs {
             // Количество участников
             const memberCount = document.createElement('p');
             memberCount.className = 'text-secondary small mb-3';
-            memberCount.textContent = `Участников: ${group.memberCount || 0}`;
+            memberCount.textContent = `Участников: ${group.memberIds?.length || 0}`;
 
             // Кнопка просмотра
             const viewButton = document.createElement('button');
@@ -78,8 +80,12 @@ export class ProfileTabs {
             viewButton.appendChild(document.createTextNode('Посмотреть участников'));
 
             // Добавляем обработчик события
+            let that = this;
             viewButton.addEventListener('click', function() {
-                // viewGroupMembers(group.id);
+                let groupId = this.getAttribute('data-group-id');
+                that.viewGroupMembersEvt(groupId);
+                // const modal = new bootstrap.Modal(document.getElementById('groupMembersModal'));
+                // modal.show();
             });
 
             // Собираем карточку
@@ -94,6 +100,49 @@ export class ProfileTabs {
         });
     }
 
+    renderGroupMembers(members = []) {
+        const membersList = document.getElementById('groupMembersList');
+        membersList.innerHTML = ''; // Очищаем список
+
+        if (!members || members.length === 0) {
+            const emptyMessage = document.createElement('li');
+            emptyMessage.className = 'list-group-item text-center text-muted';
+            emptyMessage.textContent = 'В группе пока нет участников';
+            membersList.appendChild(emptyMessage);
+            return;
+        }
+
+        members.forEach(member => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item d-flex align-items-center';
+
+            // Иконка пользователя
+            const userIcon = document.createElement('i');
+            userIcon.className = 'bi bi-person-circle text-primary fs-4 me-2';
+
+            // Контейнер для информации
+            const infoContainer = document.createElement('div');
+
+            // Имя участника
+            const memberName = document.createElement('div');
+            memberName.className = 'fw-bold';
+            memberName.textContent = member.name || `${member.firstName} ${member.lastName}`;
+
+            // Роль/инструмент
+            const memberRole = document.createElement('small');
+            memberRole.className = 'text-muted';
+            memberRole.textContent = member.role || member.instrument || 'Участник';
+
+            // Собираем структуру
+            infoContainer.appendChild(memberName);
+            infoContainer.appendChild(memberRole);
+
+            listItem.appendChild(userIcon);
+            listItem.appendChild(infoContainer);
+
+            membersList.appendChild(listItem);
+        });
+    }
 
     prepareUserInfoApi() {
         return {
@@ -103,5 +152,13 @@ export class ProfileTabs {
             lastName: this.lastName.value,
             shortDescription: this.shortDescription.value,
         };
+    }
+
+    showMembersModal(members = []) {
+        const modal = new bootstrap.Modal(document.getElementById('groupMembersModal'));
+
+        this.renderGroupMembers(members)
+
+        modal.show();
     }
 }

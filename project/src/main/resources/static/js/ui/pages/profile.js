@@ -14,26 +14,40 @@ export class Profile {
             userDescription: 'userDescription',
             saveProfileBtn: 'saveProfileBtn',
             saveBtnEvent: this.onSaveProfileBtnClick,
+            viewGroupMembersEvt: this.onViewGroupMembers
         });
     }
 
-    init = async () => {
-        this.loadProfile().catch(console.error);
-        this.loadGroups().catch(console.error);
-    }
 
-    loadProfile = async () => {
+    init = async () => {
         try {
             const user = await getUserData();
+            this.loadProfile(user).catch(console.error);
+            this.loadGroups(user).catch(console.error);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    loadProfile = async (user) => {
+        try {
             this.view.renderUserInfo(user);
         } catch (e) {
             console.error(e);
         }
     }
 
-    loadGroups = async () => {
+    loadGroups = async (user) => {
         try {
-            this.view.renderGroups(null);
+            this.view.renderGroups(user.groups);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onViewGroupMembers = async (groupId = 0) => {
+        try {
+            this.view.showMembersModal(null);
         } catch (e) {
             console.error(e);
         }
@@ -44,7 +58,7 @@ export class Profile {
             const userDto = this.view.prepareUserInfoApi();
             const result = await updateUser(userDto.id, userDto);
             if (result.success) {
-                this.loadProfile().catch(console.error);
+                this.init().catch(console.error);
             }
         } catch (e) {
             console.error(e);
