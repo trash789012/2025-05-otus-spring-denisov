@@ -12,6 +12,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedEntityGraphs;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -33,11 +35,19 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "groups")
-@NamedEntityGraph(
-        name = "group-members-graph",
-        attributeNodes = {
-                @NamedAttributeNode("members")
-        })
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "group-members-graph",
+                attributeNodes = @NamedAttributeNode("members")
+        ),
+        @NamedEntityGraph(
+                name = "group-with-members-and-slots",
+                attributeNodes = {
+                        @NamedAttributeNode("members"),
+                        @NamedAttributeNode("slots")
+                }
+        )
+})
 @Builder
 public class Group {
     @Id
@@ -57,6 +67,7 @@ public class Group {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+//    @BatchSize(size = 10)
     private List<User> members;
 
     @ToString.Exclude

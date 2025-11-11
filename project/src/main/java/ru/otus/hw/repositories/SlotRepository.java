@@ -14,5 +14,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
 
     List<Slot> findAllByBookedBy_Id(Long groupId);
 
+    @EntityGraph("slot-group-graph")
     List<Slot> findAllByStartTimeBetween(LocalDateTime start, LocalDateTime end);
 }

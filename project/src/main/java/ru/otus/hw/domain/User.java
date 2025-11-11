@@ -14,6 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedEntityGraphs;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import ru.otus.hw.domain.enums.UserRole;
@@ -36,11 +39,19 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-@NamedEntityGraph(
-        name = "user-roles-graph",
-        attributeNodes = {
-                @NamedAttributeNode("roles")
-        })
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "user-roles-graph",
+                attributeNodes = @NamedAttributeNode("roles")
+        ),
+        @NamedEntityGraph(
+                name = "user-with-groups",
+                attributeNodes = {
+                        @NamedAttributeNode("roles"),
+                        @NamedAttributeNode("groups")
+                }
+        )
+})
 @Builder
 public class User {
     @Id
@@ -73,11 +84,5 @@ public class User {
     @ToString.Exclude
     @Fetch(FetchMode.SUBSELECT)
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "members")
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "user_groups",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "group_id")
-//    )
     private List<Group> groups;
 }

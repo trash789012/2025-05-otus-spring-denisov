@@ -47,6 +47,7 @@ export class Profile {
 
     onViewGroupMembers = async (groupId = 0) => {
         try {
+            //TODO:   get members by groud id
             this.view.showMembersModal(null);
         } catch (e) {
             console.error(e);

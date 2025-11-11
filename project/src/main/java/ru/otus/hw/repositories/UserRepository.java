@@ -2,11 +2,28 @@ package ru.otus.hw.repositories;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.otus.hw.domain.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph("user-roles-graph")
     Optional<User> findByName(String username);
+
+    @EntityGraph(attributePaths = {"groups", "groups.members"})
+    @Query("SELECT u FROM User u WHERE u.name = :username")
+    Optional<User> findByNameWithGroupsAndMembers(@Param("username") String username);
+
+    // Загрузка пользователя с группами
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.groups WHERE u.name = :username")
+    Optional<User> findByNameWithGroups(@Param("username") String username);
+
+    // Загрузка нескольких пользователей по ID с ролями (для участников групп)
+    @EntityGraph("user-roles-graph")
+    @Query("SELECT u FROM User u WHERE u.id IN :userIds")
+    List<User> findAllByIdsWithRoles(@Param("userIds") List<Long> userIds);
+
 }

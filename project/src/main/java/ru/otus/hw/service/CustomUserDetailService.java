@@ -34,6 +34,15 @@ public class CustomUserDetailService implements UserDetailsService {
         return userConverter.toDto(dbUser);
     }
 
+    @Transactional(readOnly = true)
+    public UserDto findByNameWithGroupsAndMembers(String username) {
+        var dbUser = userRepository.findByNameWithGroupsAndMembers(username)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User with name %s not found".formatted(username))
+                );
+        return userConverter.toDto(dbUser);
+    }
+
     @Transactional
     public UserDto updateUserInfo(UserDto userDto) {
         var userDb = getUserByName(userDto.name());

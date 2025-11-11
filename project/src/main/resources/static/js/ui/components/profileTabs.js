@@ -84,8 +84,6 @@ export class ProfileTabs {
             viewButton.addEventListener('click', function() {
                 let groupId = this.getAttribute('data-group-id');
                 that.viewGroupMembersEvt(groupId);
-                // const modal = new bootstrap.Modal(document.getElementById('groupMembersModal'));
-                // modal.show();
             });
 
             // Собираем карточку

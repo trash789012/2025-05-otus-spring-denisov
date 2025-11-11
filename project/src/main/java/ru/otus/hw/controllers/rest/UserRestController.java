@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.UserDto;
 import ru.otus.hw.exceptions.BadRequestException;
+import ru.otus.hw.repositories.UserRepository;
 import ru.otus.hw.service.CustomUserDetailService;
 
 @RestController
@@ -24,10 +25,11 @@ public class UserRestController {
 
     private final CustomUserDetailService userDetailsService;
 
+
     @Operation(summary = "Получить информацию по текущему авторизованному пользователю")
     @GetMapping("/self")
     public UserDto getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        return userDetailsService.findByUserName(userDetails.getUsername());
+        return userDetailsService.findByNameWithGroupsAndMembers(userDetails.getUsername());
     }
 
     @Operation(summary = "Обновить основные данные о пользователе")
@@ -36,7 +38,7 @@ public class UserRestController {
                               @RequestBody UserDto userDto,
                               @AuthenticationPrincipal UserDetails userDetails
     ) {
-
+        //TODO: change for select exists id only (N+1)
         var userDb = userDetailsService.findByUserName(userDetails.getUsername());
         if (!id.equals(userDb.id())) {
             throw new BadRequestException("Id in path and principal must match");
