@@ -3,10 +3,13 @@ package ru.otus.hw.controllers.rest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.otus.hw.dto.AuthRequestDto;
+import ru.otus.hw.dto.AuthResponseDto;
 import ru.otus.hw.service.AuthService;
 
 @RestController
@@ -19,7 +22,9 @@ public class AuthController {
 
     @Operation(summary = "Создать новый токен")
     @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password) {
-        return authService.generateToken(username, password);
+    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto request) {
+        var token = authService.generateToken(request.username(), request.password());
+
+        return ResponseEntity.ok(new AuthResponseDto(token));
     }
 }

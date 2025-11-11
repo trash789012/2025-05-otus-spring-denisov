@@ -56,7 +56,7 @@ export async function post(url, data, options = {}) {
             }
 
             const errors = data;
-            console.error('Ошибка валидации:', errors);
+            console.error('Ошибка:', errors);
             return { success: false, errors};
         }
 
@@ -136,4 +136,11 @@ export async function getCsrf() {
     }
 
     return null;
+}
+
+export async function getCurrentUser() {
+    return {
+        id: 1,
+        name: "admin"
+    };
 }

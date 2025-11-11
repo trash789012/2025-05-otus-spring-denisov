@@ -12,29 +12,9 @@
 <body class="bg-light">
 <div class="container-fluid">
     <div class="container-fluid">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-            <div class="container">
-                <a class="navbar-brand fw-bold" href="#">
-                    <i class="bi bi-calendar-week me-2"></i>JamTime
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link active" href="#"><i class="bi bi-house-door me-1"></i> Home</a>-->
-<!--                        </li>-->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="bi bi-gear me-1"></i> Личный кабинет</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="bi bi-box-arrow-right me-1"></i> Выйти</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+
+        <!-- menu -->
+        <div th:replace="~{fragments/menu :: main-menu}"></div>
 
         <div class="container">
             <div class="row mb-4">
@@ -51,9 +31,6 @@
                             <i class="bi bi-calendar-month me-1"></i>Месяц
                         </button>
                     </div>
-<!--                    <button id="newSlotBtn" class="btn btn-success ms-2">-->
-<!--                        <i class="bi bi-plus-circle me-2"></i>Забронировать-->
-<!--                    </button>-->
                 </div>
             </div>
 
@@ -64,9 +41,9 @@
                             <button class="btn btn-outline-secondary me-2 btn-prev-week">
                                 <i class="bi bi-arrow-left"></i>
                             </button>
-<!--                            <span class="fw-bold fs-5">-->
-<!--                                <span id="weekTitle">Current Week</span>-->
-<!--                            </span>-->
+                            <!--                            <span class="fw-bold fs-5">-->
+                            <!--                                <span id="weekTitle">Current Week</span>-->
+                            <!--                            </span>-->
                             <button class="btn btn-outline-secondary ms-2 btn-next-week">
                                 <i class="bi bi-arrow-right"></i>
                             </button>
@@ -99,7 +76,8 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Create New Time Slot</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="newSlotForm">
@@ -113,7 +91,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="slotDuration" class="form-label">Продолжительность (Мин.)</label>
-                            <input type="number" step="30" value="120" min="30" class="form-control" id="slotDuration" required>
+                            <input type="number" step="30" value="120" min="30" class="form-control" id="slotDuration"
+                                   required>
                         </div>
                         <div class="mb-3">
                             <label for="slotGroup" class="form-label">Группа</label>
@@ -131,14 +110,12 @@
             </div>
         </div>
     </div>
-    <footer class="bg-light text-center py-3 mt-4 border-top">
-        <div class="container">
-            <p class="text-muted mb-0">© JamTime. All rights reserved.</p>
-        </div>
-    </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script type="module" src="../static/js/ui/pages/lots-list.js" th:src="@{/js/ui/pages/lots-list.js}"></script>
+    <!--  footer  -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../static/js/ui/pages/lots-list.js" th:src="@{/js/ui/pages/lots-list.js}"></script>
 
 </body>
 </html>

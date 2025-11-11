@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему | JamTime</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #e2ecff, #f9f9f9);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-logo i {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            padding: 0.75rem;
+        }
+
+        .btn-google {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            color: #555;
+            width: 100%;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google:hover {
+            background-color: #f8f9fa;
+        }
+
+        .google-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="login-logo">
+        <i class="bi bi-calendar-week"></i>
+        <h4 class="mt-2 fw-bold text-primary">JamTime</h4>
+    </div>
+
+    <form id="loginForm">
+        <div class="mb-3">
+            <label for="username" class="form-label">Имя пользователя</label>
+            <input type="text" class="form-control" id="username" placeholder="Введите имя" required>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="form-label">Пароль</label>
+            <input type="password" class="form-control" id="password" placeholder="Введите пароль" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Войти
+        </button>
+    </form>
+
+    <div class="divider">или</div>
+
+    <button class="btn btn-google" id="googleLoginBtn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="google-icon" alt="">
+        Войти через Google
+    </button>
+
+    <div class="text-center mt-4">
+        <small class="text-muted">© JamTime</small>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="../static/js/ui/pages/login.js" th:src="@{/js/ui/pages/login.js}"></script>
+
+<!--<script type="module">-->
+<!--    // import {post} from "../static/js/utils/http.js";-->
+
+<!--    const form = document.getElementById("loginForm");-->
+<!--    form.addEventListener("submit", async (e) => {-->
+<!--        e.preventDefault();-->
+<!--        const username = form.username.value.trim();-->
+<!--        const password = form.password.value.trim();-->
+
+<!--        try {-->
+<!--            const res = await post("/api/v1/auth/login", { username, password });-->
+<!--            localStorage.setItem("token", res.accessToken);-->
+<!--            window.location.href = "/"; // переход в календарь-->
+<!--        } catch (err) {-->
+<!--            alert("Ошибка входа: " + (err.message || "неверные данные"));-->
+<!--        }-->
+<!--    });-->
+
+<!--    document.getElementById("googleLoginBtn").addEventListener("click", () => {-->
+<!--        window.location.href = "/oauth2/authorization/google";-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>

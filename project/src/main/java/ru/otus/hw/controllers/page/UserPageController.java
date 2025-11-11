@@ -4,11 +4,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class SlotPageController {
-
-    @GetMapping("/")
-    public String slotPage() {
-        return "index";
+public class UserPageController {
+    @GetMapping("/profile")
+    public String userPage() {
+        return "profile";
     }
-
 }

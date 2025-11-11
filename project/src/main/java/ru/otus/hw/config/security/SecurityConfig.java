@@ -38,14 +38,15 @@ public class SecurityConfig {
                         sm ->
                                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(PathRequest.toH2Console()).permitAll()
-//                        .requestMatchers(pathConfig.getApiBasePath() +"/auth/**").permitAll()
-//                        .requestMatchers(
-//                                pathConfig.getSwaggerUiPath() + "/**",
-//                                pathConfig.getOpenApiDocsPath() + "/**"
-//                        ).permitAll()
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                        .requestMatchers(PathRequest.toH2Console()).permitAll()
+                                .requestMatchers(pathConfig.getApiBasePath() + "/auth/**").permitAll()
+                                .requestMatchers( "/login/**", "/css/**", "/js/**").permitAll()
+                                .requestMatchers(
+                                        pathConfig.getSwaggerUiPath() + "/**",
+                                        pathConfig.getOpenApiDocsPath() + "/**"
+                                ).permitAll()
+                                .anyRequest().authenticated()
+//                                .anyRequest().permitAll()
                 )
                 .headers(headers -> headers.frameOptions(
                         HeadersConfigurer.FrameOptionsConfig::sameOrigin)
