@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.config.security.SecurityUserDetails;
 import ru.otus.hw.converters.UserConverter;
+import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.UserDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.UserRepository;
@@ -23,20 +24,31 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var dbUser = userRepository.findByName(username)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("User with name %s not found".formatted(username))
-                );
-
+        var dbUser = getUserByName(username);
         return new SecurityUserDetails(dbUser);
     }
 
     @Transactional(readOnly = true)
     public UserDto findByUserName(String username) {
-        var dbUser = userRepository.findByName(username)
+        var dbUser = getUserByName(username);
+        return userConverter.toDto(dbUser);
+    }
+
+    @Transactional
+    public UserDto updateUserInfo(UserDto userDto) {
+        var userDb = getUserByName(userDto.name());
+
+        userDb.setFirstName(userDto.firstName());
+        userDb.setLastName(userDto.lastName());
+        userDb.setShortDescription(userDto.shortDescription());
+
+        return userConverter.toDto(userRepository.save(userDb));
+    }
+
+    private User getUserByName(String username) {
+        return userRepository.findByName(username)
                 .orElseThrow(
                         () -> new EntityNotFoundException("User with name %s not found".formatted(username))
                 );
-        return userConverter.toDto(dbUser);
     }
 }

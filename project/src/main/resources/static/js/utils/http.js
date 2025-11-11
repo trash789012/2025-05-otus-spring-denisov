@@ -74,7 +74,7 @@ export async function post(url, data, options = {}) {
         const result = await response.json();
         return {success: true, result};
     } catch (error) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! ${error.message}`);
     }
 }
 
@@ -90,7 +90,7 @@ export async function put(url, data, options = {}) {
             }
         });
 
-        if (response.status === 401 || response.status === 403) {
+        if (response?.status === 401 || response?.status === 403) {
             localStorage.removeItem("token");
             window.location.href = "/login";
             return;
@@ -111,7 +111,7 @@ export async function put(url, data, options = {}) {
         const result = await response.json();
         return {success: true, result};
     } catch (error) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! ${error.message}`);
     }
 }
 
@@ -125,7 +125,7 @@ export async function del(url) {
         }
     });
 
-    if (response.status === 401 || response.status === 403) {
+    if (response?.status === 401 || response?.status === 403) {
         localStorage.removeItem("token");
         window.location.href = "/login";
         return;
@@ -140,13 +140,6 @@ export async function del(url) {
 
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
-}
-
-export async function getCurrentUser() {
-    return {
-        id: 1,
-        name: "admin"
-    };
 }
 
 function getAuthHeader() {

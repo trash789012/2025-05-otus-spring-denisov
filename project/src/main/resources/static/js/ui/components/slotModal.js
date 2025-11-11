@@ -121,7 +121,7 @@ export class SlotModal {
             return false;
         }
 
-        return true
+        return true;
     }
 
 }

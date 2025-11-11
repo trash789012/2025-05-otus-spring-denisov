@@ -1,4 +1,5 @@
-import {getUserData} from "../../api/userApi.js";
+import {getUserData, updateUser} from "../../api/userApi.js";
+import {ProfileTabs} from "../components/profileTabs.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const profilePage = new Profile();
@@ -7,9 +8,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Profile {
     constructor() {
-        this.firstName = document.getElementById("userName");
-        this.lastName = document.getElementById("userLastName");
-        this.shortDescription = document.getElementById("userDescription");
+        this.view = new ProfileTabs({
+            userName: 'userName',
+            userLastName: 'userLastName',
+            userDescription: 'userDescription',
+            saveProfileBtn: 'saveProfileBtn',
+            saveBtnEvent: this.onSaveProfileBtnClick,
+        });
     }
 
     init = async () => {
@@ -19,9 +24,19 @@ export class Profile {
     loadProfile = async () => {
         try {
             const user = await getUserData();
-            this.firstName.value = user.firstName;
-            this.lastName.value = user.lastName;
-            this.shortDescription.value = user.shortDescription;
+            this.view.renderUserInfo(user);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onSaveProfileBtnClick = async () => {
+        try {
+            const userDto = this.view.prepareUserInfoApi();
+            const result = await updateUser(userDto.id, userDto);
+            if (result.success) {
+                this.loadProfile().catch(console.error);
+            }
         } catch (e) {
             console.error(e);
         }
