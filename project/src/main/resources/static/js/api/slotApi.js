@@ -1,4 +1,8 @@
-import {get, post, put} from "../utils/http.js";
+import {del, get, post, put} from "../utils/http.js";
+
+export async function fetchSlotById(id) {
+    return get(`/slot/${id}`);
+}
 
 export async function fetchAllSlots() {
     return get(`/slot`);
@@ -40,4 +44,8 @@ export async function updateSlot(id, slot) {
             headers: {'Content-Type': 'application/json'},
         }
     );
+}
+
+export async function deleteSlot(id) {
+    return del(`/slot/${id}`);
 }

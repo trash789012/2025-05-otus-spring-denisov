@@ -1,4 +1,11 @@
-import {createSlot, fetchAllSlots, fetchSlotsByPeriod, updateSlot} from "../../api/slotApi.js";
+import {
+    createSlot,
+    deleteSlot,
+    fetchAllSlots,
+    fetchSlotById,
+    fetchSlotsByPeriod,
+    updateSlot
+} from "../../api/slotApi.js";
 import {SlotsTable} from "../components/slotsTable.js";
 import {fetchAllGroups} from "../../api/groupApi.js";
 import {SlotModal} from "../components/slotModal.js";
@@ -38,8 +45,10 @@ export class Lots {
             slotDuration: 'slotDuration',
             groupSelector: 'slotGroup',
             saveSlotBtn: 'saveSlotBtn',
+            deleteSlotBtn: 'deleteSlotBtn',
             newSlotForm: 'newSlotForm',
-            onSave: this.onSaveSlotBtnClick
+            onSave: this.onSaveSlotBtnClick,
+            onDelete: this.onDeleteSlotBtnClick,
         });
 
         //selectors
@@ -69,7 +78,7 @@ export class Lots {
                 if (timeSlot.classList.contains('booked')) {
                     that.showSlotModal(timeSlot).catch(console.error);
                 } else {
-                   that.showSlotModal(timeSlot).catch(console.error);
+                    that.showSlotModal(timeSlot).catch(console.error);
                 }
             }
         });
@@ -85,7 +94,7 @@ export class Lots {
     loadLots = async () => {
         try {
             if (this.currentView === 'week') {
-                const range =  this.lotsTable.getWeekRange(this.currentOffset);
+                const range = this.lotsTable.getWeekRange(this.currentOffset);
 
                 this.lots = await fetchSlotsByPeriod(range.startIso, range.endIso);
             } else {
@@ -108,7 +117,7 @@ export class Lots {
     }
 
     onSaveSlotBtnClick = async () => {
-        if (!this.slotModal.validateForm()){
+        if (!this.slotModal.validateForm()) {
             return null;
         }
 
@@ -122,6 +131,17 @@ export class Lots {
             //close modal
             this.slotModal.close();
             //reinit calendar
+            this.loadLots().catch(console.error);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onDeleteSlotBtnClick = async () => {
+        try {
+            const slotDto = this.slotModal.getSlotForApi();
+            await deleteSlot(slotDto.id);
+            this.slotModal.close();
             this.loadLots().catch(console.error);
         } catch (e) {
             console.error(e);
@@ -165,7 +185,13 @@ export class Lots {
     showSlotModal = async (timeSlot) => {
         try {
             const groups = await fetchAllGroups();
-            this.slotModal.show(groups, timeSlot);
+            if (timeSlot.dataset.id) {
+                const timeSlotDb = await fetchSlotById(timeSlot.dataset.id)
+                console.log(timeSlotDb);
+                this.slotModal.show(groups, timeSlot, timeSlotDb);
+            } else {
+                this.slotModal.show(groups, timeSlot);
+            }
         } catch (error) {
             console.error(error);
         }

@@ -11,6 +11,7 @@ export class SlotModal {
         this.slotTime = document.getElementById(parameters.timeSelector);
         this.slotDuration = document.getElementById(parameters.slotDuration);
         this.saveSlotBtn = document.getElementById(parameters.saveSlotBtn);
+        this.deleteSlotBtn = document.getElementById(parameters.deleteSlotBtn);
 
         this.groupSelector = new GroupSelector(parameters.groupSelector);
 
@@ -21,20 +22,43 @@ export class SlotModal {
         this.saveSlotBtn.onclick = () => {
             parameters.onSave();
         }
+
+        this.deleteSlotBtn.onclick = () => {
+            parameters.onDelete();
+        }
     }
 
-    show(groups, timeSlotCell) {
+    show(groups, timeSlotCell, timeSlotDb = null) {
         //id
-        this.slotId = timeSlotCell.dataset.id;
+        if (timeSlotDb) {
+            this.slotId = timeSlotDb.id;
+        } else {
+            this.slotId = timeSlotCell.dataset.id;
+        }
+
+        if (this.slotId) {
+            document.querySelector('#newSlotModal .modal-title').textContent = 'Редактировать слот';
+            this.deleteSlotBtn.hidden = false;
+        } else {
+            document.querySelector('#newSlotModal .modal-title').textContent = 'Создать новый слот';
+            this.deleteSlotBtn.hidden = true;
+        }
 
         //init
         this.modal = new bootstrap.Modal(this.newSlotModal);
 
         //группы
-        this.groupSelector.render(groups, timeSlotCell.dataset.groupId)
+        if (timeSlotDb) {
+            this.groupSelector.render(groups, timeSlotDb.group?.id)
+        } else {
+            this.groupSelector.render(groups, timeSlotCell.dataset.groupId)
+        }
 
         //дата
-        const startDateTime = new Date(timeSlotCell.dataset.start);
+        let startDateTime = new Date(timeSlotCell.dataset.start);
+        if (timeSlotDb) {
+            startDateTime = new Date(timeSlotDb.startTime);
+        }
 
         this.slotDate.value = startDateTime.toISOString().split('T')[0]; // yyyy-MM-dd
         this.slotDate.readOnly = true;
@@ -44,10 +68,16 @@ export class SlotModal {
         this.slotTime.readOnly = true;
 
         //продолжительность
-        if (!timeSlotCell.dataset.id) {
+        if (!this.slotId) {
             this.slotDuration.value = 120; //по дефолту
         } else {
-            this.slotDuration.value = timeSlotCell.dataset.duration * 30 - 30;
+            if (timeSlotDb) {
+                const endDateTime = new Date(timeSlotDb.endTime);
+                const durationMinutes = (endDateTime - startDateTime) / 60000;
+                this.slotDuration.value = durationMinutes;
+            } else {
+                this.slotDuration.value = timeSlotCell.dataset.duration * 30 - 30;
+            }
         }
 
         //показываем
@@ -55,7 +85,6 @@ export class SlotModal {
     }
 
     getSlotForApi() {
-
         const duration = this.slotDuration.value;
         const startTime = `${this.slotDate.value}T${this.slotTime.value}:00`
         const endTime = this.calculateEndTime(startTime, duration);
