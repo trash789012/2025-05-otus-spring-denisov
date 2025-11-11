@@ -10,7 +10,10 @@ public class UserConverter {
     public UserDto toDto(User user) {
         return new UserDto(
                 user.getId(),
-                user.getName()
+                user.getName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getShortDescription()
         );
     }
 

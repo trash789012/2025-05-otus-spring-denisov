@@ -1,4 +1,4 @@
-name;password
-admin;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2
-user;user
-user2;user
+name;password;first_name;last_name;short_description
+admin;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2;Nikolay;Denisov;Root Admin
+user;1;Тракторина;Белоусова;Играю на клавишах
+user2;1;Владислав;Лаптев;Барабанщик

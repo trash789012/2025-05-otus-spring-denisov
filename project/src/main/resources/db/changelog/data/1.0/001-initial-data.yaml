@@ -16,6 +16,12 @@ databaseChangeLog:
                       name: name
                 - column:
                       name: password
+                - column:
+                      name: first_name
+                - column:
+                      name: last_name
+                - column:
+                      name: short_description
         - loadData:
             tableName: groups
             file: ../initial/groups.csv

@@ -5,7 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.config.security.SecurityUserDetails;
+import ru.otus.hw.converters.UserConverter;
+import ru.otus.hw.dto.UserDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.UserRepository;
 
@@ -15,7 +18,10 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    private final UserConverter userConverter;
+
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var dbUser = userRepository.findByName(username)
                 .orElseThrow(
@@ -23,5 +29,14 @@ public class CustomUserDetailService implements UserDetailsService {
                 );
 
         return new SecurityUserDetails(dbUser);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto findByUserName(String username) {
+        var dbUser = userRepository.findByName(username)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User with name %s not found".formatted(username))
+                );
+        return userConverter.toDto(dbUser);
     }
 }

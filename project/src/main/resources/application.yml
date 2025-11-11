@@ -8,7 +8,7 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: validate #не будем автоматически генерировать сущности
-    #      ddl-auto: update
+#          ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -40,8 +40,8 @@ springdoc:
 
 jwt:
   secret: "SuperSecretJamKey2025!jabjbedjahwdjahwbdjhwbdjahbjwdbh"  #сменить вынести в ENV
-#  expiration: 3600000  # 1 час
-  expiration: 30000  # 30 сек
+  expiration: 3600000  # 1 час
+#  expiration: 30000  # 30 сек
 
 logging:
   level:

@@ -1,4 +1,4 @@
-import {getCurrentUser} from "../../utils/http.js";
+import {getUserData} from "../../api/userApi.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const profilePage = new Profile();
@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Profile {
     constructor() {
-        this.userName = document.getElementById("userName");
+        this.firstName = document.getElementById("userName");
+        this.lastName = document.getElementById("userLastName");
+        this.shortDescription = document.getElementById("userDescription");
     }
 
     init = async () => {
@@ -16,8 +18,10 @@ export class Profile {
 
     loadProfile = async () => {
         try {
-            const user = await getCurrentUser();
-            this.userName.value = user.name
+            const user = await getUserData();
+            this.firstName.value = user.firstName;
+            this.lastName.value = user.lastName;
+            this.shortDescription.value = user.shortDescription;
         } catch (e) {
             console.error(e);
         }

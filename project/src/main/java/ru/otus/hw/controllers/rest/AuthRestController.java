@@ -16,7 +16,7 @@ import ru.otus.hw.service.AuthService;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Auth", description = "Аутентификация")
-public class AuthController {
+public class AuthRestController {
 
     private final AuthService authService;
 
