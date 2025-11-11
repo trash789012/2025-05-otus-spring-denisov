@@ -19,12 +19,21 @@ export class Profile {
 
     init = async () => {
         this.loadProfile().catch(console.error);
+        this.loadGroups().catch(console.error);
     }
 
     loadProfile = async () => {
         try {
             const user = await getUserData();
             this.view.renderUserInfo(user);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    loadGroups = async () => {
+        try {
+            this.view.renderGroups(null);
         } catch (e) {
             console.error(e);
         }
