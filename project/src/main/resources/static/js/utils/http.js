@@ -8,10 +8,17 @@ export async function get(url, options = {}) {
     const response = await fetch(`${API_BASE}${url}`, {
         headers: {
             'Content-Type': 'application/json',
+            ...getAuthHeader(),
             ...options.headers
         },
         ...options
     });
+
+    if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+    }
 
     if (!response.ok) {
         const data = await response.json().catch(() => null);
@@ -36,17 +43,21 @@ export async function get(url, options = {}) {
 
 export async function post(url, data, options = {}) {
     try {
-        // const xsrf = await getCsrf();
-
         const response = await fetch(`${API_BASE}${url}`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
-                // 'X-XSRF-TOKEN': xsrf,
+                ...getAuthHeader(),
                 ...options.headers
             },
         });
+
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+            return;
+        }
 
         if (!response.ok) {
             const data = await response.json().catch(() => null);
@@ -57,11 +68,11 @@ export async function post(url, data, options = {}) {
 
             const errors = data;
             console.error('Ошибка:', errors);
-            return { success: false, errors};
+            return {success: false, errors};
         }
 
         const result = await response.json();
-        return { success: true, result };
+        return {success: true, result};
     } catch (error) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -69,17 +80,21 @@ export async function post(url, data, options = {}) {
 
 export async function put(url, data, options = {}) {
     try {
-        // const xsrf = await getCsrf();
-
         const response = await fetch(`${API_BASE}${url}`, {
             method: 'PUT',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
-                // 'X-XSRF-TOKEN': xsrf,
+                ...getAuthHeader(),
                 ...options.headers
             }
         });
+
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+            return;
+        }
 
         if (!response.ok) {
             const data = await response.json().catch(() => null);
@@ -90,27 +105,31 @@ export async function put(url, data, options = {}) {
 
             const errors = data;
             console.error('Ошибка валидации:', errors);
-            return { success: false, errors};
+            return {success: false, errors};
         }
 
         const result = await response.json();
-        return { success: true, result };
+        return {success: true, result};
     } catch (error) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
 }
 
 export async function del(url) {
-    // const xsrf = await getCsrf();
-
     const response = await fetch(`${API_BASE}${url}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            // 'X-XSRF-TOKEN': xsrf
+            ...getAuthHeader(),
         }
     });
+
+    if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+    }
 
     if (!response.ok) {
         const data = await response.json().catch(() => null);
@@ -123,24 +142,14 @@ export async function del(url) {
     }
 }
 
-export async function getCsrf() {
-    const name = "XSRF-TOKEN=";
-    const decodedCookies = decodeURIComponent(document.cookie);
-    const cookies = decodedCookies.split(';');
-
-    for (let cookie of cookies) {
-        cookie = cookie.trim();
-        if (cookie.startsWith(name)) {
-            return cookie.substring(name.length);
-        }
-    }
-
-    return null;
-}
-
 export async function getCurrentUser() {
     return {
         id: 1,
         name: "admin"
     };
+}
+
+function getAuthHeader() {
+    const token = localStorage.getItem('token');
+    return token ? {Authorization: `Bearer ${token}`} : {};
 }

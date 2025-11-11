@@ -40,7 +40,8 @@ springdoc:
 
 jwt:
   secret: "SuperSecretJamKey2025!jabjbedjahwdjahwbdjhwbdjahbjwdbh"  #сменить вынести в ENV
-  expiration: 3600000  # 1 час
+#  expiration: 3600000  # 1 час
+  expiration: 30000  # 30 сек
 
 logging:
   level:

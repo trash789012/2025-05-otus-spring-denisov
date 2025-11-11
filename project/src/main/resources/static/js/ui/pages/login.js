@@ -22,6 +22,8 @@ export class Login {
 
     logIn = async () => {
         try {
+            localStorage.removeItem("token");
+
             const userName = this.userName.value;
             const password = this.password.value;
 

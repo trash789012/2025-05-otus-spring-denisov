@@ -39,14 +39,19 @@ public class SecurityConfig {
                                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers(pathConfig.getApiBasePath() + "/auth/**").permitAll()
-                                .requestMatchers( "/login/**", "/css/**", "/js/**").permitAll()
-                                .requestMatchers(
-                                        pathConfig.getSwaggerUiPath() + "/**",
-                                        pathConfig.getOpenApiDocsPath() + "/**"
-                                ).permitAll()
-                                .anyRequest().authenticated()
-//                                .anyRequest().permitAll()
+                        .requestMatchers(pathConfig.getApiBasePath() + "/auth/**").permitAll()
+                        .requestMatchers(
+                                "/login/**",
+                                "/",
+                                "/profile/**",
+                                "/css/**",
+                                "/js/**").permitAll()
+                        .requestMatchers(
+                                pathConfig.getSwaggerUiPath() + "/**",
+                                pathConfig.getOpenApiDocsPath() + "/**"
+                        ).permitAll()
+                        .requestMatchers(pathConfig.getApiBasePath() + "/**").authenticated()
+                        .anyRequest().denyAll()
                 )
                 .headers(headers -> headers.frameOptions(
                         HeadersConfigurer.FrameOptionsConfig::sameOrigin)
