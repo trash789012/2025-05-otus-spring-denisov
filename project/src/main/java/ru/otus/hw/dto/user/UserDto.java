@@ -1,4 +1,6 @@
-package ru.otus.hw.dto;
+package ru.otus.hw.dto.user;
+
+import ru.otus.hw.dto.group.GroupFormDto;
 
 import java.util.List;
 

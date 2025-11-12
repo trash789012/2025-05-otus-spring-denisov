@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.converters.GroupConverter;
-import ru.otus.hw.dto.GroupDto;
-import ru.otus.hw.dto.GroupFormDto;
-import ru.otus.hw.dto.GroupWithoutNestedDto;
+import ru.otus.hw.dto.group.GroupDto;
+import ru.otus.hw.dto.group.GroupFormDto;
+import ru.otus.hw.dto.group.GroupInfoDto;
+import ru.otus.hw.dto.group.GroupWithMembersDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.GroupService;
 
@@ -34,7 +35,7 @@ public class GroupRestController {
 
     @Operation(summary = "Получить все группы")
     @GetMapping
-    public List<GroupWithoutNestedDto> getAllGroups() {
+    public List<GroupInfoDto> getAllGroups() {
         return groupService.findAllWithoutNested();
     }
 
@@ -43,6 +44,12 @@ public class GroupRestController {
     public GroupFormDto getGroupById(@PathVariable Long id) {
         var group = groupService.findById(id);
         return groupConverter.toDto(group);
+    }
+
+    @Operation(summary = "Получить группу с участниками по ID")
+    @GetMapping("/{id}/members")
+    public GroupWithMembersDto getGroupWithMembers(@PathVariable Long id) {
+        return groupService.findGroupWithMembersById(id);
     }
 
     @Operation(summary = "Создать новую группу")

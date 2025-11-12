@@ -1,7 +1,7 @@
 package ru.otus.hw.service;
 
-import ru.otus.hw.dto.SlotDto;
-import ru.otus.hw.dto.SlotFormDto;
+import ru.otus.hw.dto.slot.SlotDto;
+import ru.otus.hw.dto.slot.SlotFormDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

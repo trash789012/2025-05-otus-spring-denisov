@@ -2,9 +2,10 @@ package ru.otus.hw.converters;
 
 import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.User;
-import ru.otus.hw.dto.GroupFormDto;
-import ru.otus.hw.dto.UserDto;
-import ru.otus.hw.dto.UserExistsDto;
+import ru.otus.hw.dto.group.GroupFormDto;
+import ru.otus.hw.dto.user.UserDto;
+import ru.otus.hw.dto.user.UserExistsDto;
+import ru.otus.hw.dto.user.UserInfoDto;
 
 @Component
 public class UserConverter {
@@ -45,6 +46,20 @@ public class UserConverter {
                 .id(userDto.id())
                 .name(userDto.name())
                 .build();
+    }
+
+    public UserInfoDto toInfoDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return new UserInfoDto(
+                user.getId(),
+                user.getName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getShortDescription()
+        );
     }
 
 }

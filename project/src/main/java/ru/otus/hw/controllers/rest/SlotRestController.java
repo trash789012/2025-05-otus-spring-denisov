@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.hw.dto.SlotDto;
-import ru.otus.hw.dto.SlotFormDto;
+import ru.otus.hw.dto.slot.SlotDto;
+import ru.otus.hw.dto.slot.SlotFormDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.SlotService;
 

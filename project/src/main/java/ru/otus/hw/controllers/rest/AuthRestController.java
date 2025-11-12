@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.hw.dto.AuthRequestDto;
-import ru.otus.hw.dto.AuthResponseDto;
+import ru.otus.hw.dto.auth.AuthRequestDto;
+import ru.otus.hw.dto.auth.AuthResponseDto;
 import ru.otus.hw.service.AuthService;
 
 @RestController

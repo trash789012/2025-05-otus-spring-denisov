@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName(String username);
 
     @EntityGraph(attributePaths = {"groups", "groups.members"})
-    @Query("SELECT u FROM User u WHERE u.name = :username")
+    @Query("SELECT DISTINCT u FROM User u WHERE u.name = :username")
     Optional<User> findByNameWithGroupsAndMembers(@Param("username") String username);
 
     Optional<User> findIdAndNameByName(String name);

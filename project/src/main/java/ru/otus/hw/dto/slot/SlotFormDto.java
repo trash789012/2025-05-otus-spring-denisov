@@ -1,4 +1,4 @@
-package ru.otus.hw.dto;
+package ru.otus.hw.dto.slot;
 
 import ru.otus.hw.domain.enums.SlotStatus;
 

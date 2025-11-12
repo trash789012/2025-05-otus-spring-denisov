@@ -1,5 +1,6 @@
 import {getUserData, updateUser} from "../../api/userApi.js";
 import {ProfileTabs} from "../components/profileTabs.js";
+import {fetchGroupMembers} from "../../api/groupApi.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const profilePage = new Profile();
@@ -17,7 +18,6 @@ export class Profile {
             viewGroupMembersEvt: this.onViewGroupMembers
         });
     }
-
 
     init = async () => {
         try {
@@ -47,8 +47,8 @@ export class Profile {
 
     onViewGroupMembers = async (groupId = 0) => {
         try {
-            //TODO:   get members by groud id
-            this.view.showMembersModal(null);
+            const group = await fetchGroupMembers(groupId);
+            this.view.showMembersModal(group.members);
         } catch (e) {
             console.error(e);
         }

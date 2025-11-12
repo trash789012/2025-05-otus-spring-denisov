@@ -3,11 +3,12 @@ package ru.otus.hw.converters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.Group;
-import ru.otus.hw.dto.GroupDto;
-import ru.otus.hw.dto.GroupFormDto;
-import ru.otus.hw.dto.GroupWithoutNestedDto;
-import ru.otus.hw.dto.SlotDto;
-import ru.otus.hw.dto.UserDto;
+import ru.otus.hw.dto.group.GroupDto;
+import ru.otus.hw.dto.group.GroupFormDto;
+import ru.otus.hw.dto.group.GroupInfoDto;
+import ru.otus.hw.dto.group.GroupWithMembersDto;
+import ru.otus.hw.dto.slot.SlotDto;
+import ru.otus.hw.dto.user.UserDto;
 
 @Component
 @RequiredArgsConstructor
@@ -37,12 +38,12 @@ public class GroupConverter {
         );
     }
 
-    public GroupWithoutNestedDto toWithoutNestedDto(Group group) {
+    public GroupInfoDto toWithoutNestedDto(Group group) {
         if (group == null) {
             return null;
         }
 
-        return new GroupWithoutNestedDto(
+        return new GroupInfoDto(
                 group.getId(),
                 group.getName(),
                 group.getDescription()
@@ -66,6 +67,22 @@ public class GroupConverter {
                 (group.slots() != null) ?
                         group.slots().stream()
                                 .map(SlotDto::id)
+                                .toList() : null
+        );
+    }
+
+    public GroupWithMembersDto toWithMembersDto(Group group) {
+        if (group == null) {
+            return null;
+        }
+
+        return new GroupWithMembersDto(
+                group.getId(),
+                group.getName(),
+                group.getDescription(),
+                (group.getMembers() != null) ?
+                        group.getMembers().stream()
+                                .map(userConverter::toInfoDto)
                                 .toList() : null
         );
     }

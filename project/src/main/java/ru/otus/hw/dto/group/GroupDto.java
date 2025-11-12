@@ -1,4 +1,7 @@
-package ru.otus.hw.dto;
+package ru.otus.hw.dto.group;
+
+import ru.otus.hw.dto.slot.SlotDto;
+import ru.otus.hw.dto.user.UserDto;
 
 import java.util.List;
 
