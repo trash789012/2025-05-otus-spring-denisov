@@ -1,5 +1,5 @@
 import {GroupTabs} from "../components/groupTabs.js";
-import {fetchGroupMembersAndSlots} from "../../api/groupApi.js";
+import {fetchGroupMembersAndSlots, updateGroupInfo} from "../../api/groupApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -9,8 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Group {
     constructor(groupId) {
-        this.groupTabView = new GroupTabs();
         this.groupId = groupId;
+        this.groupTabView = new GroupTabs(groupId,  {
+            updateGroupInfoEvt: this.onSaveGroupInfoBtnClick
+        });
     }
 
     init = async () => {
@@ -21,6 +23,18 @@ export class Group {
         try {
             const group = await fetchGroupMembersAndSlots(this.groupId);
             this.groupTabView.renderGroupInfo(group);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onSaveGroupInfoBtnClick = async () => {
+        try {
+            const groupForm = this.groupTabView.prepareGroupForApi();
+            const result = await updateGroupInfo(this.groupId, groupForm);
+            if (!result.success) {
+                console.log(result.errors);
+            }
         } catch (e) {
             console.error(e);
         }

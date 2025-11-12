@@ -123,8 +123,14 @@ public class GroupServiceImpl implements GroupService {
         }
 
         groupNestedObjects nestedObjs = prepareNestedObjects(groupDto);
-        group.setMembers(nestedObjs.members());
-        group.setSlots(nestedObjs.slots());
+        if (nestedObjs.members() != null) {
+            group.setMembers(nestedObjs.members());
+        }
+        if (nestedObjs.slots() != null) {
+            group.setSlots(nestedObjs.slots());
+        }
+
+        group.setDescription(groupDto.description());
 
         return groupRepository.save(group);
     }
