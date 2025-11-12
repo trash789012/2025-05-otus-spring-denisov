@@ -140,6 +140,14 @@ export async function del(url) {
 
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
+    try {
+        const result = await response.json();
+        return {success: true, result};
+    } catch (e) {
+        return {success: true, result: {}};
+    }
+
 }
 
 function getAuthHeader() {

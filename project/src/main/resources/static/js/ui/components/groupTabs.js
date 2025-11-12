@@ -29,6 +29,9 @@ export class GroupTabs {
         })
 
         this.membersTable = document.getElementById('membersTable');
+        this.deleteRememberFromGroupEvt = params.deleteRememberFromGroupEvt;
+
+        this.currentMembers = []; // Храним текущий список участников
     }
 
     renderGroupInfo(group = {}) {
@@ -40,6 +43,8 @@ export class GroupTabs {
     }
 
     renderMembersTable(members = []) {
+        this.currentMembers = members; // Сохраняем текущий список
+
         this.membersTable.innerHTML = ''; // Очищаем таблицу
 
         if (!members || members.length === 0) {
@@ -64,6 +69,7 @@ export class GroupTabs {
 
         members.forEach(member => {
             const row = document.createElement('tr');
+            row.id = `member-row-${member.id}`; // Добавляем ID для строки
 
             // Ячейка с информацией об участнике
             const memberCell = document.createElement('td');
@@ -112,11 +118,12 @@ export class GroupTabs {
             removeButton.appendChild(removeIcon);
             actionsCell.appendChild(removeButton);
 
-            // // Добавляем обработчик события для кнопки удаления
-            // removeButton.addEventListener('click', function() {
-            //     const memberId = this.getAttribute('data-member-id');
-            //     removeMemberFromGroup(memberId);
-            // });
+            // Добавляем обработчик события для кнопки удаления
+            let that = this;
+            removeButton.addEventListener('click', function() {
+                const memberId = this.getAttribute('data-member-id');
+                that.deleteRememberFromGroupEvt(memberId);
+            });
 
             // Собираем строку
             row.appendChild(memberCell);
@@ -167,5 +174,31 @@ export class GroupTabs {
     showDeleteConfirm() {
         const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
         modal.show();
+    }
+
+    removeMemberRow(memberId = 0) {
+        const rowToRemove = document.getElementById(`member-row-${memberId}`);
+
+        if (rowToRemove) {
+            // Анимация удаления (опционально)
+            rowToRemove.style.opacity = '0';
+            rowToRemove.style.transition = 'opacity 0.3s ease';
+
+            setTimeout(() => {
+                rowToRemove.remove();
+
+                // Обновляем текущий список участников
+                this.currentMembers = this.currentMembers.filter(member => member.id != memberId);
+
+                // Если после удаления не осталось участников, показываем пустое состояние
+                if (this.currentMembers.length === 0) {
+                    this.renderMembersTable([]);
+                    this.updateMembersStats(this.currentMembers);
+                } else {
+                    // Обновляем статистику
+                    this.updateMembersStats(this.currentMembers);
+                }
+            }, 300);
+        }
     }
 }

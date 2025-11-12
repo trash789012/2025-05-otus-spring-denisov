@@ -20,9 +20,12 @@ public interface GroupService {
 
     GroupWithMembersAndSlotsDto findGroupWithMembersAndSlotsById(Long id);
 
+    void deleteMemberFromGroup(Long memberId, Long groupId);
+
     GroupDto insert(GroupFormDto groupDto);
 
     GroupDto update(GroupFormDto groupDto);
+
 
     void deleteById(Long id);
 

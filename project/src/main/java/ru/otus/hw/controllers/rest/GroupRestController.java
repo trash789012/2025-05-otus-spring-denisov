@@ -77,6 +77,15 @@ public class GroupRestController {
         return groupService.update(groupDto);
     }
 
+    @Operation(summary = "Исключить пользователя из группы")
+    @DeleteMapping("/{groupId}/members/{memberId}")
+    public void deleteMemberFromGroup(
+            @PathVariable Long groupId,
+            @PathVariable Long memberId
+    ) {
+        groupService.deleteMemberFromGroup(memberId, groupId);
+    }
+
     @Operation(summary = "Удалить группу")
     @DeleteMapping("/{id}")
     public void deleteGroup(@PathVariable Long id) {

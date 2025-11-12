@@ -56,6 +56,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GroupInfoDto> findAllWithoutNested() {
         return groupRepository.findAll().stream()
                 .map(groupConverter::toWithoutNestedDto)
@@ -63,6 +64,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GroupWithMembersDto findGroupWithMembersById(Long id) {
         var group = groupRepository.findById(id)
                 .orElseThrow(
@@ -72,6 +74,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GroupWithMembersAndSlotsDto findGroupWithMembersAndSlotsById(Long id) {
         var group = groupRepository.findById(id)
                 .orElseThrow(
@@ -79,6 +82,29 @@ public class GroupServiceImpl implements GroupService {
                 );
         return groupConverter.toWithMembersAndSlotsDto(group);
 
+    }
+
+    @Override
+    @Transactional
+    public void deleteMemberFromGroup(Long memberId, Long groupId) {
+        if (groupId == null) {
+            throw new IllegalArgumentException("Group id is null");
+        }
+        if (memberId == null) {
+            throw new IllegalArgumentException("Member id is null");
+        }
+
+        var group = groupRepository.findById(groupId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Group with id %d not found".formatted(groupId))
+                );
+        var member = userRepository.findById(memberId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User with id %d not found".formatted(memberId))
+                );
+
+        group.getMembers().remove(member);
+        groupRepository.save(group);
     }
 
     @Override

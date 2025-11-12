@@ -23,3 +23,7 @@ export async function updateGroupInfo(id, groupInfo) {
 export async function deleteGroup(id) {
     return del(`/group/${id}`);
 }
+
+export async function deleteMemberFromGroup(groupId, memberId) {
+    return del(`/group/${groupId}/members/${memberId}`);
+}
