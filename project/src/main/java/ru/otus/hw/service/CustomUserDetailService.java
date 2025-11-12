@@ -10,6 +10,7 @@ import ru.otus.hw.config.security.SecurityUserDetails;
 import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.UserDto;
+import ru.otus.hw.dto.UserExistsDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.UserRepository;
 
@@ -41,6 +42,16 @@ public class CustomUserDetailService implements UserDetailsService {
                         () -> new EntityNotFoundException("User with name %s not found".formatted(username))
                 );
         return userConverter.toDto(dbUser);
+    }
+
+    @Transactional(readOnly = true)
+    public UserExistsDto findIdByName(String username) {
+        var dbUser = userRepository.findIdAndNameByName(username)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User with name %s not found".formatted(username))
+                );
+        return userConverter.toExistsDto(dbUser);
+
     }
 
     @Transactional

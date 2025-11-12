@@ -9,6 +9,7 @@ import ru.otus.hw.domain.Slot;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.GroupDto;
 import ru.otus.hw.dto.GroupFormDto;
+import ru.otus.hw.dto.GroupWithoutNestedDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;
@@ -49,6 +50,13 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupDto> findAll() {
         return groupRepository.findAll().stream()
                 .map(groupConverter::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<GroupWithoutNestedDto> findAllWithoutNested() {
+        return groupRepository.findAll().stream()
+                .map(groupConverter::toWithoutNestedDto)
                 .toList();
     }
 

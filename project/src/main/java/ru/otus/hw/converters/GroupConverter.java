@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.dto.GroupDto;
 import ru.otus.hw.dto.GroupFormDto;
+import ru.otus.hw.dto.GroupWithoutNestedDto;
 import ru.otus.hw.dto.SlotDto;
 import ru.otus.hw.dto.UserDto;
 
@@ -17,7 +18,6 @@ public class GroupConverter {
     private final UserConverter userConverter;
 
     public GroupDto toDto(Group group) {
-
         if (group == null) {
             return null;
         }
@@ -35,6 +35,19 @@ public class GroupConverter {
                                 .map(slotConverter::toDto)
                                 .toList() : null
         );
+    }
+
+    public GroupWithoutNestedDto toWithoutNestedDto(Group group) {
+        if (group == null) {
+            return null;
+        }
+
+        return new GroupWithoutNestedDto(
+                group.getId(),
+                group.getName(),
+                group.getDescription()
+        );
+
     }
 
     public GroupFormDto toDto(GroupDto group) {

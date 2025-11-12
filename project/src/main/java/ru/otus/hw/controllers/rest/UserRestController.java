@@ -38,8 +38,7 @@ public class UserRestController {
                               @RequestBody UserDto userDto,
                               @AuthenticationPrincipal UserDetails userDetails
     ) {
-        //TODO: change for select exists id only (N+1)
-        var userDb = userDetailsService.findByUserName(userDetails.getUsername());
+        var userDb = userDetailsService.findIdByName(userDetails.getUsername());
         if (!id.equals(userDb.id())) {
             throw new BadRequestException("Id in path and principal must match");
         }

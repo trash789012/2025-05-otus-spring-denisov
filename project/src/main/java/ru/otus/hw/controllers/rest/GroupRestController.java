@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.converters.GroupConverter;
 import ru.otus.hw.dto.GroupDto;
 import ru.otus.hw.dto.GroupFormDto;
+import ru.otus.hw.dto.GroupWithoutNestedDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.GroupService;
 
@@ -33,8 +34,8 @@ public class GroupRestController {
 
     @Operation(summary = "Получить все группы")
     @GetMapping
-    public List<GroupDto> getAllGroups() {
-        return groupService.findAll();
+    public List<GroupWithoutNestedDto> getAllGroups() {
+        return groupService.findAllWithoutNested();
     }
 
     @Operation(summary = "Получить группу по ID")

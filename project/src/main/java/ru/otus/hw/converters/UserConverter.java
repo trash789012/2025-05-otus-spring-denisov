@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.GroupFormDto;
 import ru.otus.hw.dto.UserDto;
+import ru.otus.hw.dto.UserExistsDto;
 
 @Component
 public class UserConverter {
@@ -29,6 +30,10 @@ public class UserConverter {
                 user.getShortDescription(),
                 userGroups
         );
+    }
+
+    public UserExistsDto toExistsDto(User user) {
+        return new UserExistsDto(user.getId(), user.getName());
     }
 
     public User toEntity(UserDto userDto) {

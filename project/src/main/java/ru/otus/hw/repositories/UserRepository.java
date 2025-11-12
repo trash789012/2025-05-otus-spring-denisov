@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.name = :username")
     Optional<User> findByNameWithGroupsAndMembers(@Param("username") String username);
 
+    Optional<User> findIdAndNameByName(String name);
+
     // Загрузка пользователя с группами
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.groups WHERE u.name = :username")
     Optional<User> findByNameWithGroups(@Param("username") String username);

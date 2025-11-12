@@ -60,14 +60,13 @@ public class Group {
     private String description;
 
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class)
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
             name = "user_groups",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-//    @BatchSize(size = 10)
     private List<User> members;
 
     @ToString.Exclude
