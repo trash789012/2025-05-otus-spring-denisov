@@ -18,16 +18,24 @@ export class Group {
     }
 
     init = async () => {
-        this.loadGroup().catch(console.error);
-    }
-
-    loadGroup = async () => {
         try {
             const group = await fetchGroupMembersAndSlots(this.groupId);
-            this.groupTabView.renderGroupInfo(group);
+
+            this.loadGroup(group).catch(console.error);
+            this.loadMembers(group).catch(console.error);
         } catch (e) {
             console.error(e);
         }
+
+    }
+
+    loadGroup = async (group) => {
+        this.groupTabView.renderGroupInfo(group);
+    }
+
+    loadMembers = async (group) => {
+        this.groupTabView.renderMembersTable(group.members);
+
     }
 
     onSaveGroupInfoBtnClick = async () => {

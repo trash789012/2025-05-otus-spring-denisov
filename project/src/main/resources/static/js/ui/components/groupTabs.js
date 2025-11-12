@@ -9,6 +9,7 @@ export class GroupTabs {
         this.deleteGroupName = document.getElementById('deleteGroupName');
         this.groupInfoForm = document.getElementById('groupInfoForm');
         this.membersCount = document.getElementById('membersCount');
+        this.totalMembers = document.getElementById('totalMembers');
 
         this.saveGroupBtn = document.getElementById('saveGroupBtn');
         this.saveGroupBtn.addEventListener('click', () => {
@@ -26,6 +27,8 @@ export class GroupTabs {
         this.confirmDeleteGroup.addEventListener('click', () => {
             params.deleteOkGroupInfoEvt();
         })
+
+        this.membersTable = document.getElementById('membersTable');
     }
 
     renderGroupInfo(group = {}) {
@@ -34,6 +37,108 @@ export class GroupTabs {
         this.groupDescription.value = group.description;
         this.deleteGroupName.textContent = group.name;
         this.membersCount.textContent = group.members.length;
+    }
+
+    renderMembersTable(members = []) {
+        this.membersTable.innerHTML = ''; // Очищаем таблицу
+
+        if (!members || members.length === 0) {
+            const emptyRow = document.createElement('tr');
+
+            const emptyCell = document.createElement('td');
+            emptyCell.colSpan = 4;
+            emptyCell.className = 'text-center text-muted py-4';
+
+            const emptyIcon = document.createElement('i');
+            emptyIcon.className = 'bi bi-people display-4 d-block mb-2';
+
+            const emptyText = document.createTextNode('В коллективе пока нет участников');
+
+            emptyCell.appendChild(emptyIcon);
+            emptyCell.appendChild(emptyText);
+            emptyRow.appendChild(emptyCell);
+            this.membersTable.appendChild(emptyRow);
+
+            return;
+        }
+
+        members.forEach(member => {
+            const row = document.createElement('tr');
+
+            // Ячейка с информацией об участнике
+            const memberCell = document.createElement('td');
+            const memberContainer = document.createElement('div');
+            memberContainer.className = 'd-flex align-items-center';
+
+            const memberIcon = document.createElement('i');
+            memberIcon.className = 'bi bi-person-circle text-primary fs-4 me-3';
+
+            const memberInfo = document.createElement('div');
+
+            const memberName = document.createElement('div');
+            memberName.className = 'fw-bold';
+            memberName.textContent = `${member?.firstName} ${member?.lastName}` || member.name;
+
+            const memberId = document.createElement('small');
+            memberId.className = 'text-muted';
+            memberId.textContent = `ID: ${member.id}`;
+
+            memberInfo.appendChild(memberName);
+            memberInfo.appendChild(memberId);
+            memberContainer.appendChild(memberIcon);
+            memberContainer.appendChild(memberInfo);
+            memberCell.appendChild(memberContainer);
+
+            // Ячейка с ролью/инструментом
+            const roleCell = document.createElement('td');
+            roleCell.textContent = member.role || 'Не указана';
+
+            // Ячейка со статусом
+            const statusCell = document.createElement('td');
+            const statusBadge = document.createElement('span');
+            statusBadge.className = member.status === 'active' ? 'badge bg-success' : 'badge bg-warning';
+            statusBadge.textContent = member.status === 'active' ? 'Активный' : 'Ожидание';
+            statusCell.appendChild(statusBadge);
+
+            // Ячейка с действиями
+            const actionsCell = document.createElement('td');
+            const removeButton = document.createElement('button');
+            removeButton.className = 'btn btn-sm btn-outline-danger remove-member';
+            removeButton.setAttribute('data-member-id', member.id);
+
+            const removeIcon = document.createElement('i');
+            removeIcon.className = 'bi bi-person-dash';
+
+            removeButton.appendChild(removeIcon);
+            actionsCell.appendChild(removeButton);
+
+            // // Добавляем обработчик события для кнопки удаления
+            // removeButton.addEventListener('click', function() {
+            //     const memberId = this.getAttribute('data-member-id');
+            //     removeMemberFromGroup(memberId);
+            // });
+
+            // Собираем строку
+            row.appendChild(memberCell);
+            row.appendChild(roleCell);
+            row.appendChild(statusCell);
+            row.appendChild(actionsCell);
+
+            this.membersTable.appendChild(row);
+        });
+
+        this.updateMembersStats(members);
+    }
+
+    updateMembersStats(members) {
+        const total = members.length;
+        // const active = members.filter(m => m.status === 'active').length;
+        // const pending = members.filter(m => m.status === 'pending').length;
+
+        this.membersCount.textContent = total;
+        this.totalMembers.textContent = total;
+        // document.getElementById('activeMembers').textContent = active;
+        // document.getElementById('pendingMembers').textContent = pending;
     }
 
     setTitle(title = "") {
