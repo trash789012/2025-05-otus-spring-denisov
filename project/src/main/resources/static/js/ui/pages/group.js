@@ -1,5 +1,5 @@
 import {GroupTabs} from "../components/groupTabs.js";
-import {fetchGroupMembersAndSlots, updateGroupInfo} from "../../api/groupApi.js";
+import {deleteGroup, fetchGroupMembersAndSlots, updateGroupInfo} from "../../api/groupApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -10,8 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
 export class Group {
     constructor(groupId) {
         this.groupId = groupId;
-        this.groupTabView = new GroupTabs(groupId,  {
-            updateGroupInfoEvt: this.onSaveGroupInfoBtnClick
+        this.groupTabView = new GroupTabs(groupId, {
+            updateGroupInfoEvt: this.onSaveGroupInfoBtnClick,
+            deleteGroupInfoEvt: this.onDeleteGroupInfoBtnClick
         });
     }
 
@@ -35,6 +36,15 @@ export class Group {
             if (!result.success) {
                 console.log(result.errors);
             }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onDeleteGroupInfoBtnClick = async () => {
+        try {
+            await deleteGroup(this.groupId);
+            window.location.href = "/";
         } catch (e) {
             console.error(e);
         }

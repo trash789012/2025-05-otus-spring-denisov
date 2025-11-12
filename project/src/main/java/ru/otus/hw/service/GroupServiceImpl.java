@@ -102,8 +102,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
-        groupRepository.findById(id);
+    public void deleteById(Long id) {
+        groupRepository.deleteById(id);
     }
 
     private Group prepareGroup(GroupFormDto groupDto) {

@@ -15,9 +15,14 @@ export class GroupTabs {
         this.membersCount = document.getElementById('membersCount');
 
         this.saveGroupBtn = document.getElementById('saveGroupBtn');
-        saveGroupBtn.addEventListener('click', () => {
+        this.saveGroupBtn.addEventListener('click', () => {
             params.updateGroupInfoEvt();
         });
+
+        this.deleteGroupBtn = document.getElementById('deleteGroupBtn');
+        this.deleteGroupBtn.addEventListener('click', () => {
+            params.deleteGroupInfoEvt();
+        })
     }
 
     renderGroupInfo(group = {}) {

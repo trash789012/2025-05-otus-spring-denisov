@@ -1,4 +1,4 @@
-import {get, post, put} from "../utils/http.js";
+import {get, del, put} from "../utils/http.js";
 
 export async function fetchAllGroups() {
     return get(`/group`);
@@ -18,4 +18,8 @@ export async function updateGroupInfo(id, groupInfo) {
             headers: {'Content-Type': 'application/json'},
         }
     );
+}
+
+export async function deleteGroup(id) {
+    return del(`/group/${id}`);
 }

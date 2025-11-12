@@ -24,6 +24,6 @@ public interface GroupService {
 
     GroupDto update(GroupFormDto groupDto);
 
-    void deleteById(long id);
+    void deleteById(Long id);
 
 }
