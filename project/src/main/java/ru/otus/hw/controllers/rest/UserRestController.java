@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.user.UserDto;
+import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.CustomUserDetailService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.GroupConverter;
+import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.domain.Slot;
 import ru.otus.hw.domain.User;
@@ -12,11 +13,13 @@ import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
 import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
+import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;
 import ru.otus.hw.repositories.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,6 +29,8 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
 
     private final UserRepository userRepository;
+
+    private final UserConverter userConverter;
 
     private final SlotRepository slotRepository;
 
@@ -105,6 +110,22 @@ public class GroupServiceImpl implements GroupService {
 
         group.getMembers().remove(member);
         groupRepository.save(group);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm) {
+        List<Long> existingMemberIds = new ArrayList<>();
+        var group = groupRepository.findById(groupId);
+        if (group.isPresent()) {
+            existingMemberIds = group.get().getMembers().stream()
+                    .map(User::getId)
+                    .toList();
+        }
+        return userRepository.findBySearchTermAndIdNotIn(searchTerm, existingMemberIds)
+                .stream()
+                .map(userConverter::toInfoDto)
+                .toList();
     }
 
     @Override

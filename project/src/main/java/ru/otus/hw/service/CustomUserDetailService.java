@@ -11,8 +11,11 @@ import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
+import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.UserRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

@@ -26,12 +26,23 @@ export class GroupTabs {
         this.confirmDeleteGroup = document.getElementById('confirmDeleteGroup');
         this.confirmDeleteGroup.addEventListener('click', () => {
             params.deleteOkGroupInfoEvt();
-        })
+        });
 
         this.membersTable = document.getElementById('membersTable');
         this.deleteRememberFromGroupEvt = params.deleteRememberFromGroupEvt;
 
         this.currentMembers = []; // Храним текущий список участников
+
+        this.addMemberBtn = document.getElementById('addMemberBtn');
+        this.addMemberBtn.addEventListener('click', () => {
+            this.showAddMembers();
+        })
+
+        //кнопка поиска пользователей
+        this.searchUser = document.getElementById('searchUserBtn');
+        this.searchUser.addEventListener('click', () => {
+            params.onUserSearchEvt();
+        })
     }
 
     renderGroupInfo(group = {}) {
@@ -120,7 +131,7 @@ export class GroupTabs {
 
             // Добавляем обработчик события для кнопки удаления
             let that = this;
-            removeButton.addEventListener('click', function() {
+            removeButton.addEventListener('click', function () {
                 const memberId = this.getAttribute('data-member-id');
                 that.deleteRememberFromGroupEvt(memberId);
             });
@@ -176,6 +187,11 @@ export class GroupTabs {
         modal.show();
     }
 
+    showAddMembers() {
+        const modal = new bootstrap.Modal(document.getElementById('addMemberModal'));
+        modal.show();
+    }
+
     removeMemberRow(memberId = 0) {
         const rowToRemove = document.getElementById(`member-row-${memberId}`);
 
@@ -200,5 +216,76 @@ export class GroupTabs {
                 }
             }, 300);
         }
+    }
+
+    renderSearchedMembers(users = []) {
+        const usersTable = document.getElementById('usersTable');
+        usersTable.innerHTML = '';
+
+        if (!users || users.length === 0) {
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 3;
+            cell.className = 'text-center text-muted py-3';
+
+            const icon = document.createElement('i');
+            icon.className = 'bi bi-search me-2';
+
+            const text = document.createTextNode('Пользователи не найдены');
+
+            cell.appendChild(icon);
+            cell.appendChild(text);
+            row.appendChild(cell);
+            usersTable.appendChild(row);
+            return;
+        }
+
+        users.forEach(user => {
+            const row = document.createElement('tr');
+
+            // Ячейка выбора
+            const selectCell = document.createElement('td');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'form-check-input user-select';
+            checkbox.setAttribute('data-user-id', user.id);
+            selectCell.appendChild(checkbox);
+
+            // Ячейка пользователя
+            const userCell = document.createElement('td');
+            const userContainer = document.createElement('div');
+            userContainer.className = 'd-flex align-items-center';
+
+            const userIcon = document.createElement('i');
+            userIcon.className = 'bi bi-person-circle text-primary me-2';
+
+            const userInfo = document.createElement('div');
+
+            const userName = document.createElement('div');
+            userName.className = 'fw-semibold';
+            userName.textContent = `${user.firstName} ${user.lastName}`;
+
+            const userId = document.createElement('small');
+            userId.className = 'text-muted';
+            userId.textContent = `ID: ${user.id}`;
+
+            userInfo.appendChild(userName);
+            userInfo.appendChild(userId);
+            userContainer.appendChild(userIcon);
+            userContainer.appendChild(userInfo);
+            userCell.appendChild(userContainer);
+
+            // Ячейка email
+            const emailCell = document.createElement('td');
+            emailCell.textContent = user.email || '';
+
+            // Собираем строку
+            row.appendChild(selectCell);
+            row.appendChild(userCell);
+            row.appendChild(emailCell);
+
+            usersTable.appendChild(row);
+        });
+
     }
 }

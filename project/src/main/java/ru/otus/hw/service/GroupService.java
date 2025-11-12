@@ -5,6 +5,7 @@ import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
 import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
+import ru.otus.hw.dto.user.UserInfoDto;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public interface GroupService {
     GroupWithMembersAndSlotsDto findGroupWithMembersAndSlotsById(Long id);
 
     void deleteMemberFromGroup(Long memberId, Long groupId);
+
+    List<UserInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm);
 
     GroupDto insert(GroupFormDto groupDto);
 

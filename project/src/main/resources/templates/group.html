@@ -169,10 +169,10 @@
 
     <!-- Модальное окно добавления участника -->
     <div class="modal fade" id="addMemberModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Добавить участника</h5>
+                    <h5 class="modal-title">Добавить участников</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -181,35 +181,40 @@
                             <label for="searchUser" class="form-label">Поиск пользователя</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="searchUser"
-                                       placeholder="Введите имя или email пользователя">
-                                <button class="btn btn-outline-secondary" type="button" id="searchUserBtn">
+                                       placeholder="Введите имя или email">
+                                <button class="btn btn-outline-primary" type="button" id="searchUserBtn">
                                     <i class="bi bi-search"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="memberRole" class="form-label">Роль/Инструмент</label>
-                            <input type="text" class="form-control" id="memberRole"
-                                   placeholder="Например: гитара, вокал, барабаны">
-                        </div>
-
-                        <div id="searchResults" class="mt-3" style="display: none;">
-                            <label class="form-label">Найденные пользователи:</label>
-                            <div class="list-group" id="usersList">
-                                <!-- Результаты поиска -->
+                        <!-- Таблица найденных пользователей -->
+                        <div id="searchResults" class="mt-3">
+                            <label class="form-label fw-semibold">Найденные пользователи:</label>
+                            <div class="table-responsive" style="max-height: 300px;">
+                                <table class="table table-sm table-hover">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th width="50">Выбор</th>
+                                        <th>Пользователь</th>
+                                        <th>Email</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="usersTable">
+                                    <!-- Будет заполнено через JS -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-primary" id="confirmAddMember" disabled>Добавить</button>
+                    <button type="button" class="btn btn-primary" id="confirmAddMember">Добавить выбранных</button>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Модальное окно подтверждения удаления -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">

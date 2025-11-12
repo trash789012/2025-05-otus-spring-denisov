@@ -1,5 +1,11 @@
 import {GroupTabs} from "../components/groupTabs.js";
-import {deleteGroup, deleteMemberFromGroup, fetchGroupMembersAndSlots, updateGroupInfo} from "../../api/groupApi.js";
+import {
+    deleteGroup,
+    deleteMemberFromGroup,
+    fetchGroupMembersAndSlots,
+    getUsersBySearchTerm,
+    updateGroupInfo
+} from "../../api/groupApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -14,7 +20,8 @@ export class Group {
             updateGroupInfoEvt: this.onSaveGroupInfoBtnClick,
             deleteGroupInfoEvt: this.onDeleteGroupInfoBtnClick,
             deleteOkGroupInfoEvt: this.onDeleteGroupOkBtnClick,
-            deleteRememberFromGroupEvt: this.onRemoveMemberFromGroup
+            deleteRememberFromGroupEvt: this.onRemoveMemberFromGroup,
+            onUserSearchEvt: this.onUserSearch
         });
     }
 
@@ -75,6 +82,15 @@ export class Group {
         try {
             await deleteGroup(this.groupId);
             window.location.href = "/";
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onUserSearch = async () => {
+        try {
+            const candidates = await getUsersBySearchTerm(this.groupId, '');
+            this.groupTabView.renderSearchedMembers(candidates);
         } catch (e) {
             console.error(e);
         }

@@ -19,6 +19,23 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findIdAndNameByName(String name);
 
+//    @Query("SELECT u FROM User u WHERE " +
+//            "LOWER(u.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+//            "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+//            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+//    List<User> findBySearchTerm(@Param("searchTerm") String searchTerm);
+
+    @Query("""
+                SELECT u FROM User u
+                WHERE (
+                    LOWER(u.name) LIKE LOWER(CONCAT('%', :term, '%'))
+                    OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :term, '%'))
+                    OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :term, '%'))
+                )
+                AND u.id NOT IN :excludedIds
+            """)
+    List<User> findBySearchTermAndIdNotIn(@Param("term") String term, @Param("excludedIds") List<Long> excludedIds);
+
     // Загрузка пользователя с группами
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.groups WHERE u.name = :username")
     Optional<User> findByNameWithGroups(@Param("username") String username);
