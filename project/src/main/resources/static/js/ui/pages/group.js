@@ -2,7 +2,7 @@ import {GroupTabs} from "../components/groupTabs.js";
 import {
     addMembersToGroup,
     deleteGroup,
-    deleteMemberFromGroup,
+    deleteMemberFromGroup, fetchGroupMembers,
     fetchGroupMembersAndSlots,
     getUsersBySearchTerm,
     updateGroupInfo
@@ -29,7 +29,7 @@ export class Group {
 
     init = async () => {
         try {
-            const group = await fetchGroupMembersAndSlots(this.groupId);
+            const group = await fetchGroupMembers(this.groupId);
 
             this.loadGroup(group).catch(console.error);
             this.loadMembers(group).catch(console.error);
