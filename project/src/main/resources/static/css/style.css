@@ -224,3 +224,15 @@ footer p {
     color: white;
 }
 
+/* Фиксированный навбар на всю ширину */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+}
+/* Отступ, чтобы контент не перекрывался меню */
+body {
+    padding-top: 70px; /* высота навбара */
+}

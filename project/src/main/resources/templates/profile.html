@@ -10,126 +10,124 @@
 </head>
 
 <body class="bg-light">
-<div class="container-fluid">
-    <!-- menu -->
-    <div th:replace="~{fragments/menu :: main-menu}"></div>
+<!-- menu -->
+<div th:replace="~{fragments/menu :: main-menu}"></div>
 
-    <div class="container my-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white border-0 pb-0">
-                <ul class="nav nav-tabs card-header-tabs" id="profileTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about"
-                                type="button" role="tab">
-                            <i class="bi bi-person-lines-fill me-1"></i>О себе
-                        </button>
+<div class="container my-4 content">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white border-0 pb-0">
+            <ul class="nav nav-tabs card-header-tabs" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about"
+                            type="button" role="tab">
+                        <i class="bi bi-person-lines-fill me-1"></i>О себе
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups"
+                            type="button" role="tab">
+                        <i class="bi bi-people-fill me-1"></i>Мои группы
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body tab-content p-4" id="profileTabsContent">
+            <!-- О себе -->
+            <div class="tab-pane fade show active" id="about" role="tabpanel">
+                <h5 class="fw-bold text-primary mb-3">Информация о себе</h5>
+                <form id="profileForm" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="userName" placeholder="Введите ваше имя">
+                        <div class="invalid-feedback">Введите имя</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userLastName" class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" id="userLastName" placeholder="Введите вашу фамилию">
+                        <div class="invalid-feedback">Введите фамилию</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userDescription" class="form-label">Описание</label>
+                        <textarea class="form-control" id="userDescription" rows="4"
+                                  placeholder="Кратко о себе (инструменты, опыт, жанры...)"></textarea>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="saveProfileBtn">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Мои группы -->
+            <div class="tab-pane fade" id="groups" role="tabpanel">
+                <h5 class="fw-bold text-primary mb-3">Мои группы</h5>
+                <div id="userGroups" class="row g-3">
+                    <!-- Группы рендерятся динамически -->
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-1">The Estimators</h6>
+                                <p class="text-muted small mb-2">Жанр: рок</p>
+                                <p class="text-secondary small mb-3">Участников: 5</p>
+                                <button class="btn btn-outline-primary btn-sm w-100 view-group" data-group-id="1">
+                                    <i class="bi bi-eye me-1"></i>Посмотреть участников
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-1">Кузьмич Band</h6>
+                                <p class="text-muted small mb-2">Жанр: блюз</p>
+                                <p class="text-secondary small mb-3">Участников: 3</p>
+                                <button class="btn btn-outline-primary btn-sm w-100 view-group" data-group-id="2">
+                                    <i class="bi bi-eye me-1"></i>Посмотреть участников
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal с участниками группы -->
+<div class="modal fade" id="groupMembersModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-people-fill me-1"></i>Участники группы</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="groupMembersList" class="list-group">
+                    <!-- Участники заполняются динамически -->
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-person-circle text-primary fs-4 me-2"></i>
+                        <div>
+                            <div class="fw-bold">Алексей</div>
+                            <small class="text-muted">Гитара</small>
+                        </div>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups"
-                                type="button" role="tab">
-                            <i class="bi bi-people-fill me-1"></i>Мои группы
-                        </button>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-person-circle text-primary fs-4 me-2"></i>
+                        <div>
+                            <div class="fw-bold">Мария</div>
+                            <small class="text-muted">Вокал</small>
+                        </div>
                     </li>
                 </ul>
             </div>
-
-            <div class="card-body tab-content p-4" id="profileTabsContent">
-                <!-- О себе -->
-                <div class="tab-pane fade show active" id="about" role="tabpanel">
-                    <h5 class="fw-bold text-primary mb-3">Информация о себе</h5>
-                    <form id="profileForm" class="needs-validation" novalidate>
-                        <div class="mb-3">
-                            <label for="userName" class="form-label">Имя</label>
-                            <input type="text" class="form-control" id="userName" placeholder="Введите ваше имя">
-                            <div class="invalid-feedback">Введите имя</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userLastName" class="form-label">Фамилия</label>
-                            <input type="text" class="form-control" id="userLastName" placeholder="Введите вашу фамилию">
-                            <div class="invalid-feedback">Введите фамилию</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userDescription" class="form-label">Описание</label>
-                            <textarea class="form-control" id="userDescription" rows="4"
-                                      placeholder="Кратко о себе (инструменты, опыт, жанры...)"></textarea>
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-primary" id="saveProfileBtn">Сохранить</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Мои группы -->
-                <div class="tab-pane fade" id="groups" role="tabpanel">
-                    <h5 class="fw-bold text-primary mb-3">Мои группы</h5>
-                    <div id="userGroups" class="row g-3">
-                        <!-- Группы рендерятся динамически -->
-                        <div class="col-md-4">
-                            <div class="card h-100 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="fw-bold mb-1">The Estimators</h6>
-                                    <p class="text-muted small mb-2">Жанр: рок</p>
-                                    <p class="text-secondary small mb-3">Участников: 5</p>
-                                    <button class="btn btn-outline-primary btn-sm w-100 view-group" data-group-id="1">
-                                        <i class="bi bi-eye me-1"></i>Посмотреть участников
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="card h-100 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="fw-bold mb-1">Кузьмич Band</h6>
-                                    <p class="text-muted small mb-2">Жанр: блюз</p>
-                                    <p class="text-secondary small mb-3">Участников: 3</p>
-                                    <button class="btn btn-outline-primary btn-sm w-100 view-group" data-group-id="2">
-                                        <i class="bi bi-eye me-1"></i>Посмотреть участников
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-
-    <!-- Modal с участниками группы -->
-    <div class="modal fade" id="groupMembersModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="bi bi-people-fill me-1"></i>Участники группы</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <ul id="groupMembersList" class="list-group">
-                        <!-- Участники заполняются динамически -->
-                        <li class="list-group-item d-flex align-items-center">
-                            <i class="bi bi-person-circle text-primary fs-4 me-2"></i>
-                            <div>
-                                <div class="fw-bold">Алексей</div>
-                                <small class="text-muted">Гитара</small>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center">
-                            <i class="bi bi-person-circle text-primary fs-4 me-2"></i>
-                            <div>
-                                <div class="fw-bold">Мария</div>
-                                <small class="text-muted">Вокал</small>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- footer -->
 </div>
+
+<!-- footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

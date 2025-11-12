@@ -54,9 +54,22 @@ export class ProfileTabs {
             cardBody.className = 'card-body';
 
             // Название группы
+            // {
+            const groupNameLink = document.createElement('a');
+            groupNameLink.href = `/profile/group/${group.id}`;
+            groupNameLink.className = 'text-decoration-none';
+
             const groupName = document.createElement('h6');
-            groupName.className = 'fw-bold mb-1';
+            groupName.className = 'fw-bold mb-1 text-primary';
             groupName.textContent = group.name;
+
+            // Обработчик клика по названию группы
+            // groupNameLink.addEventListener('click', (e) => {
+            //     e.preventDefault(); // Предотвращаем переход по ссылке если href="#"
+            //     this.viewGroupDetails(group.id); // Новый метод для просмотра деталей группы
+            // });
+
+            groupNameLink.appendChild(groupName);
 
             // Жанр
             const genre = document.createElement('p');
@@ -87,7 +100,8 @@ export class ProfileTabs {
             });
 
             // Собираем карточку
-            cardBody.appendChild(groupName);
+            // cardBody.appendChild(groupName);
+            cardBody.appendChild(groupNameLink);
             cardBody.appendChild(genre);
             cardBody.appendChild(memberCount);
             cardBody.appendChild(viewButton);
@@ -124,12 +138,12 @@ export class ProfileTabs {
             // Имя участника
             const memberName = document.createElement('div');
             memberName.className = 'fw-bold';
-            memberName.textContent = member.name || `${member.firstName} ${member.lastName}`;
+            memberName.textContent = `${member.firstName} ${member.lastName}` || member.name;
 
             // Роль/инструмент
             const memberRole = document.createElement('small');
             memberRole.className = 'text-muted';
-            memberRole.textContent = member.role || member.instrument || 'Участник';
+            memberRole.textContent = member.role || member.shortDescription || 'Участник';
 
             // Собираем структуру
             infoContainer.appendChild(memberName);
