@@ -116,10 +116,7 @@ public class GroupServiceImpl implements GroupService {
                             )
                     );
         } else {
-            group = Group.builder()
-                    .name(groupDto.name())
-                    .description(groupDto.description())
-                    .build();
+            group = new Group();
         }
 
         groupNestedObjects nestedObjs = prepareNestedObjects(groupDto);
@@ -130,6 +127,7 @@ public class GroupServiceImpl implements GroupService {
             group.setSlots(nestedObjs.slots());
         }
 
+        group.setName(groupDto.name());
         group.setDescription(groupDto.description());
 
         return groupRepository.save(group);

@@ -12,7 +12,8 @@ export class Group {
         this.groupId = groupId;
         this.groupTabView = new GroupTabs(groupId, {
             updateGroupInfoEvt: this.onSaveGroupInfoBtnClick,
-            deleteGroupInfoEvt: this.onDeleteGroupInfoBtnClick
+            deleteGroupInfoEvt: this.onDeleteGroupInfoBtnClick,
+            deleteOkGroupInfoEvt: this.onDeleteGroupOkBtnClick
         });
     }
 
@@ -30,18 +31,28 @@ export class Group {
     }
 
     onSaveGroupInfoBtnClick = async () => {
+        if (!this.groupTabView.validateForm()) {
+            return;
+        }
         try {
             const groupForm = this.groupTabView.prepareGroupForApi();
             const result = await updateGroupInfo(this.groupId, groupForm);
             if (!result.success) {
                 console.log(result.errors);
+                return null;
             }
+
+            this.groupTabView.setTitle(groupForm.name);
         } catch (e) {
             console.error(e);
         }
     }
 
     onDeleteGroupInfoBtnClick = async () => {
+        this.groupTabView.showDeleteConfirm();
+    }
+
+    onDeleteGroupOkBtnClick = async () => {
         try {
             await deleteGroup(this.groupId);
             window.location.href = "/";
@@ -49,4 +60,5 @@ export class Group {
             console.error(e);
         }
     }
+
 }
