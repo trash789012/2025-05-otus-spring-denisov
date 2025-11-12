@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,10 +58,19 @@ public class GroupRestController {
         return groupService.findGroupWithMembersById(id);
     }
 
-    @Operation(summary = "Получить группу с участниками и лотами")
+    @Operation(summary = "Получить группу с участниками и лотами по ID")
     @GetMapping("/{id}/members-and-slots")
     public GroupWithMembersAndSlotsDto getGroupWithMembersAndSlots(@PathVariable Long id) {
         return groupService.findGroupWithMembersAndSlotsById(id);
+    }
+
+    @Operation(summary = "Поиск пользователей по неявному условию (логин/имя/фамилия")
+    @GetMapping("/{groupId}/candidates")
+    public List<UserInfoDto> getUsersBySearchTerm(
+            @PathVariable Long groupId,
+            @RequestParam String searchTerm
+    ) {
+        return groupService.findUsersForGroupBySearchTerm(groupId, searchTerm);
     }
 
     @Operation(summary = "Создать новую группу")
@@ -81,6 +91,15 @@ public class GroupRestController {
         return groupService.update(groupDto);
     }
 
+    @Operation(summary = "Добавить нескольких участников в группу")
+    @PostMapping("/{groupId}/members")
+    public GroupWithMembersDto addMembersToGroup(
+            @PathVariable Long groupId,
+            @RequestBody List<Long> memberIds
+    ) {
+        return groupService.addMembersToGroup(memberIds, groupId);
+    }
+
     @Operation(summary = "Исключить пользователя из группы")
     @DeleteMapping("/{groupId}/members/{memberId}")
     public void deleteMemberFromGroup(
@@ -88,15 +107,6 @@ public class GroupRestController {
             @PathVariable Long memberId
     ) {
         groupService.deleteMemberFromGroup(memberId, groupId);
-    }
-
-    @Operation(summary = "Поиск пользователей по неявному условию (логин/имя/фамилия")
-    @GetMapping("/{groupId}/candidates")
-    public List<UserInfoDto> getUsersBySearchTerm(
-            @PathVariable Long groupId,
-            @RequestParam String searchTerm
-    ) {
-        return groupService.findUsersForGroupBySearchTerm(groupId, searchTerm);
     }
 
     @Operation(summary = "Удалить группу")

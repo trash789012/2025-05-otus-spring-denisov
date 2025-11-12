@@ -1,5 +1,6 @@
 import {GroupTabs} from "../components/groupTabs.js";
 import {
+    addMembersToGroup,
     deleteGroup,
     deleteMemberFromGroup,
     fetchGroupMembersAndSlots,
@@ -21,7 +22,8 @@ export class Group {
             deleteGroupInfoEvt: this.onDeleteGroupInfoBtnClick,
             deleteOkGroupInfoEvt: this.onDeleteGroupOkBtnClick,
             deleteRememberFromGroupEvt: this.onRemoveMemberFromGroup,
-            onUserSearchEvt: this.onUserSearch
+            onUserSearchEvt: this.onUserSearch,
+            onConfirmAddMemberEvt: this.onConfirmAddMember
         });
     }
 
@@ -92,6 +94,21 @@ export class Group {
             const pattern = this.groupTabView.getSearchTerm();
             const candidates = await getUsersBySearchTerm(this.groupId, pattern);
             this.groupTabView.renderSearchedMembers(candidates);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onConfirmAddMember = async () => {
+        try {
+            const selected = this.groupTabView.getSelectedMemberIds();
+            const response = await addMembersToGroup(this.groupId, selected);
+            if (response.success) {
+                //update ui from response
+                this.groupTabView.closeAddMemberModal();
+                this.groupTabView.renderGroupInfo(response.result);
+                this.groupTabView.renderMembersTable(response.result.members);
+            }
         } catch (e) {
             console.error(e);
         }

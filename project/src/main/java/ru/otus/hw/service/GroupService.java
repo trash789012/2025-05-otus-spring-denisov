@@ -25,6 +25,8 @@ public interface GroupService {
 
     List<UserInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm);
 
+    GroupWithMembersDto addMembersToGroup(List<Long> memberIds, Long groupId);
+
     GroupDto insert(GroupFormDto groupDto);
 
     GroupDto update(GroupFormDto groupDto);

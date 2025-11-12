@@ -115,13 +115,15 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public List<UserInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm) {
-        List<Long> existingMemberIds = new ArrayList<>();
-        var group = groupRepository.findById(groupId);
-        if (group.isPresent()) {
-            existingMemberIds = group.get().getMembers().stream()
-                    .map(User::getId)
-                    .toList();
-        }
+        var group = groupRepository.findById(groupId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Group with id %d not found".formatted(groupId))
+                );
+
+        List<Long> existingMemberIds = group.getMembers().stream()
+                .map(User::getId)
+                .toList();
+
         if (existingMemberIds.isEmpty()) {
             return userRepository.findBySearchTerm(searchTerm)
                     .stream()
@@ -133,6 +135,53 @@ public class GroupServiceImpl implements GroupService {
                     .map(userConverter::toInfoDto)
                     .toList();
         }
+    }
+
+    @Override
+    @Transactional
+    public GroupWithMembersDto addMembersToGroup(List<Long> memberIds, Long groupId) {
+        if (memberIds.isEmpty()) {
+            throw new IllegalArgumentException("Member id is null");
+        }
+
+        var group = groupRepository.findById(groupId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Group with id %d not found".formatted(groupId))
+                );
+
+        var newMembers = userRepository.findAllById(memberIds);
+
+        var foundMemberIds = newMembers.stream()
+                .map(User::getId)
+                .toList();
+
+        var notFoundMemberIds = memberIds.stream()
+                .filter(id -> !foundMemberIds.contains(id))
+                .toList();
+
+        if (!notFoundMemberIds.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Users with ids %s not found".formatted(notFoundMemberIds)
+            );
+        }
+
+        var existingMembers = group.getMembers();
+        var existingMemberIds = existingMembers.stream()
+                .map(User::getId)
+                .toList();
+
+        var membersToAdd = newMembers.stream()
+                .filter(user -> !existingMemberIds.contains(user.getId()))
+                .toList();
+
+        if (membersToAdd.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "All selected users are already members of this group %s".formatted(groupId)
+            );
+        }
+
+        existingMembers.addAll(membersToAdd);
+        return groupConverter.toWithMembersDto(groupRepository.save(group));
     }
 
     @Override

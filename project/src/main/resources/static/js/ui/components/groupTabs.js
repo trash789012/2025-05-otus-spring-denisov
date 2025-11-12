@@ -46,6 +46,14 @@ export class GroupTabs {
 
         //searchTerm для поиска пользователей
         this.searchUser = document.getElementById('searchUser');
+
+        //кнопка ок для выбранных к добавлению пользователей
+        this.confirmAddMember = document.getElementById('confirmAddMember');
+        this.confirmAddMember.addEventListener('click', () => {
+            params.onConfirmAddMemberEvt();
+        })
+
+        this.addMemberModal = document.getElementById('addMemberModal');
     }
 
     renderGroupInfo(group = {}) {
@@ -191,11 +199,16 @@ export class GroupTabs {
     }
 
     showAddMembers() {
-        const modal = new bootstrap.Modal(document.getElementById('addMemberModal'));
+        const modal = new bootstrap.Modal(this.addMemberModal);
 
         this.renderSearchedMembers(null);
 
         modal.show();
+    }
+
+    closeAddMemberModal() {
+        const modal = bootstrap.Modal.getInstance(this.addMemberModal);
+        modal.hide();
     }
 
     removeMemberRow(memberId = 0) {
@@ -308,5 +321,13 @@ export class GroupTabs {
 
     getSearchTerm() {
         return this.searchUser.value;
+    }
+
+    getSelectedMemberIds() {
+        const selectedCheckboxes = document.querySelectorAll('#usersTable .user-select:checked');
+        const selectedIds = Array.from(selectedCheckboxes).map(checkbox => {
+            return parseInt(checkbox.getAttribute('data-user-id'));
+        });
+        return selectedIds;
     }
 }

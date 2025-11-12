@@ -1,4 +1,4 @@
-import {get, del, put} from "../utils/http.js";
+import {get, del, put, post} from "../utils/http.js";
 
 export async function fetchAllGroups() {
     return get(`/group`);
@@ -39,4 +39,12 @@ export async function getUsersBySearchTerm(groupId, searchTerm = '*') {
     }
 
     return get(url);
+}
+
+export async function addMembersToGroup(groupId, membersIds = []) {
+    return post(`/group/${groupId}/members`, membersIds, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
 }

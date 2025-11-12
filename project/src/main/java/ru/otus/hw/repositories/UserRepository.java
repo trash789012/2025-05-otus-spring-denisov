@@ -45,4 +45,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.id IN :userIds")
     List<User> findAllByIdsWithRoles(@Param("userIds") List<Long> userIds);
 
+    @Override
+    List<User> findAllById(Iterable<Long> longs);
+
 }
