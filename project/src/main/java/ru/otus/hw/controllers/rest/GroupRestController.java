@@ -17,6 +17,7 @@ import ru.otus.hw.converters.GroupConverter;
 import ru.otus.hw.dto.group.GroupDto;
 import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
+import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.GroupService;
@@ -50,6 +51,12 @@ public class GroupRestController {
     @GetMapping("/{id}/members")
     public GroupWithMembersDto getGroupWithMembers(@PathVariable Long id) {
         return groupService.findGroupWithMembersById(id);
+    }
+
+    @Operation(summary = "Получить группу с участниками и лотами")
+    @GetMapping("/{id}/members-and-slots")
+    public GroupWithMembersAndSlotsDto getGroupWithMembersAndSlots(@PathVariable Long id) {
+        return groupService.findGroupWithMembersAndSlotsById(id);
     }
 
     @Operation(summary = "Создать новую группу")

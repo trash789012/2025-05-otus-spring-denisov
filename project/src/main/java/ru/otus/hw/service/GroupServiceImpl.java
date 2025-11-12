@@ -10,6 +10,7 @@ import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.group.GroupDto;
 import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
+import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
@@ -68,6 +69,16 @@ public class GroupServiceImpl implements GroupService {
                         () -> new EntityNotFoundException("Group with id %d not found".formatted(id))
                 );
         return groupConverter.toWithMembersDto(group);
+    }
+
+    @Override
+    public GroupWithMembersAndSlotsDto findGroupWithMembersAndSlotsById(Long id) {
+        var group = groupRepository.findById(id)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Group with id %d not found".formatted(id))
+                );
+        return groupConverter.toWithMembersAndSlotsDto(group);
+
     }
 
     @Override

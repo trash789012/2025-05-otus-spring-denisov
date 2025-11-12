@@ -6,6 +6,7 @@ import ru.otus.hw.domain.Group;
 import ru.otus.hw.dto.group.GroupDto;
 import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
+import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
 import ru.otus.hw.dto.slot.SlotDto;
 import ru.otus.hw.dto.user.UserDto;
@@ -83,6 +84,26 @@ public class GroupConverter {
                 (group.getMembers() != null) ?
                         group.getMembers().stream()
                                 .map(userConverter::toInfoDto)
+                                .toList() : null
+        );
+    }
+
+    public GroupWithMembersAndSlotsDto toWithMembersAndSlotsDto(Group group) {
+        if (group == null) {
+            return null;
+        }
+
+        return new GroupWithMembersAndSlotsDto(
+                group.getId(),
+                group.getName(),
+                group.getDescription(),
+                (group.getMembers() != null) ?
+                        group.getMembers().stream()
+                                .map(userConverter::toInfoDto)
+                                .toList() : null,
+                (group.getSlots()) != null ?
+                        group.getSlots().stream()
+                                .map(slotConverter::toInfoDto)
                                 .toList() : null
         );
     }

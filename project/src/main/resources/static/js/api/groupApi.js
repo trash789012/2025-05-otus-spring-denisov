@@ -7,3 +7,7 @@ export async function fetchAllGroups() {
 export async function fetchGroupMembers(groupId) {
     return get(`/group/${groupId}/members`);
 }
+
+export async function fetchGroupMembersAndSlots(groupId) {
+    return get(`/group/${groupId}/members-and-slots`);
+}
