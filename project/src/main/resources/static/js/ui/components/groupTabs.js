@@ -43,6 +43,9 @@ export class GroupTabs {
         this.searchUser.addEventListener('click', () => {
             params.onUserSearchEvt();
         })
+
+        //searchTerm для поиска пользователей
+        this.searchUser = document.getElementById('searchUser');
     }
 
     renderGroupInfo(group = {}) {
@@ -189,6 +192,9 @@ export class GroupTabs {
 
     showAddMembers() {
         const modal = new bootstrap.Modal(document.getElementById('addMemberModal'));
+
+        this.renderSearchedMembers(null);
+
         modal.show();
     }
 
@@ -245,11 +251,22 @@ export class GroupTabs {
 
             // Ячейка выбора
             const selectCell = document.createElement('td');
+            selectCell.className = 'text-center align-middle';
+
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.className = 'form-check-input user-select';
             checkbox.setAttribute('data-user-id', user.id);
             selectCell.appendChild(checkbox);
+
+            selectCell.addEventListener('click', (e) => {
+                // Предотвращаем двойное срабатывание если кликнули прямо на чекбокс
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    // Триггерим событие change для чекбокса
+                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
 
             // Ячейка пользователя
             const userCell = document.createElement('td');
@@ -287,5 +304,9 @@ export class GroupTabs {
             usersTable.appendChild(row);
         });
 
+    }
+
+    getSearchTerm() {
+        return this.searchUser.value;
     }
 }

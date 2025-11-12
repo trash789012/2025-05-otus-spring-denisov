@@ -89,7 +89,8 @@ export class Group {
 
     onUserSearch = async () => {
         try {
-            const candidates = await getUsersBySearchTerm(this.groupId, '');
+            const pattern = this.groupTabView.getSearchTerm();
+            const candidates = await getUsersBySearchTerm(this.groupId, pattern);
             this.groupTabView.renderSearchedMembers(candidates);
         } catch (e) {
             console.error(e);

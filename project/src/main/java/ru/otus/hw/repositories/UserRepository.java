@@ -19,11 +19,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findIdAndNameByName(String name);
 
-//    @Query("SELECT u FROM User u WHERE " +
-//            "LOWER(u.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-//            "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-//            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-//    List<User> findBySearchTerm(@Param("searchTerm") String searchTerm);
+    @Query("SELECT u FROM User u WHERE " +
+            "LOWER(u.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    List<User> findBySearchTerm(@Param("searchTerm") String searchTerm);
 
     @Query("""
                 SELECT u FROM User u

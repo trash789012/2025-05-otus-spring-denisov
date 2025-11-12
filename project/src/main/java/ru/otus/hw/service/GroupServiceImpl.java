@@ -122,10 +122,17 @@ public class GroupServiceImpl implements GroupService {
                     .map(User::getId)
                     .toList();
         }
-        return userRepository.findBySearchTermAndIdNotIn(searchTerm, existingMemberIds)
-                .stream()
-                .map(userConverter::toInfoDto)
-                .toList();
+        if (existingMemberIds.isEmpty()) {
+            return userRepository.findBySearchTerm(searchTerm)
+                    .stream()
+                    .map(userConverter::toInfoDto)
+                    .toList();
+        } else {
+            return userRepository.findBySearchTermAndIdNotIn(searchTerm, existingMemberIds)
+                    .stream()
+                    .map(userConverter::toInfoDto)
+                    .toList();
+        }
     }
 
     @Override

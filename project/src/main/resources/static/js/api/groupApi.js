@@ -30,12 +30,9 @@ export async function deleteMemberFromGroup(groupId, memberId) {
 
 export async function getUsersBySearchTerm(groupId, searchTerm = '*') {
     let url = `/group/${groupId}/candidates`;
-
     const params = new URLSearchParams();
 
-    // if (searchTerm) {
-        params.append('searchTerm', searchTerm);
-    // }
+    params.append('searchTerm', searchTerm);
 
     if (params.toString()) {
         url += `?${params.toString()}`;
