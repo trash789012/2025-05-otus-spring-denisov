@@ -27,7 +27,6 @@ public class UserRestController {
 
     private final CustomUserDetailService userDetailsService;
 
-
     @Operation(summary = "Получить информацию по текущему авторизованному пользователю")
     @GetMapping("/self")
     public UserDto getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {

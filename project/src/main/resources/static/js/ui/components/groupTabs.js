@@ -107,12 +107,7 @@ export class GroupTabs {
             memberName.className = 'fw-bold';
             memberName.textContent = `${member?.firstName} ${member?.lastName}` || member.name;
 
-            const memberId = document.createElement('small');
-            memberId.className = 'text-muted';
-            memberId.textContent = `ID: ${member.id}`;
-
             memberInfo.appendChild(memberName);
-            memberInfo.appendChild(memberId);
             memberContainer.appendChild(memberIcon);
             memberContainer.appendChild(memberInfo);
             memberCell.appendChild(memberContainer);
@@ -286,22 +281,13 @@ export class GroupTabs {
             const userContainer = document.createElement('div');
             userContainer.className = 'd-flex align-items-center';
 
-            const userIcon = document.createElement('i');
-            userIcon.className = 'bi bi-person-circle text-primary me-2';
-
             const userInfo = document.createElement('div');
 
             const userName = document.createElement('div');
             userName.className = 'fw-semibold';
             userName.textContent = `${user.firstName} ${user.lastName}`;
 
-            const userId = document.createElement('small');
-            userId.className = 'text-muted';
-            userId.textContent = `ID: ${user.id}`;
-
             userInfo.appendChild(userName);
-            userInfo.appendChild(userId);
-            userContainer.appendChild(userIcon);
             userContainer.appendChild(userInfo);
             userCell.appendChild(userContainer);
 

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админпанель - JamTime</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 0px; /* высота навбара */
+        }
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0;
+            margin-top: 70px;
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+        }
+
+        .admin-nav {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .admin-nav-btn {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 0.5rem;
+            background: white;
+            color: #495057;
+            text-decoration: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .admin-nav-btn:hover {
+            background: #f8f9fa;
+            color: var(--primary-color);
+        }
+
+        .admin-nav-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: #f8f9fa;
+            font-weight: 500;
+        }
+
+        .admin-nav-btn i {
+            display: block;
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-nav-btn span {
+            display: block;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .admin-nav-btn {
+                padding: 0.75rem 0.25rem;
+            }
+
+            .admin-nav-btn i {
+                font-size: 1.1rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .admin-nav-btn span {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .admin-nav {
+                flex-wrap: wrap;
+            }
+
+            .admin-nav-btn {
+                flex: 0 0 33.333%;
+                padding: 0.6rem 0.25rem;
+            }
+
+            .admin-nav-btn:nth-child(n+4) {
+                flex: 0 0 50%;
+            }
+        }
+
+        /* Остальные стили остаются без изменений */
+        .admin-content {
+            padding: 1.5rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .entity-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+
+        .entity-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-meta {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-xs {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .badge-sm {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .entity-content {
+            display: none;
+        }
+
+        .entity-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<!-- Главное меню -->
+<div th:replace="~{fragments/menu :: main-menu}"></div>
+
+<!-- Админ навигация -->
+<div class="admin-header">
+    <div class="container-fluid px-0">
+        <div class="admin-nav">
+            <a href="#users" class="admin-nav-btn active" data-target="users">
+                <i class="bi bi-people"></i>
+                <span>Пользователи</span>
+            </a>
+            <a href="#groups" class="admin-nav-btn" data-target="groups">
+                <i class="bi bi-music-note-beamed"></i>
+                <span>Коллективы</span>
+            </a>
+            <a href="#genres" class="admin-nav-btn" data-target="genres">
+                <i class="bi bi-tags"></i>
+                <span>Жанры</span>
+            </a>
+            <a href="#slots" class="admin-nav-btn" data-target="slots">
+                <i class="bi bi-calendar-event"></i>
+                <span>Бронирования</span>
+            </a>
+            <a href="#reports" class="admin-nav-btn" data-target="reports">
+                <i class="bi bi-graph-up"></i>
+                <span>Отчеты</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div class="admin-content">
+    <div class="container">
+        <!-- Пользователи -->
+        <div id="users-content" class="entity-content active">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-primary mb-1">Пользователи</h1>
+                        <p class="text-muted mb-0">Управление пользователями системы</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-circle me-1"></i>Добавить
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <!-- Карточка пользователя 1 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar">АИ</div>
+                            <div>
+                                <div class="card-title">Алексей Иванов</div>
+                                <div class="card-meta">@alexivanov</div>
+                            </div>
+                        </div>
+                        <span class="badge bg-secondary badge-sm">USER</span>
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-envelope me-1"></i>alex@example.com
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-success badge-sm">Активен</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Карточка пользователя 2 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar">МП</div>
+                            <div>
+                                <div class="card-title">Мария Петрова</div>
+                                <div class="card-meta">@maria</div>
+                            </div>
+                        </div>
+                        <span class="badge bg-primary badge-sm">ADMIN</span>
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-envelope me-1"></i>maria@example.com
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-success badge-sm">Активен</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Остальное содержимое без изменений -->
+        <!-- Коллективы -->
+        <div id="groups-content" class="entity-content">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-primary mb-1">Коллективы</h1>
+                        <p class="text-muted mb-0">Управление музыкальными коллективами</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i>Добавить
+                    </button>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <!-- Карточка коллектива 1 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">The Estimators</div>
+                            <div class="card-meta">ID: 1</div>
+                        </div>
+                        <span class="badge bg-success badge-sm">Активен</span>
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-tag me-1"></i>Рок
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-people me-1"></i>5 участников
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Карточка коллектива 2 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Кузьмич Band</div>
+                            <div class="card-meta">ID: 2</div>
+                        </div>
+                        <span class="badge bg-success badge-sm">Активен</span>
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-tag me-1"></i>Блюз
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-people me-1"></i>3 участника
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Жанры -->
+        <div id="genres-content" class="entity-content">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-primary mb-1">Жанры</h1>
+                        <p class="text-muted mb-0">Управление музыкальными жанрами</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i>Добавить
+                    </button>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <!-- Карточка жанра 1 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Рок</div>
+                            <div class="card-meta">ID: 1</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">
+                        Рок-музыка различных направлений
+                    </div>
+                    <div class="card-actions mt-2">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Карточка жанра 2 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Блюз</div>
+                            <div class="card-meta">ID: 2</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">
+                        Блюзовая музыка и её производные
+                    </div>
+                    <div class="card-actions mt-2">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Бронирования -->
+        <div id="slots-content" class="entity-content">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-primary mb-1">Бронирования</h1>
+                        <p class="text-muted mb-0">Управление бронированиями репетиций</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i>Добавить
+                    </button>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <!-- Карточка бронирования 1 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">The Estimators</div>
+                            <div class="card-meta">ID: 1</div>
+                        </div>
+                        <span class="badge bg-success badge-sm">Подтверждено</span>
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-calendar me-1"></i>15.11.2024 18:00
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-clock me-1"></i>2 часа
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Карточка бронирования 2 -->
+                <div class="entity-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Кузьмич Band</div>
+                            <div class="card-meta">ID: 2</div>
+                        </div>
+                        <span class="badge bg-warning badge-sm">Ожидание</span>
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-calendar me-1"></i>16.11.2024 20:00
+                    </div>
+                    <div class="card-meta mb-2">
+                        <i class="bi bi-clock me-1"></i>3 часа
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline-primary btn-xs">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </button>
+                        <button class="btn btn-outline-danger btn-xs">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Отчеты -->
+        <div id="reports-content" class="entity-content">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-primary mb-1">Отчеты</h1>
+                        <p class="text-muted mb-0">Аналитика и отчеты по системе</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm">
+                        <i class="bi bi-download me-1"></i>Скачать отчет
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">156</div>
+                    <div class="text-muted">Всего пользователей</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">23</div>
+                    <div class="text-muted">Коллективов</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">89</div>
+                    <div class="text-muted">Бронирований</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="text-muted">Жанров</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navButtons = document.querySelectorAll('.admin-nav-btn');
+        const contents = document.querySelectorAll('.entity-content');
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                contents.forEach(content => content.classList.remove('active'));
+                const targetId = this.getAttribute('data-target') + '-content';
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+    });
+</script>
+</body>
+</html>
