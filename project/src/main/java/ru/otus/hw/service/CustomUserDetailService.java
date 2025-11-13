@@ -12,6 +12,7 @@ import ru.otus.hw.domain.User;
 import ru.otus.hw.domain.enums.UserRole;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
+import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -20,6 +21,7 @@ import ru.otus.hw.repositories.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,14 +81,47 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDto updateUserInfo(UserDto userDto) {
-        var userDb = getUserByName(userDto.name());
+    public UserDto updateUserInfo(UserInfoDto userDto) {
+        var userDb = userRepository.findById(userDto.id()).orElseThrow(
+                () -> new EntityNotFoundException("User not found %s".formatted(userDto.id()))
+        );
 
-        userDb.setFirstName(userDto.firstName());
-        userDb.setLastName(userDto.lastName());
-        userDb.setShortDescription(userDto.shortDescription());
+        prepareForUpdate(userDto.firstName(), userDb, userDto.lastName(), userDto.shortDescription());
+        return userConverter.toDto(userRepository.save(userDb));
+    }
+
+    @Transactional
+    public UserDto updateUserWithRoles(UserWithRolesDto userDto) {
+        var userDb = getUserById(userDto.id());
+
+        prepareForUpdate(userDto.firstName(), userDb, userDto.lastName(), userDto.shortDescription());
+        if (!userDto.roles().isEmpty()) {
+            userDb.setRoles(userDto.roles().stream()
+                    .map(String::toUpperCase)
+                    .map(UserRole::valueOf)
+                    .collect(Collectors.toList())
+            );
+        }
 
         return userConverter.toDto(userRepository.save(userDb));
+    }
+
+    private static void prepareForUpdate(String userDto, User userDb, String userDto1, String userDto2) {
+        if (userDto != null) {
+            userDb.setFirstName(userDto);
+        }
+        if (userDto1 != null) {
+            userDb.setLastName(userDto1);
+        }
+        if (userDto2 != null) {
+            userDb.setShortDescription(userDto2);
+        }
+    }
+
+    private User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("User not found %s".formatted(id))
+        );
     }
 
     @Transactional

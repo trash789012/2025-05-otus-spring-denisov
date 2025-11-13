@@ -1,5 +1,5 @@
 import {UserTabs} from "../components/userTabs.js";
-import {fetchAllRoles, fetchUserById} from "../../api/userApi.js";
+import {fetchAllRoles, fetchUserById, updateUserRoles} from "../../api/userApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
 export class User {
     constructor(userId = 0) {
         this.userId = userId;
-        this.view = new UserTabs();
+        this.view = new UserTabs({
+            saveBtnEvent: this.onSaveUserBtnClick
+        });
     }
 
     init = async () => {
@@ -28,6 +30,18 @@ export class User {
             this.view.setAllRoles(roles);
             this.view.renderMainInfo(user);
             this.view.renderRolesSelector(user.roles);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    onSaveUserBtnClick = async () => {
+        try {
+            const userDto = this.view.prepareForApi();
+            const result = await updateUserRoles(userDto.id, userDto);
+            if (result.success) {
+                this.init().catch(console.error);
+            }
         } catch (e) {
             console.error(e);
         }

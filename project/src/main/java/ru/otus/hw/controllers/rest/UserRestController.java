@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.user.UserDto;
+import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.BadRequestException;
@@ -56,7 +57,7 @@ public class UserRestController {
     @Operation(summary = "Обновить основные данные о пользователе")
     @PutMapping("/{id}")
     public UserDto updateUser(@PathVariable Long id,
-                              @RequestBody UserDto userDto,
+                              @RequestBody UserInfoDto userDto,
                               @AuthenticationPrincipal UserDetails userDetails
     ) {
         var userDb = userDetailsService.findIdByName(userDetails.getUsername());
@@ -69,6 +70,19 @@ public class UserRestController {
         }
 
         return userDetailsService.updateUserInfo(userDto);
+    }
+
+    @Operation(summary = "Обновить данные о пользователе и роли")
+    @PutMapping("/{id}/roles")
+    public UserDto updateUserRoles(
+            @PathVariable Long id,
+            @RequestBody UserWithRolesDto userDto
+    ) {
+
+        if (!id.equals(userDto.id())) {
+            throw new BadRequestException("Id in path and principal must match");
+        }
+        return userDetailsService.updateUserWithRoles(userDto);
     }
 
     @Operation(summary = "Удаление пользователя по ID")

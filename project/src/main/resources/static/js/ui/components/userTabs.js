@@ -1,5 +1,5 @@
 export class UserTabs {
-    constructor(params= {}) {
+    constructor(params = {}) {
         this.userInit = document.getElementById('userInit');
         this.userLogin = document.getElementById('userLogin');
         this.firstName = document.getElementById('firstName');
@@ -8,10 +8,17 @@ export class UserTabs {
 
         this.rolesSelector = document.getElementById('userRoles');
 
+        this.saveUserBtn = document.getElementById('saveUserBtn');
+        this.saveUserBtn.onclick = () => {
+            params.saveBtnEvent();
+        }
+
         this.allRoles = params.allRoles;
+        this.userId = 0;
     }
 
     renderMainInfo(user = {}) {
+        this.userId = user.id;
         this.userInit.textContent = `${user.firstName} ${user.lastName}`;
         this.userLogin.textContent = `@${user.name}`;
         this.firstName.value = user.firstName;
@@ -19,19 +26,19 @@ export class UserTabs {
         this.username.value = user.name;
     }
 
-    renderRolesSelector(roles= []) {
+    renderRolesSelector(roles = []) {
         this.rolesSelector.innerHTML = '';
 
         this.allRoles.forEach(role => {
-           const option = document.createElement('option');
-           option.value = role;
-           option.textContent = role;
+            const option = document.createElement('option');
+            option.value = role;
+            option.textContent = role;
 
-           if (roles) {
-               option.selected = roles.includes(role);
-           }
+            if (roles) {
+                option.selected = roles.includes(role);
+            }
 
-           this.rolesSelector.appendChild(option);
+            this.rolesSelector.appendChild(option);
         });
     }
 
@@ -43,5 +50,14 @@ export class UserTabs {
 
     setAllRoles(roles) {
         this.allRoles = roles;
+    }
+
+    prepareForApi() {
+        return {
+            id: this.userId,
+            firstName: this.firstName.value,
+            lastName: this.lastName.value,
+            roles: this.getSelectedRoles()
+        };
     }
 }
