@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.config.security.SecurityUserDetails;
 import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.User;
+import ru.otus.hw.domain.enums.UserRole;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
@@ -17,6 +18,7 @@ import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.UserRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -28,6 +30,13 @@ public class CustomUserDetailService implements UserDetailsService {
     private final GroupRepository groupRepository;
 
     private final UserConverter userConverter;
+
+    public List<String> findAllUserRoles() {
+        return Arrays.stream(UserRole.values())
+                .map(Enum::name)
+                .toList();
+    }
+
 
     @Override
     @Transactional(readOnly = true)

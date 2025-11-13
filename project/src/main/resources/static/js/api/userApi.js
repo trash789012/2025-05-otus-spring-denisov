@@ -16,6 +16,10 @@ export async function updateUser(id, user) {
     );
 }
 
+export async function fetchAllRoles() {
+    return get('/user/roles');
+}
+
 export async function fetchUserById(id) {
     return get(`/user/${id}`);
 }

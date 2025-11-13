@@ -1,5 +1,5 @@
 import {UserTabs} from "../components/userTabs.js";
-import {fetchUserById} from "../../api/userApi.js";
+import {fetchAllRoles, fetchUserById} from "../../api/userApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -20,7 +20,12 @@ export class User {
 
     loadUserInfo = async (userId) => {
         try {
-            const user = await fetchUserById(userId);
+            const [user, roles] = await Promise.all([
+                fetchUserById(userId),
+                fetchAllRoles()
+            ]);
+
+            this.view.setAllRoles(roles);
             this.view.renderMainInfo(user);
             this.view.renderRolesSelector(user.roles);
         } catch (e) {

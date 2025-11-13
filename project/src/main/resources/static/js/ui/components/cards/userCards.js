@@ -174,10 +174,10 @@ export class UserCards {
 
     getRoleBadgeClass(role) {
         const roleClasses = {
-            'ROOT': 'badge bg-primary badge-sm',
-            'ADMIN': 'badge bg-info badge-sm',
-            'MODERATOR': 'badge bg-info badge-sm',
-            'USER': 'badge bg-secondary badge-sm'
+            'ROLE_ROOT': 'badge bg-primary badge-sm',
+            'ROLE_ADMIN': 'badge bg-info badge-sm',
+            'ROLE_MODERATOR': 'badge bg-info badge-sm',
+            'ROLE_USER': 'badge bg-secondary badge-sm'
         };
         return roleClasses[role] || 'badge bg-secondary badge-sm';
     }

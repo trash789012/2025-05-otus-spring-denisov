@@ -34,6 +34,12 @@ public class UserRestController {
         return userDetailsService.findByNameWithGroupsAndMembers(userDetails.getUsername());
     }
 
+    @Operation(summary = "Получить список возможных ролей в системе")
+    @GetMapping("/roles")
+    public List<String> getAllRoles() {
+        return userDetailsService.findAllUserRoles();
+    }
+
     @Operation(summary = "Получить информацию по пользователю, с ролями и группами")
     @GetMapping("/{id}")
     public UserWithRolesAndGroupsDto getUserById(@PathVariable Long id) {

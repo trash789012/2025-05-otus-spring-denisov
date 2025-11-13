@@ -22,13 +22,13 @@ export class UserTabs {
     renderRolesSelector(roles= []) {
         this.rolesSelector.innerHTML = '';
 
-        roles.forEach(role => {
+        this.allRoles.forEach(role => {
            const option = document.createElement('option');
            option.value = role;
            option.textContent = role;
 
-           if (this.allRoles) {
-               option.selected = this.allRoles.includes(role);
+           if (roles) {
+               option.selected = roles.includes(role);
            }
 
            this.rolesSelector.appendChild(option);
@@ -39,5 +39,9 @@ export class UserTabs {
         return Array.from(this.rolesSelector.selectedOptions).map(
             option => option.value
         );
+    }
+
+    setAllRoles(roles) {
+        this.allRoles = roles;
     }
 }
