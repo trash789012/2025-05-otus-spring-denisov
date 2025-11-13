@@ -30,6 +30,7 @@ export class User {
             this.view.setAllRoles(roles);
             this.view.renderMainInfo(user);
             this.view.renderRolesSelector(user.roles);
+            this.view.renderUserGroups(user.groups);
         } catch (e) {
             console.error(e);
         }
