@@ -12,7 +12,9 @@ import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
 import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
+import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.UserRepository;
 
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.List;
 public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    private final GroupRepository groupRepository;
 
     private final UserConverter userConverter;
 
@@ -36,6 +40,13 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDto findByUserName(String username) {
         var dbUser = getUserByName(username);
         return userConverter.toDto(dbUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserWithRolesDto> getAllUsersWithRoles() {
+        return userRepository.findAll().stream()
+                .map(userConverter::toUserWithRolesDto)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -66,6 +77,21 @@ public class CustomUserDetailService implements UserDetailsService {
         userDb.setShortDescription(userDto.shortDescription());
 
         return userConverter.toDto(userRepository.save(userDb));
+    }
+
+    @Transactional
+    public void deleteUserById(Long id) {
+        var user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User not found %s".formatted(id))
+                );
+
+        // Удаляем пользователя из всех групп
+        user.getGroups().forEach(group -> group.getMembers().remove(user));
+        groupRepository.saveAll(user.getGroups());
+
+        // Теперь можно безопасно удалить пользователя
+        userRepository.delete(user);
     }
 
     private User getUserByName(String username) {

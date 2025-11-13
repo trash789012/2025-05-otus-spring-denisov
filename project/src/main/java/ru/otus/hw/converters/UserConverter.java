@@ -2,10 +2,14 @@ package ru.otus.hw.converters;
 
 import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.User;
+import ru.otus.hw.domain.enums.UserRole;
 import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
 import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserWithRolesDto;
+
+import java.util.List;
 
 @Component
 public class UserConverter {
@@ -37,17 +41,6 @@ public class UserConverter {
         return new UserExistsDto(user.getId(), user.getName());
     }
 
-    public User toEntity(UserDto userDto) {
-        if (userDto == null) {
-            return null;
-        }
-
-        return User.builder()
-                .id(userDto.id())
-                .name(userDto.name())
-                .build();
-    }
-
     public UserInfoDto toInfoDto(User user) {
         if (user == null) {
             return null;
@@ -59,6 +52,24 @@ public class UserConverter {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getShortDescription()
+        );
+    }
+
+    public UserWithRolesDto toUserWithRolesDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return new UserWithRolesDto(
+                user.getId(),
+                user.getName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getShortDescription(),
+                user.getRoles() != null
+                        ? user.getRoles().stream()
+                        .map(Enum::name)
+                        .toList() : List.of()
         );
     }
 
