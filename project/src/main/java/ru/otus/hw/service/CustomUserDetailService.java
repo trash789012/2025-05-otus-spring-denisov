@@ -11,7 +11,7 @@ import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
@@ -37,9 +37,11 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public UserDto findByUserName(String username) {
-        var dbUser = getUserByName(username);
-        return userConverter.toDto(dbUser);
+    public UserWithRolesAndGroupsDto findUserById(Long userId) {
+        var dbUser = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("User not found %s".formatted(userId))
+        );
+        return userConverter.toUserWithRolesAndGroupsDto(dbUser);
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +67,6 @@ public class CustomUserDetailService implements UserDetailsService {
                         () -> new EntityNotFoundException("User with name %s not found".formatted(username))
                 );
         return userConverter.toExistsDto(dbUser);
-
     }
 
     @Transactional

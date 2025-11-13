@@ -20,6 +20,7 @@ export class UserCards {
     createUserCard(user) {
         const card = document.createElement('div');
         card.className = 'entity-card';
+        card.setAttribute('data-user-id', user.id);
 
         // Основной контент
         const cardContent = document.createElement('div');
@@ -81,8 +82,8 @@ export class UserCards {
         userInfo.appendChild(textInfo);
 
         const roleBadge = document.createElement('span');
-        roleBadge.className = this.getRoleBadgeClass(user.role);
-        roleBadge.textContent = user.role || 'USER';
+        roleBadge.className = this.getRoleBadgeClass(user.roles[0] || '');
+        roleBadge.textContent = user.roles[0] || 'USER';
 
         cardHeader.appendChild(userInfo);
         cardHeader.appendChild(roleBadge);
@@ -173,7 +174,8 @@ export class UserCards {
 
     getRoleBadgeClass(role) {
         const roleClasses = {
-            'ADMIN': 'badge bg-primary badge-sm',
+            'ROOT': 'badge bg-primary badge-sm',
+            'ADMIN': 'badge bg-info badge-sm',
             'MODERATOR': 'badge bg-info badge-sm',
             'USER': 'badge bg-secondary badge-sm'
         };
@@ -225,6 +227,31 @@ export class UserCards {
         emptyMessage.appendChild(emptyIcon);
         emptyMessage.appendChild(emptyText);
         this.container.appendChild(emptyMessage);
+    }
+
+    removeCard(userId) {
+        const card = document.querySelector(`[data-user-id="${userId}"]`);
+
+        // Добавляем класс для анимации исчезновения
+        card.style.transition = 'all 0.3s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-100%)';
+        card.style.maxHeight = '0';
+        card.style.overflow = 'hidden';
+        card.style.margin = '0';
+        card.style.padding = '0';
+        card.style.border = 'none';
+
+        // Удаляем карточку после завершения анимации
+        setTimeout(() => {
+            card.remove();
+
+            // Если контейнер пуст, показываем состояние "нет пользователей"
+            if (this.container.children.length === 0) {
+                this.renderEmptyState();
+            }
+        }, 300);
+
     }
 
     // Система событий для расширения функциональности

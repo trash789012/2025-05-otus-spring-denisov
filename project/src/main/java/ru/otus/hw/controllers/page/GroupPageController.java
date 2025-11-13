@@ -12,7 +12,7 @@ public class GroupPageController {
         return "groups-list";
     }
 
-    @GetMapping({"/profile/group/{id}", "/group/new"})
+    @GetMapping({"/profile/group/{id}", "/admin/group/{id}"})
     public String editPage(@PathVariable(required = false) Long id) {
         return "group";
     }

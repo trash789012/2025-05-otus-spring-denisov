@@ -16,6 +16,10 @@ export async function updateUser(id, user) {
     );
 }
 
+export async function fetchUserById(id) {
+    return get(`/user/${id}`);
+}
+
 export async function deleteUser(id) {
     return del(`/user/${id}`);
 }

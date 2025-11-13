@@ -236,37 +236,3 @@ footer p {
 body {
     padding-top: 70px; /* высота навбара */
 }
-
-
-/*//cards*/
-.entity-card {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
-    padding: 1.25rem;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    min-height: 200px;
-}
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    flex-shrink: 0; /* Запрещаем сжатие */
-}
-
-.card-content {
-    flex: 1; /* Занимает все доступное пространство */
-    display: flex;
-    flex-direction: column;
-}
-
-.card-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: auto; /* Прижимаем к низу */
-    flex-shrink: 0; /* Запрещаем сжатие */
-}

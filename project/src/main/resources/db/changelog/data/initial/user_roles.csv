@@ -2,3 +2,6 @@ user_id;role
 1;ROOT
 2;ADMIN
 3;USER
+4;USER
+5;USER
+6;ADMIN

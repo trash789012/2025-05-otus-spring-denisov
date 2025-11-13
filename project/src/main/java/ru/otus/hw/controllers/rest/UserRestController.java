@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.user.UserDto;
+import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.CustomUserDetailService;
@@ -31,6 +32,12 @@ public class UserRestController {
     @GetMapping("/self")
     public UserDto getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         return userDetailsService.findByNameWithGroupsAndMembers(userDetails.getUsername());
+    }
+
+    @Operation(summary = "Получить информацию по пользователю, с ролями и группами")
+    @GetMapping("/{id}")
+    public UserWithRolesAndGroupsDto getUserById(@PathVariable Long id) {
+        return userDetailsService.findUserById(id);
     }
 
     @Operation(summary = "Получить информацию о пользователях с ролями")
