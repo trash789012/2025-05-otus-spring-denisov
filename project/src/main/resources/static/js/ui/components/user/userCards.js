@@ -47,19 +47,35 @@ export class UserCards {
 
         const avatar = document.createElement('div');
         avatar.className = 'user-avatar';
-        avatar.textContent = this.getInitials(user.firstName, user.lastName);
+        avatar.textContent = this.getInitials(user.firstName || '', user.lastName || '');
 
         const textInfo = document.createElement('div');
+
+        // Создаем ссылку для имени пользователя
+        const userNameLink = document.createElement('a');
+        userNameLink.href = `/admin/user/${user.id}`;
+        userNameLink.className = 'card-title text-decoration-none';
+        userNameLink.style.color = 'inherit';
 
         const userName = document.createElement('div');
         userName.className = 'card-title';
         userName.textContent = `${user.firstName} ${user.lastName}`;
 
+        // Добавляем hover эффект
+        userNameLink.addEventListener('mouseenter', () => {
+            userNameLink.style.color = 'var(--primary-color)';
+        });
+        userNameLink.addEventListener('mouseleave', () => {
+            userNameLink.style.color = 'inherit';
+        });
+
+        userNameLink.appendChild(userName);
+
         const userLogin = document.createElement('div');
         userLogin.className = 'card-meta';
         userLogin.textContent = `@${user.username || user.name}`;
 
-        textInfo.appendChild(userName);
+        textInfo.appendChild(userNameLink);
         textInfo.appendChild(userLogin);
         userInfo.appendChild(avatar);
         userInfo.appendChild(textInfo);
@@ -106,10 +122,10 @@ export class UserCards {
         const actionsRow = document.createElement('div');
         actionsRow.className = 'card-actions mt-auto'; // mt-auto для прижатия к низу
 
-        const editButton = this.createEditButton(user.id);
+        // const editButton = this.createEditButton(user.id);
         const deleteButton = this.createDeleteButton(user.id);
 
-        actionsRow.appendChild(editButton);
+        // actionsRow.appendChild(editButton);
         actionsRow.appendChild(deleteButton);
 
         return actionsRow;
@@ -135,7 +151,9 @@ export class UserCards {
     createDeleteButton(userId) {
         const deleteButton = document.createElement('button');
         deleteButton.className = 'btn btn-outline-danger btn-xs';
-        deleteButton.addEventListener('click', () => this.onDeleteUser(userId));
+        deleteButton.addEventListener('click', () => {
+            this.onDeleteUser(userId)
+        });
 
         const deleteIcon = document.createElement('i');
         deleteIcon.className = 'bi bi-trash me-1';
