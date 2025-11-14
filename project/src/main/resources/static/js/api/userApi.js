@@ -16,8 +16,16 @@ export async function updateUser(id, user) {
     );
 }
 
-export async function updateUserRoles(id, user) {
+export async function updateUserAndRoles(id, user) {
     return put(`/user/${id}/roles`, user,
+        {
+            headers: {'Content-Type': 'application/json'},
+        }
+    );
+}
+
+export async function createUser(user) {
+    return post(`/user`, user,
         {
             headers: {'Content-Type': 'application/json'},
         }

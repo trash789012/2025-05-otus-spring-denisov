@@ -14,6 +14,11 @@ export class AdminTabs {
         this.groupCards.addEventListener('delete', (groupId) => {
             props.onGroupDelete(groupId);
         });
+
+        this.btnCreateUser = document.getElementById("btnCreateUser");
+        this.btnCreateUser.onclick = () => {
+            props.btnCreateUser();
+        }
     }
 
     removeUserCard(userId) {

@@ -1,4 +1,5 @@
 import {login} from "../../api/loginApi.js";
+import {Notification} from "../../utils/notifications.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const pageLogin = new Login();
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Login {
     constructor() {
+        this.notifications = new Notification();
         this.userName = document.getElementById("username");
         this.password = document.getElementById("password");
         this.form = document.getElementById("loginForm");
@@ -29,6 +31,7 @@ export class Login {
 
             const response = await login(userName, password);
             if (!response.success) {
+                this.notifications.error("Ошибка входа. Неверный пользователь или пароль");
                 console.log(response.errors);
                 return;
             }

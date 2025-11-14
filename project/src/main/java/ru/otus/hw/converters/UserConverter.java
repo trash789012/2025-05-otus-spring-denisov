@@ -12,6 +12,8 @@ import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class UserConverter {
@@ -106,6 +108,26 @@ public class UserConverter {
                         .map(Enum::name)
                         .toList() : List.of()
         );
+    }
+
+    public List<UserRole> toUserRoles(List<String> roleStrings) {
+        if (roleStrings == null) {
+            return List.of();
+        }
+
+        return roleStrings.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .map(role -> {
+                    try {
+                        return UserRole.valueOf(role);
+                    } catch (IllegalArgumentException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
 }

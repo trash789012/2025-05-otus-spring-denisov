@@ -13,11 +13,37 @@ export class UserTabs {
         this.saveUserBtn = document.getElementById('saveUserBtn');
         this.saveUserBtn.onclick = () => {
             params.saveBtnEvent();
-
         }
+
+        this.deleteUserBtn = document.getElementById('deleteUserBtn');
+        this.deleteUserBtn.onclick = () => {
+            params.deleteBtnEvent();
+        }
+
         this.allRoles = params.allRoles;
 
         this.groupList = document.getElementById('userGroupList');
+
+        this.password = document.getElementById('password');
+        this.passwordArea = document.getElementById('passwordArea');
+    }
+
+    requiredPassword(required=true) {
+        this.password.required = required;
+        if (!required) {
+            this.passwordArea.hidden = true;
+        } else {
+            this.passwordArea.hidden = false;
+        }
+    }
+
+    enableLogin() {
+        this.username.readOnly = false;
+    }
+
+    disableLogin() {
+        this.username.readOnly = true;
+
     }
 
     renderMainInfo(user = {}) {
@@ -154,6 +180,8 @@ export class UserTabs {
     prepareForApi() {
         return {
             id: this.userId,
+            name: this.username.value,
+            password: this.password.value,
             firstName: this.firstName.value,
             lastName: this.lastName.value,
             roles: this.getSelectedRoles()

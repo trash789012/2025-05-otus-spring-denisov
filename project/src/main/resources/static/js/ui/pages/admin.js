@@ -11,7 +11,8 @@ export class Admin {
     constructor() {
         this.adminView = new AdminTabs({
             onUserDelete: this.onUserDelete,
-            onGroupDelete: this.onGroupDelete
+            onGroupDelete: this.onGroupDelete,
+            btnCreateUser: this.onUserCreate
         });
     }
 
@@ -74,6 +75,10 @@ export class Admin {
         } catch (e) {
             console.error(e);
         }
+    }
+
+    onUserCreate = async () => {
+        window.location.href = '/admin/user/new';
     }
 
     onGroupDelete = async (groupId) => {

@@ -164,17 +164,21 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="firstName" class="form-label">Имя</label>
-                            <input type="text" class="form-control" id="firstName" value="Алексей" required>
+                            <input type="text" class="form-control" id="firstName" value="" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="lastName" class="form-label">Фамилия</label>
-                            <input type="text" class="form-control" id="lastName" value="Иванов">
+                            <input type="text" class="form-control" id="lastName" value="">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="username" class="form-label">Логин</label>
-                        <input type="text" class="form-control" id="username" value="alexivanov" readonly>
+                        <input type="text" class="form-control" id="username" value="" readonly>
+                    </div>
+                    <div class="mb-3" id="passwordArea">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="password" value="">
                     </div>
 
                     <div class="mb-3">
@@ -200,7 +204,7 @@
                 </form>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-danger">
+                    <button type="button"  id="deleteUserBtn" class="btn btn-danger">
                         <i class="bi bi-trash me-1"></i>Удалить
                     </button>
                     <button type="button" id="saveUserBtn" class="btn btn-primary">
@@ -217,26 +221,26 @@
 
                 <div class="group-list" id="userGroupList">
                     <!-- Группа 1 -->
-                    <div class="group-item">
-                        <div>
-                            <div class="group-name">The Estimators</div>
-                            <div class="group-meta">Рок • 5 участников</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="text-muted small">Гитара</div>
-                        </div>
-                    </div>
+<!--                    <div class="group-item">-->
+<!--                        <div>-->
+<!--                            <div class="group-name">The Estimators</div>-->
+<!--                            <div class="group-meta">Рок • 5 участников</div>-->
+<!--                        </div>-->
+<!--                        <div class="text-end">-->
+<!--                            <div class="text-muted small">Гитара</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
-                    <!-- Группа 2 -->
-                    <div class="group-item">
-                        <div>
-                            <div class="group-name">Кузьмич Band</div>
-                            <div class="group-meta">Блюз • 3 участника</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="text-muted small">Вокал</div>
-                        </div>
-                    </div>
+<!--                    &lt;!&ndash; Группа 2 &ndash;&gt;-->
+<!--                    <div class="group-item">-->
+<!--                        <div>-->
+<!--                            <div class="group-name">Кузьмич Band</div>-->
+<!--                            <div class="group-meta">Блюз • 3 участника</div>-->
+<!--                        </div>-->
+<!--                        <div class="text-end">-->
+<!--                            <div class="text-muted small">Вокал</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>

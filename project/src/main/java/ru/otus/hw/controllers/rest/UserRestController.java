@@ -2,12 +2,14 @@ package ru.otus.hw.controllers.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
+import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.CustomUserDetailService;
+import ru.otus.hw.service.UserService;
 
 import java.util.List;
 
@@ -27,7 +31,7 @@ import java.util.List;
 @Tag(name = "Users", description = "Операции с пользователями")
 public class UserRestController {
 
-    private final CustomUserDetailService userDetailsService;
+    private final UserService userDetailsService;
 
     @Operation(summary = "Получить информацию по текущему авторизованному пользователю")
     @GetMapping("/self")
@@ -47,12 +51,17 @@ public class UserRestController {
         return userDetailsService.findUserById(id);
     }
 
-    @Operation(summary = "Получить информацию о пользователях с ролями")
+    @Operation(summary = "Получить информацию о всех пользователях с ролями")
     @GetMapping
     public List<UserWithRolesDto> getAllUsersWithRoles() {
-        return userDetailsService.getAllUsersWithRoles();
+        return userDetailsService.findAllUsersWithRoles();
     }
 
+    @Operation(summary = "Создать нового пользователя")
+    @PostMapping
+    public UserWithRolesDto createUser(@RequestBody @Valid UserWithRolesAndPasswordDto userDto) {
+        return userDetailsService.createUser(userDto);
+    }
 
     @Operation(summary = "Обновить основные данные о пользователе")
     @PutMapping("/{id}")
@@ -72,6 +81,7 @@ public class UserRestController {
         return userDetailsService.updateUserInfo(userDto);
     }
 
+    //acl root
     @Operation(summary = "Обновить данные о пользователе и роли")
     @PutMapping("/{id}/roles")
     public UserDto updateUserRoles(
@@ -85,6 +95,7 @@ public class UserRestController {
         return userDetailsService.updateUserWithRoles(userDto);
     }
 
+    //acl admin and root
     @Operation(summary = "Удаление пользователя по ID")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {

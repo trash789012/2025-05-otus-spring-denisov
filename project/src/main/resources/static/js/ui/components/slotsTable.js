@@ -69,9 +69,11 @@ export class SlotsTable {
                     const durationMinutes = (end - start) / 60000;
                     const durationSlots = durationMinutes / 30;
 
-                    timeCell.colSpan = durationSlots + 1;
+                    // timeCell.colSpan = durationSlots + 1;
+                    timeCell.colSpan = durationSlots;
 
-                    timeIndex += durationSlots;
+                    // timeIndex += durationSlots;
+                    timeIndex += durationSlots - 1;
                     row.appendChild(timeCell);
                     continue;
                 }

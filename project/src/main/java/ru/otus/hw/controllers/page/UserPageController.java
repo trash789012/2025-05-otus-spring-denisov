@@ -11,7 +11,7 @@ public class UserPageController {
         return "profile";
     }
 
-    @GetMapping({"/user/{id}", "/admin/user/{id}"})
+    @GetMapping({"/user/{id}", "/admin/user/{id}", "/admin/user/new"})
     public String userPage(@PathVariable(required = false) Long id) {
         return "user";
     }
