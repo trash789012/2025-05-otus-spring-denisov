@@ -211,7 +211,7 @@ public class GroupServiceImpl implements GroupService {
 
     private Group prepareGroup(GroupFormDto groupDto) {
         Group group;
-        if (groupDto.id() != null) {
+        if (groupDto.id() != null && groupDto.id() != 0) {
             group = groupRepository.findById(groupDto.id())
                     .orElseThrow(() ->
                             new EntityNotFoundException(

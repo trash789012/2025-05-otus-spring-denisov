@@ -12,8 +12,10 @@ export class Admin {
         this.adminView = new AdminTabs({
             onUserDelete: this.onUserDelete,
             onGroupDelete: this.onGroupDelete,
-            btnCreateUser: this.onUserCreate
+            onCreate: this.onCreate
         });
+
+        this.view = 'users';
     }
 
     init = async () => {
@@ -35,6 +37,7 @@ export class Admin {
                 contents.forEach(content => content.classList.remove('active'));
 
                 const target = this.getAttribute('data-target');
+                that.view = target;
                 switch (target) {
                     case 'users': {
                         that.loadUsers().catch(console.error);
@@ -77,8 +80,16 @@ export class Admin {
         }
     }
 
-    onUserCreate = async () => {
-        window.location.href = '/admin/user/new';
+    onCreate = async () => {
+        switch (this.view) {
+            case 'users': {
+                window.location.href = '/admin/user/new';
+            } break;
+            case 'groups': {
+                window.location.href = '/admin/group/new';
+            } break;
+        }
+
     }
 
     onGroupDelete = async (groupId) => {

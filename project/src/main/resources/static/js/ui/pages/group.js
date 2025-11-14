@@ -1,9 +1,8 @@
 import {GroupTabs} from "../components/groupTabs.js";
 import {
-    addMembersToGroup,
+    addMembersToGroup, createGroup,
     deleteGroup,
     deleteMemberFromGroup, fetchGroupMembers,
-    fetchGroupMembersAndSlots,
     getUsersBySearchTerm,
     updateGroupInfo
 } from "../../api/groupApi.js";
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Group {
     constructor(groupId) {
-        this.groupId = groupId;
         this.groupTabView = new GroupTabs(groupId, {
             updateGroupInfoEvt: this.onSaveGroupInfoBtnClick,
             deleteGroupInfoEvt: this.onDeleteGroupInfoBtnClick,
@@ -25,18 +23,19 @@ export class Group {
             onUserSearchEvt: this.onUserSearch,
             onConfirmAddMemberEvt: this.onConfirmAddMember
         });
+        this.setEditMode(groupId);
     }
 
     init = async () => {
         try {
-            const group = await fetchGroupMembers(this.groupId);
-
-            this.loadGroup(group).catch(console.error);
-            this.loadMembers(group).catch(console.error);
+            if (this.editMode) {
+                const group = await fetchGroupMembers(this.groupId);
+                this.loadGroup(group).catch(console.error);
+                this.loadMembers(group).catch(console.error);
+            }
         } catch (e) {
             console.error(e);
         }
-
     }
 
     loadGroup = async (group) => {
@@ -44,7 +43,7 @@ export class Group {
     }
 
     loadMembers = async (group) => {
-        this.groupTabView.renderMembersTable(group.members);
+        this.groupTabView.renderMembersTable(group?.members);
     }
 
     onSaveGroupInfoBtnClick = async () => {
@@ -53,13 +52,23 @@ export class Group {
         }
         try {
             const groupForm = this.groupTabView.prepareGroupForApi();
-            const result = await updateGroupInfo(this.groupId, groupForm);
+            let result = {};
+            if (this.editMode) {
+                result = await updateGroupInfo(this.groupId, groupForm);
+            } else {
+                result = await createGroup(groupForm);
+            }
             if (!result.success) {
                 console.log(result.errors);
                 return null;
             }
-
-            this.groupTabView.setTitle(groupForm.name);
+            this.groupId = result.result.id;
+            if (!this.editMode) {
+                window.history.go(-1);
+                return;
+            }
+            this.setEditMode(this.groupId);
+            this.init().catch(console.error);
         } catch (e) {
             console.error(e);
         }
@@ -113,5 +122,18 @@ export class Group {
             console.error(e);
         }
     }
-
+    setEditMode(groupId) {
+        if (groupId == null || groupId === 'new') {
+            this.groupId = 0;
+            this.editMode = false;
+        } else {
+            this.groupId = groupId;
+            this.editMode = true;
+        }
+        if (this.editMode) {
+            this.groupTabView.showMembersTab();
+        } else {
+            this.groupTabView.hideMembersTab();
+        }
+    }
 }

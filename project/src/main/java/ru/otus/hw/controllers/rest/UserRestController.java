@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserInfoDto;
@@ -59,6 +61,7 @@ public class UserRestController {
 
     @Operation(summary = "Создать нового пользователя")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserWithRolesDto createUser(@RequestBody @Valid UserWithRolesAndPasswordDto userDto) {
         return userDetailsService.createUser(userDto);
     }

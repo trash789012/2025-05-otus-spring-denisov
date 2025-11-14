@@ -15,9 +15,13 @@ export class AdminTabs {
             props.onGroupDelete(groupId);
         });
 
-        this.btnCreateUser = document.getElementById("btnCreateUser");
-        this.btnCreateUser.onclick = () => {
-            props.btnCreateUser();
+        this.btnCreate = document.getElementById("btnCreate");
+        this.btnCreateGroup = document.getElementById("btnCreateGroup");
+        this.btnCreate.onclick = () => {
+            props.onCreate();
+        }
+        this.btnCreateGroup.onclick = () => {
+            props.onCreate();
         }
     }
 

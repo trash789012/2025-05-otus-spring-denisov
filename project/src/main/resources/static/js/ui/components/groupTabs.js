@@ -1,6 +1,6 @@
 export class GroupTabs {
     constructor(groupId = 0, params = {}) {
-        this.groupId = groupId;
+        this.groupId = 0;
 
         this.groupName = document.getElementById('groupName');
         this.groupTitle = document.getElementById('groupTitle');
@@ -62,6 +62,10 @@ export class GroupTabs {
         this.groupDescription.value = group.description;
         this.deleteGroupName.textContent = group.name;
         this.membersCount.textContent = group.members.length;
+    }
+
+    setGroupId(groupId=0) {
+
     }
 
     renderMembersTable(members = []) {
@@ -272,7 +276,7 @@ export class GroupTabs {
                 if (e.target !== checkbox) {
                     checkbox.checked = !checkbox.checked;
                     // Триггерим событие change для чекбокса
-                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                    checkbox.dispatchEvent(new Event('change', {bubbles: true}));
                 }
             });
 
@@ -315,5 +319,43 @@ export class GroupTabs {
             return parseInt(checkbox.getAttribute('data-user-id'));
         });
         return selectedIds;
+    }
+
+    hideMembersTab() {
+        const membersTab = document.getElementById('members-tab');
+        const membersContent = document.getElementById('members');
+
+        if (membersTab) {
+            // Скрываем кнопку таба
+            membersTab.closest('.nav-item').style.display = 'none';
+
+            // Убеждаемся, что активен другой таб
+            const infoTab = document.getElementById('info-tab');
+            const infoContent = document.getElementById('info');
+
+            infoTab.classList.add('active');
+            infoContent.classList.add('show', 'active');
+
+            // Скрываем контент участников
+            membersContent.style.display = 'none';
+        }
+    }
+
+    showMembersTab() {
+        const membersTab = document.getElementById('members-tab');
+        const membersContent = document.getElementById('members');
+
+        if (membersTab) {
+            // Показываем кнопку таба
+            membersTab.closest('.nav-item').style.display = 'block';
+
+            // Восстанавливаем стили кнопки
+            membersTab.style.pointerEvents = 'auto';
+            membersTab.style.opacity = '1';
+            membersTab.disabled = false;
+
+            // Показываем контент участников
+            membersContent.style.display = 'block';
+        }
     }
 }

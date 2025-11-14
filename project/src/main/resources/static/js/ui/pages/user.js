@@ -10,15 +10,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class User {
     constructor(userId) {
+        this.userId = userId;
         this.view = new UserTabs({
             saveBtnEvent: this.onSaveUserBtnClick,
             deleteBtnEvent: this.onDeleteUserBtnClick
         });
-        this.setEditMode(userId);
+        this.setEditMode(this.userId);
     }
 
     init = async () => {
-
         this.loadUserInfo(this.userId).catch(console.error);
     }
 

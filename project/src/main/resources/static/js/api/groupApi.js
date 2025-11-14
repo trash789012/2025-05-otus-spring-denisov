@@ -12,6 +12,14 @@ export async function fetchGroupMembersAndSlots(groupId) {
     return get(`/group/${groupId}/members-and-slots`);
 }
 
+export async function createGroup(groupForm) {
+    return post(`/group`, groupForm, {
+        headers: {
+            "Content-Type": "application/json",
+        }
+    });
+}
+
 export async function updateGroupInfo(id, groupInfo) {
     return put(`/group/${id}`, groupInfo,
         {
