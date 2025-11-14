@@ -28,7 +28,7 @@ export class GroupCards {
 
         cardContent.appendChild(this.createCardHeader(group));
         cardContent.appendChild(this.createGenreRow(group));
-        cardContent.appendChild(this.createMembersRow(group));
+        // cardContent.appendChild(this.createMembersRow(group));
 
         // Кнопки действий
         const actionsRow = this.createActionsRow(group);
@@ -65,19 +65,14 @@ export class GroupCards {
 
         groupNameLink.appendChild(groupName);
 
-        const groupId = document.createElement('div');
-        groupId.className = 'card-meta';
-        groupId.textContent = `ID: ${group.id}`;
-
         groupInfo.appendChild(groupNameLink);
-        groupInfo.appendChild(groupId);
 
-        const statusBadge = document.createElement('span');
-        statusBadge.className = this.getStatusBadgeClass(group.status);
-        statusBadge.textContent = this.getStatusText(group.status);
+        // const statusBadge = document.createElement('span');
+        // statusBadge.className = this.getStatusBadgeClass(group.status);
+        // statusBadge.textContent = this.getStatusText(group.status);
 
         cardHeader.appendChild(groupInfo);
-        cardHeader.appendChild(statusBadge);
+        // cardHeader.appendChild(statusBadge);
 
         return cardHeader;
     }

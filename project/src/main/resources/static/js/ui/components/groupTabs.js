@@ -321,41 +321,34 @@ export class GroupTabs {
         return selectedIds;
     }
 
-    hideMembersTab() {
+    toggleMembersTab(show) {
         const membersTab = document.getElementById('members-tab');
+        const membersTabItem = membersTab.closest('.nav-item');
         const membersContent = document.getElementById('members');
+        const infoTab = document.getElementById('info-tab');
+        const infoContent = document.getElementById('info');
 
-        if (membersTab) {
-            // Скрываем кнопку таба
-            membersTab.closest('.nav-item').style.display = 'none';
+        if (!membersTab) return;
 
-            // Убеждаемся, что активен другой таб
-            const infoTab = document.getElementById('info-tab');
-            const infoContent = document.getElementById('info');
-
-            infoTab.classList.add('active');
-            infoContent.classList.add('show', 'active');
-
-            // Скрываем контент участников
-            membersContent.style.display = 'none';
-        }
-    }
-
-    showMembersTab() {
-        const membersTab = document.getElementById('members-tab');
-        const membersContent = document.getElementById('members');
-
-        if (membersTab) {
-            // Показываем кнопку таба
-            membersTab.closest('.nav-item').style.display = 'block';
-
-            // Восстанавливаем стили кнопки
-            membersTab.style.pointerEvents = 'auto';
-            membersTab.style.opacity = '1';
-            membersTab.disabled = false;
-
-            // Показываем контент участников
+        if (show) {
+            // Показать таб участников
+            membersTabItem.style.display = 'list-item';
             membersContent.style.display = 'block';
+
+            // Активируем таб участников через Bootstrap
+            const membersBsTab = new bootstrap.Tab(membersTab);
+            membersBsTab.show();
+
+        } else {
+            // Скрыть таб участников
+            membersTabItem.style.display = 'none';
+            membersContent.style.display = 'none';
+
+            // Если скрываемый таб активен, переключаем на info таб
+            if (membersTab.classList.contains('active')) {
+                const infoBsTab = new bootstrap.Tab(infoTab);
+                infoBsTab.show();
+            }
         }
     }
 }

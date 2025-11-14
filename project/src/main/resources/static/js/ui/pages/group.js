@@ -130,10 +130,8 @@ export class Group {
             this.groupId = groupId;
             this.editMode = true;
         }
-        if (this.editMode) {
-            this.groupTabView.showMembersTab();
-        } else {
-            this.groupTabView.hideMembersTab();
+        if (!this.editMode) {
+            this.groupTabView.toggleMembersTab(false);
         }
     }
 }

@@ -28,7 +28,7 @@ export class UserCards {
 
         cardContent.appendChild(this.createCardHeader(user));
         // cardContent.appendChild(this.createEmailRow(user));
-        cardContent.appendChild(this.createStatusRow(user));
+        // cardContent.appendChild(this.createStatusRow(user));
 
         // Кнопки действий (всегда внизу)
         const actionsRow = this.createActionsRow(user);
