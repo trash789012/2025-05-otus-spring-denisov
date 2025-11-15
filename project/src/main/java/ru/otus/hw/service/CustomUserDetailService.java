@@ -34,8 +34,6 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    private final GroupRepository groupRepository;
-
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -44,11 +42,6 @@ public class CustomUserDetailService implements UserDetailsService {
                         () -> new EntityNotFoundException("User with name %s not found".formatted(username))
                 );
 
-        SecurityUserDetails userDetails = new SecurityUserDetails(dbUser);
-        var groups = groupRepository.findByMembersId(dbUser.getId());
-        userDetails.setGroups(groups);
-
-
-        return userDetails;
+        return new SecurityUserDetails(dbUser);
     }
 }

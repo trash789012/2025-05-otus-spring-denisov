@@ -67,6 +67,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ROOT') or @groupSecurity.isMember(#slotDto.groupId())")
     public SlotDto insert(SlotFormDto slotDto) {
         validateBeforeSave(slotDto);
         var savedSlot = prepareSlot(slotDto);
@@ -75,7 +76,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'ROOT') or hasPermission(#slotDto.id(), 'ru.otus.hw.domain.Slot', 'WRITE')")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#slotDto.groupId())")
     public SlotDto update(SlotFormDto slotDto) {
         if (slotDto.id() == null) {
             throw new IllegalArgumentException("Slot id is null");
@@ -87,7 +88,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'ROOT') or hasPermission(#id, 'ru.otus.hw.domain.Slot', 'DELETE')")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#id)")
     public void delete(Long id) {
         if (!slotRepository.existsById(id)) {
             throw new EntityNotFoundException("Slot with id %d not found".formatted(id));
@@ -130,9 +131,9 @@ public class SlotServiceImpl implements SlotService {
         var savedSlot = slotRepository.save(slot);
         if (isCreate) {
             aclService.createSlotPermission(savedSlot, BasePermission.WRITE);
-//            aclService.createSlotPermission(savedSlot, BasePermission.DELETE);
-//            aclService.createAdminPermission(savedSlot);
-//            aclService.createRootPermission(savedSlot);
+            aclService.createSlotPermission(savedSlot, BasePermission.DELETE);
+            aclService.createAdminPermission(savedSlot);
+            aclService.createRootPermission(savedSlot);
         }
 
         return savedSlot;
