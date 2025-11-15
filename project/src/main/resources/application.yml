@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:jamtime_db;
+    url: jdbc:h2:mem:jamtime_db;MODE=LEGACY
     driverClassName: org.h2.Driver
     username: sa
     password: sa

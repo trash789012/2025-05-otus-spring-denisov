@@ -74,7 +74,7 @@ databaseChangeLog:
                   name: parent_object
                   type: bigint
                   constraints:
-                    nullable: false
+                    nullable: true
                     foreignKeyName: fk_acl_obj_parent
                     references: acl_object_identity(id)
               - column:

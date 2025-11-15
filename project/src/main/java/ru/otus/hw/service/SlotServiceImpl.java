@@ -2,6 +2,7 @@ package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,11 +96,13 @@ public class SlotServiceImpl implements SlotService {
 
     private Slot prepareSlot(SlotFormDto slotDto) {
         Slot slot;
+        var isCreate = true;
         if (slotDto.id() != null && slotDto.id() != 0) {
             slot = slotRepository.findById(slotDto.id())
                     .orElseThrow(() ->
                             new EntityNotFoundException("Slot with id %d not found".formatted(slotDto.id()))
                     );
+            isCreate = false;
         } else {
             slot = Slot.builder().
                     status(SlotStatus.FREE).
@@ -123,7 +126,14 @@ public class SlotServiceImpl implements SlotService {
             slot.setBookedBy(null);
         }
 
-        return slotRepository.save(slot);
+        var savedSlot = slotRepository.save(slot);
+        if (isCreate) {
+            aclService.createPermission(savedSlot, BasePermission.WRITE);
+            aclService.createPermission(savedSlot, BasePermission.DELETE);
+            aclService.createAdminPermission(savedSlot);
+        }
+
+        return savedSlot;
     }
 
     private void validateBeforeSave(SlotFormDto slotDto) {
