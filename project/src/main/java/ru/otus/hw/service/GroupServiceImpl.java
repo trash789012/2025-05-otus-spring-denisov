@@ -1,6 +1,8 @@
 package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.GroupConverter;
@@ -19,7 +21,6 @@ import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;
 import ru.otus.hw.repositories.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,6 +36,8 @@ public class GroupServiceImpl implements GroupService {
     private final SlotRepository slotRepository;
 
     private final GroupConverter groupConverter;
+
+    private final AclService aclService;
 
     private record groupNestedObjects(List<User> members, List<Slot> slots) {
 
@@ -91,6 +94,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurity.isMember(#groupId))")
     public void deleteMemberFromGroup(Long memberId, Long groupId) {
         if (groupId == null) {
             throw new IllegalArgumentException("Group id is null");
@@ -139,6 +143,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurity.isMember(#groupId))")
     public GroupWithMembersDto addMembersToGroup(List<Long> memberIds, Long groupId) {
         if (memberIds.isEmpty()) {
             throw new IllegalArgumentException("Member id is null");
@@ -186,6 +191,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ROOT')")
     public GroupDto insert(GroupFormDto groupDto) {
         validateBeforeSave(groupDto);
         var savedGroup = prepareGroup(groupDto);
@@ -194,6 +200,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ROOT') or @groupSecurity.isMember(#groupDto.id())")
     public GroupDto update(GroupFormDto groupDto) {
         if (groupDto.id() == null) {
             throw new IllegalArgumentException("Group id is null");
@@ -205,12 +212,14 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurity.isMember(#id))")
     public void deleteById(Long id) {
         groupRepository.deleteById(id);
     }
 
     private Group prepareGroup(GroupFormDto groupDto) {
         Group group;
+        var isCreate = true;
         if (groupDto.id() != null && groupDto.id() != 0) {
             group = groupRepository.findById(groupDto.id())
                     .orElseThrow(() ->
@@ -218,6 +227,7 @@ public class GroupServiceImpl implements GroupService {
                                     "Group with id %d not found".formatted(groupDto.id())
                             )
                     );
+            isCreate = false;
         } else {
             group = new Group();
         }
@@ -232,8 +242,15 @@ public class GroupServiceImpl implements GroupService {
 
         group.setName(groupDto.name());
         group.setDescription(groupDto.description());
+        var savedGroup = groupRepository.save(group);
+        if (isCreate) {
+            aclService.createPermission(savedGroup, BasePermission.WRITE);
+            aclService.createPermission(savedGroup, BasePermission.DELETE);
+            aclService.createAdminPermission(savedGroup);
+            aclService.createRootPermission(savedGroup);
+        }
 
-        return groupRepository.save(group);
+        return savedGroup;
     }
 
     private groupNestedObjects prepareNestedObjects(GroupFormDto groupDto) {

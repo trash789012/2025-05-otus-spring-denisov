@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.repositories.GroupRepository;
-import ru.otus.hw.service.GroupService;
 
 @Component
 @RequiredArgsConstructor

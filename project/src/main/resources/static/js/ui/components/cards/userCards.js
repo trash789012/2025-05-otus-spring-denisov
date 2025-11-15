@@ -1,20 +1,27 @@
+import {isRoles} from "../../../utils/util.js";
+
 export class UserCards {
     constructor() {
         this.container = document.getElementById('users-cards-grid');
+        this.roles = {};
     }
 
     render(users = []) {
-        this.container.innerHTML = '';
+        isRoles().then(roles => {
+            this.roles = roles;
 
-        if (!users || users.length === 0) {
-            this.renderEmptyState();
-            return;
-        }
+            this.container.innerHTML = '';
 
-        users.forEach(user => {
-            const card = this.createUserCard(user);
-            this.container.appendChild(card);
-        });
+            if (!users || users.length === 0) {
+                this.renderEmptyState();
+                return;
+            }
+
+            users.forEach(user => {
+                const card = this.createUserCard(user);
+                this.container.appendChild(card);
+            });
+        })
     }
 
     createUserCard(user) {
@@ -127,7 +134,10 @@ export class UserCards {
         const deleteButton = this.createDeleteButton(user.id);
 
         // actionsRow.appendChild(editButton);
-        actionsRow.appendChild(deleteButton);
+        if (!this.roles.user) {
+            actionsRow.appendChild(deleteButton);
+        }
+
 
         return actionsRow;
     }

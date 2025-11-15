@@ -7,8 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.config.security.jwt.JwtTokenProvider;
-import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.exceptions.InvalidCredentialsException;
 
 @Service
 @RequiredArgsConstructor

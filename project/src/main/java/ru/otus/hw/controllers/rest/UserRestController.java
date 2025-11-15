@@ -23,7 +23,6 @@ import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.BadRequestException;
-import ru.otus.hw.service.CustomUserDetailService;
 import ru.otus.hw.service.UserService;
 
 import java.util.List;

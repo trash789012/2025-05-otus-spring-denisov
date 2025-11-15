@@ -1,6 +1,7 @@
 import {UserTabs} from "../components/userTabs.js";
 import {createUser, deleteUser, fetchAllRoles, fetchUserById, updateUserAndRoles} from "../../api/userApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
+import {Notification} from "../../utils/notifications.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const userId = parseLastUrlParam('userId');
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class User {
     constructor(userId) {
+        this.notifications = new Notification();
         this.userId = userId;
         this.view = new UserTabs({
             saveBtnEvent: this.onSaveUserBtnClick,
@@ -43,6 +45,7 @@ export class User {
             this.view.renderUserGroups(user?.groups);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -66,6 +69,7 @@ export class User {
             }
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -75,6 +79,7 @@ export class User {
             window.history.go(-1);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 

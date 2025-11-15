@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.otus.hw.domain.Group;
-import ru.otus.hw.domain.User;
 
 import java.util.List;
 import java.util.Optional;

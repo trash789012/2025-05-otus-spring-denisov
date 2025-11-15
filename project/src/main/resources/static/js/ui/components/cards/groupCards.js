@@ -1,19 +1,26 @@
+import {isRoles} from "../../../utils/util.js";
+
 export class GroupCards {
     constructor() {
         this.container = document.getElementById('group-cards-grid');
+        this.roles = {};
     }
 
     render(groups) {
-        this.container.innerHTML = '';
+        isRoles().then(roles => {
+            this.roles = roles;
 
-        if (!groups || groups.length === 0) {
-            this.renderEmptyState();
-            return;
-        }
+            this.container.innerHTML = '';
 
-        groups.forEach(group => {
-            const card = this.createGroupCard(group);
-            this.container.appendChild(card);
+            if (!groups || groups.length === 0) {
+                this.renderEmptyState();
+                return;
+            }
+
+            groups.forEach(group => {
+                const card = this.createGroupCard(group);
+                this.container.appendChild(card);
+            });
         });
     }
 
@@ -118,7 +125,9 @@ export class GroupCards {
         const deleteButton = this.createDeleteButton(group.id);
 
         // actionsRow.appendChild(editButton);
-        actionsRow.appendChild(deleteButton);
+        if (!this.roles.user) {
+            actionsRow.appendChild(deleteButton);
+        }
 
         return actionsRow;
     }

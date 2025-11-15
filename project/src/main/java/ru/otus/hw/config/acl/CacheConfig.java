@@ -10,8 +10,6 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.spi.CachingProvider;
 
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.createSimpleCache;
-
 @Configuration
 @EnableCaching
 public class CacheConfig {

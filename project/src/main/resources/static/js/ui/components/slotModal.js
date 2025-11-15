@@ -32,11 +32,6 @@ export class SlotModal {
 
     show(groups, timeSlotCell, timeSlotDb = null) {
         const that = this;
-        isRoles().then((roles) => {
-            if (roles.admin === false && roles.root === false) {
-                that.deleteSlotBtn.hidden = true;
-            }
-        });
         //id
         if (timeSlotDb) {
             this.slotId = timeSlotDb.id;

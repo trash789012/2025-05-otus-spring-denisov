@@ -7,6 +7,7 @@ import {
     updateGroupInfo
 } from "../../api/groupApi.js";
 import {parseLastUrlParam} from "../../utils/util.js";
+import {Notification} from "../../utils/notifications.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const groupPage = new Group(parseLastUrlParam());
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Group {
     constructor(groupId) {
+        this.notifications = new Notification();
         this.groupTabView = new GroupTabs(groupId, {
             updateGroupInfoEvt: this.onSaveGroupInfoBtnClick,
             deleteGroupInfoEvt: this.onDeleteGroupInfoBtnClick,
@@ -35,6 +37,7 @@ export class Group {
             }
         } catch (e) {
             console.error(e);
+            this.notifications(e.message);
         }
     }
 
@@ -60,6 +63,7 @@ export class Group {
             }
             if (!result.success) {
                 console.log(result.errors);
+                this.notifications(result.errors);
                 return null;
             }
             this.groupId = result.result.id;
@@ -71,6 +75,7 @@ export class Group {
             this.init().catch(console.error);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message)
         }
     }
 
@@ -82,6 +87,7 @@ export class Group {
             }
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -95,6 +101,7 @@ export class Group {
             window.location.href = "/";
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -105,6 +112,7 @@ export class Group {
             this.groupTabView.renderSearchedMembers(candidates);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -120,6 +128,7 @@ export class Group {
             }
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
     setEditMode(groupId) {
@@ -128,6 +137,7 @@ export class Group {
             this.editMode = false;
         } else {
             this.groupId = groupId;
+            this.groupTabView.setGroupId(groupId);
             this.editMode = true;
         }
         if (!this.editMode) {

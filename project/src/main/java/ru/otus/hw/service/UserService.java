@@ -2,21 +2,24 @@ package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.domain.enums.UserRole;
-import ru.otus.hw.dto.user.*;
+import ru.otus.hw.dto.user.UserDto;
+import ru.otus.hw.dto.user.UserExistsDto;
+import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
+import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
+import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -81,8 +84,8 @@ public class UserService {
     // -------------------------------------------------------------------------
     // USER UPDATE
     // -------------------------------------------------------------------------
-
     @Transactional
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     public UserDto updateUserInfo(UserInfoDto userDto) {
         var userDb = getUserById(userDto.id());
         validateBasicUserFields(userDto.name(), userDto.firstName());
@@ -97,6 +100,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ROOT')")
     public UserDto updateUserWithRoles(UserWithRolesDto userDto) {
         var userDb = getUserById(userDto.id());
         validateBasicUserFields(userDto.name(), userDto.firstName());

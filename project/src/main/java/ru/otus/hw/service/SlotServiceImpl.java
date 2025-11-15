@@ -3,7 +3,6 @@ package ru.otus.hw.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.SlotConverter;
@@ -76,7 +75,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#slotDto.groupId())")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#slotDto.groupId()) or hasPermission(#slotDto.id(), 'WRITE')")
     public SlotDto update(SlotFormDto slotDto) {
         if (slotDto.id() == null) {
             throw new IllegalArgumentException("Slot id is null");
@@ -88,7 +87,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#id)")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#id) or hasPermission(#id, 'DELETE')")
     public void delete(Long id) {
         if (!slotRepository.existsById(id)) {
             throw new EntityNotFoundException("Slot with id %d not found".formatted(id));

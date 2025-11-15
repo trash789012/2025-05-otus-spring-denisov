@@ -1,3 +1,5 @@
+import {isRoles} from "../../utils/util.js";
+
 export class GroupTabs {
     constructor(groupId = 0, params = {}) {
         this.groupId = 0;
@@ -54,6 +56,12 @@ export class GroupTabs {
         })
 
         this.addMemberModal = document.getElementById('addMemberModal');
+
+        isRoles().then(roles => {
+            if (!roles.root && !roles.admin) {
+                this.deleteGroupBtn.hidden = true;
+            }
+        });
     }
 
     renderGroupInfo(group = {}) {
@@ -65,7 +73,7 @@ export class GroupTabs {
     }
 
     setGroupId(groupId=0) {
-
+        this.groupId = groupId;
     }
 
     renderMembersTable(members = []) {
