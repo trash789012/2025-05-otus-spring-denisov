@@ -1,6 +1,8 @@
 package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.SlotConverter;
@@ -25,6 +27,8 @@ public class SlotServiceImpl implements SlotService {
     private final GroupRepository groupRepository;
 
     private final SlotConverter slotConverter;
+
+    private final AclService aclService;
 
     @Override
     @Transactional(readOnly = true)
@@ -81,12 +85,11 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'ROOT')")
     public void delete(Long id) {
-        slotRepository.findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Slot with id %d not found".formatted(id))
-                );
-
+        if (!slotRepository.existsById(id)) {
+            throw new EntityNotFoundException("Slot with id %d not found".formatted(id));
+        }
         slotRepository.deleteById(id);
     }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>JamTime</title>
@@ -34,6 +34,7 @@
 <body>
 
 <div th:fragment="main-menu">
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top w-100">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold ps-3" th:href="@{/}">

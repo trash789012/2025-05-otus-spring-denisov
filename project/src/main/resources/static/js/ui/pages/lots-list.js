@@ -9,6 +9,7 @@ import {
 import {SlotsTable} from "../components/slotsTable.js";
 import {fetchAllGroups} from "../../api/groupApi.js";
 import {SlotModal} from "../components/slotModal.js";
+import {Notification} from "../../utils/notifications.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const page = new Lots();
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 export class Lots {
     constructor() {
         // Track current view and offset
+        this.notifications = new Notification();
         this.currentView = 'week';
         this.currentOffset = 0;
         this.weekViewBtn = document.getElementById('weekViewBtn');
@@ -145,6 +147,7 @@ export class Lots {
             this.loadLots().catch(console.error);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e?.message);
         }
     }
 

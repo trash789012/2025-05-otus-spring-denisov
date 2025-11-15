@@ -1,5 +1,7 @@
 package ru.otus.hw.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -7,6 +9,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ru.otus.hw.dto.auth.AuthErrorResponseDto;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,6 +36,76 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
 
         return handleError(ex, request, HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredentials(BadCredentialsException ex,
+                                                       WebRequest request) {
+        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+        var body = new AuthErrorResponseDto(
+                ex.getMessage(),
+                ex.getMessage(),
+                false,
+                false,
+                true,
+                detail
+        );
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Object> handleInvalidCredentials(InvalidCredentialsException ex,
+                                                       WebRequest request) {
+        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+        var body = new AuthErrorResponseDto(
+                ex.getMessage(),
+                ex.getMessage(),
+                false,
+                false,
+                true,
+                detail
+        );
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
+    }
+
+    @ExceptionHandler(io.jsonwebtoken.ExpiredJwtException.class)
+    public ResponseEntity<Object> handleExpiredJwt(ExpiredJwtException ex, WebRequest request) {
+        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+        var body = new AuthErrorResponseDto(
+                ex.getMessage(),
+                ex.getMessage(),
+                true,
+                false,
+                false,
+                detail
+        );
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Object> handleJwtException(JwtException ex, WebRequest request) {
+        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+        var body = new AuthErrorResponseDto(
+                ex.getMessage(),
+                ex.getMessage(),
+                false,
+                true,
+                false,
+                detail
+        );
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -68,7 +143,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             Map<String, Object> body = Map.of(
                     "error", "ACCESS_DENIED",
                     "status", HttpStatus.FORBIDDEN.value(),
-                    "redirect", "/access-denied"
+                    "redirect", "/access-denied",
+                    "message", ex.getMessage()
             );
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
@@ -125,12 +201,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             String message) {
 
         if (shouldReturnJsonResponse((ServletWebRequest) request)) {
-            Map<String, Object> body = Map.of(
-                    "error", message,
-                    "status", status.value(),
-                    "uri", ((ServletWebRequest) request).getRequest().getRequestURI(),
-                    "exception", ex.getClass().getSimpleName()
-            );
+            Map<String, Object> body = getMessageDetail(ex, (ServletWebRequest) request, status, message);
 
             return ResponseEntity
                     .status(status)
@@ -144,6 +215,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                     .contentType(MediaType.TEXT_HTML)
                     .body(modelAndView);
         }
+    }
+
+    private static Map<String, Object> getMessageDetail(Exception ex, ServletWebRequest request, HttpStatus status, String message) {
+        Map<String, Object> body = Map.of(
+                "error", message,
+                "status", status.value(),
+                "uri", request.getRequest().getRequestURI(),
+                "exception", ex.getClass().getSimpleName()
+        );
+        return body;
     }
 
     private boolean shouldReturnJsonResponse(ServletWebRequest request) {
