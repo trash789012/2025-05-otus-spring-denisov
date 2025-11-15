@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.config.security.SecurityUserDetails;
 import ru.otus.hw.converters.UserConverter;
+import ru.otus.hw.domain.Group;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.domain.enums.UserRole;
 import ru.otus.hw.dto.user.UserDto;
@@ -33,6 +34,8 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    private final GroupRepository groupRepository;
+
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -40,6 +43,12 @@ public class CustomUserDetailService implements UserDetailsService {
                 .orElseThrow(
                         () -> new EntityNotFoundException("User with name %s not found".formatted(username))
                 );
-        return new SecurityUserDetails(dbUser);
+
+        SecurityUserDetails userDetails = new SecurityUserDetails(dbUser);
+        var groups = groupRepository.findByMembersId(dbUser.getId());
+        userDetails.setGroups(groups);
+
+
+        return userDetails;
     }
 }

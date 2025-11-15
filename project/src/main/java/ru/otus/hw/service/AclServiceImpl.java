@@ -14,8 +14,7 @@ import org.springframework.security.acls.model.Sid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import javax.swing.plaf.SpinnerUI;
+import ru.otus.hw.domain.Slot;
 
 @Service
 @RequiredArgsConstructor
@@ -25,20 +24,51 @@ public class AclServiceImpl implements AclService {
 
     @Override
     public void createPermission(Object object, Permission permission) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Sid sid = new PrincipalSid(authentication);
-        ObjectIdentity oid = new ObjectIdentityImpl(object);
+        var acl = getMutableAcl(new ObjectIdentityImpl(object), permission);
+        aclService.updateAcl(acl);
+    }
 
-        MutableAcl acl = getAcl(oid);
+    @Override
+    public void createSlotPermission(Slot object, Permission permission) {
+        var acl = getMutableAcl(new ObjectIdentityImpl(object), permission);
 
-        acl.insertAce(acl.getEntries().size(), permission, sid, true);
+        Sid groupSid = new GrantedAuthoritySid("ROLE_GROUP_" + object.getBookedBy().getId());
+
+        acl.insertAce(
+                acl.getEntries().size(),
+                BasePermission.WRITE,
+                groupSid,
+                true
+        );
+
         aclService.updateAcl(acl);
     }
 
     @Override
     public void createAdminPermission(Object object) {
+        createPermission(object, "ADMIN");
+    }
+
+    private MutableAcl getMutableAcl(ObjectIdentityImpl object, Permission permission) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Sid sid = new PrincipalSid(authentication);
+
+        MutableAcl acl = getAcl(object);
+
+        acl.insertAce(acl.getEntries().size(), permission, sid, true);
+
+        return acl;
+    }
+
+    @Override
+    public void createRootPermission(Object object) {
+        createPermission(object, "ROOT");
+    }
+
+
+    private void createPermission(Object object, String role) {
         ObjectIdentity oid = new ObjectIdentityImpl(object);
-        final Sid sid = new GrantedAuthoritySid("ROLE_ADMIN");
+        final Sid sid = new GrantedAuthoritySid(role);
 
         MutableAcl acl = getAcl(oid);
         acl.insertAce(acl.getEntries().size(), BasePermission.READ, sid, true);
@@ -46,13 +76,6 @@ public class AclServiceImpl implements AclService {
         acl.insertAce(acl.getEntries().size(), BasePermission.DELETE, sid, true);
         acl.insertAce(acl.getEntries().size(), BasePermission.ADMINISTRATION, sid, true);
         aclService.updateAcl(acl);
-    }
-
-    @Override
-    public boolean isAdmin() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 
     private MutableAcl getAcl(ObjectIdentity oid) {

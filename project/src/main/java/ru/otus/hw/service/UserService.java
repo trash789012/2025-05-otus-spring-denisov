@@ -1,6 +1,8 @@
 package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,8 @@ public class UserService {
     private final UserConverter userConverter;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final AclService aclService;
 
     // -------------------------------------------------------------------------
     // ROLES
@@ -117,6 +121,7 @@ public class UserService {
     // -------------------------------------------------------------------------
 
     @Transactional
+    @PreAuthorize("hasAnyRole('ROOT')")
     public UserWithRolesDto createUser(UserWithRolesAndPasswordDto userDto) {
 
         var roles = userConverter.toUserRoles(userDto.roles());
@@ -132,7 +137,9 @@ public class UserService {
                 .roles(roles)
                 .build();
 
-        return userConverter.toUserWithRolesDto(userRepository.save(newUser));
+        var savedUser = userRepository.save(newUser);
+
+        return userConverter.toUserWithRolesDto(savedUser);
     }
 
     // -------------------------------------------------------------------------
@@ -140,6 +147,7 @@ public class UserService {
     // -------------------------------------------------------------------------
 
     @Transactional
+    @PreAuthorize("hasAnyRole('ROOT')")
     public void deleteUserById(Long id) {
         var user = getUserById(id);
 

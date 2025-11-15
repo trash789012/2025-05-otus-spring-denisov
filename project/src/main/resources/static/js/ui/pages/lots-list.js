@@ -136,6 +136,7 @@ export class Lots {
             this.loadLots().catch(console.error);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message)
         }
     }
 
