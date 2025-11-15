@@ -75,7 +75,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#slotDto.groupId()) or hasPermission(#slotDto.id(), 'WRITE')")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMemberTwoGroups(#slotDto.id(), #slotDto.groupId())")
     public SlotDto update(SlotFormDto slotDto) {
         if (slotDto.id() == null) {
             throw new IllegalArgumentException("Slot id is null");
@@ -87,7 +87,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#id) or hasPermission(#id, 'DELETE')")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#id)")
     public void delete(Long id) {
         if (!slotRepository.existsById(id)) {
             throw new EntityNotFoundException("Slot with id %d not found".formatted(id));
