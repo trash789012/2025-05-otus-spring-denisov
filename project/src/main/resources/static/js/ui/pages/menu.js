@@ -11,9 +11,6 @@ export class Menu {
     }
 
     init = async () => {
-        const perm = await isRoles();
-        if (!perm.admin && !perm.root) {
-            this.adminPoint.hidden = true;
-        }
+
     }
 }
