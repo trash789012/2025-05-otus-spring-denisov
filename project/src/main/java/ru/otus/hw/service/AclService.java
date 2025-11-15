@@ -8,4 +8,6 @@ public interface AclService {
 
     void createAdminPermission(Object object);
 
+    boolean isAdmin();
+
 }

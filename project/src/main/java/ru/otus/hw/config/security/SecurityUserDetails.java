@@ -51,6 +51,12 @@ public class SecurityUserDetails implements UserDetails {
         return true;
     }
 
+    public List<String> getRoles() {
+        return user.getRoles().stream()
+                .map(Enum::name)
+                .toList();
+    }
+
     private List<SimpleGrantedAuthority> getRoles(User user) {
         return user.getRoles().stream()
                 .map(role -> "ROLE_" + role)

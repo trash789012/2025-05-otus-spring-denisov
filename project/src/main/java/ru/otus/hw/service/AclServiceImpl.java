@@ -46,6 +46,13 @@ public class AclServiceImpl implements AclService {
         aclService.updateAcl(acl);
     }
 
+    @Override
+    public boolean isAdmin() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
+
     private MutableAcl getAcl(ObjectIdentity oid) {
         try {
             return (MutableAcl) aclService.readAclById(oid);

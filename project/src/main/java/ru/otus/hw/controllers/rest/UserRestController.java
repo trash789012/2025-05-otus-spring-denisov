@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.otus.hw.config.security.SecurityUserDetails;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
@@ -39,6 +40,12 @@ public class UserRestController {
     @GetMapping("/self")
     public UserDto getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         return userDetailsService.findByNameWithGroupsAndMembers(userDetails.getUsername());
+    }
+
+    @Operation(summary = "Роли, присвоенные текущему пользователю")
+    @GetMapping("/self/roles")
+    public List<String> getUserRoles(@AuthenticationPrincipal SecurityUserDetails userDetails) {
+        return userDetails.getRoles();
     }
 
     @Operation(summary = "Получить список возможных ролей в системе")

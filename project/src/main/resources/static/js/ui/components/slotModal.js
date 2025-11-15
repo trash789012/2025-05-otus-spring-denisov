@@ -1,4 +1,5 @@
 import {GroupSelector} from "./groupSelector.js";
+import {isRoles} from "../../utils/util.js";
 
 export class SlotModal {
     constructor(parameters = {}) {
@@ -11,6 +12,7 @@ export class SlotModal {
         this.slotTime = document.getElementById(parameters.timeSelector);
         this.slotDuration = document.getElementById(parameters.slotDuration);
         this.saveSlotBtn = document.getElementById(parameters.saveSlotBtn);
+
         this.deleteSlotBtn = document.getElementById(parameters.deleteSlotBtn);
 
         this.groupSelector = new GroupSelector(parameters.groupSelector);
@@ -29,6 +31,12 @@ export class SlotModal {
     }
 
     show(groups, timeSlotCell, timeSlotDb = null) {
+        const that = this;
+        isRoles().then((roles) => {
+            if (roles.admin === false && roles.root === false) {
+                that.deleteSlotBtn.hidden = true;
+            }
+        });
         //id
         if (timeSlotDb) {
             this.slotId = timeSlotDb.id;
