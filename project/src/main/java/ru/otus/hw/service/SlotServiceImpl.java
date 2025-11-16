@@ -50,14 +50,6 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SlotDto> findByBookedBy(Long bookedById) {
-        return slotRepository.findAllByBookedBy_Id(bookedById).stream()
-                .map(slotConverter::toDto)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<SlotDto> findByPeriod(LocalDateTime start, LocalDateTime end) {
         return slotRepository.findAllByStartTimeBetween(start, end).stream()
                 .map(slotConverter::toDto)
