@@ -60,24 +60,39 @@
 
 # 🛢 Подключение к PostgreSQL через Docker
 
+Сборка из двух образов (приложение + DB)
 ## docker-compose.yml
 ```yaml
 services:
-  postgres:
-    image: postgres:16
-    container_name: jamеtime
-    restart: always
+  app:
+    image: jamtime:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: jamtime
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+
+  postgres:
+    container_name: postgresdb
+    image: postgres:16
+    restart: always
     ports:
       - "5432:5432"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
 volumes:
-  pg_data:
+  postgres_data:
+
 ```
 
 # 📡 REST API
@@ -87,16 +102,17 @@ Swagger доступен по адресу:
 ➡️ /swagger-ui
 
 # ▶️ Как запустить проект
-1. Запустить PostgreSQL 
-Перейти в директорию файла docker-compose.yml и выполнить в командной строке
-
+1. Убедиться что установлен docker
+2. Собрать образ jamtime через jib
+```bash
+mvn compile jib:dockerBuild
+```
+3. Перейти в директорию файла docker-compose.yml и выполнить в командной строке
 ```bash
 docker compose up -d
 ```
-2. Запустить Spring Boot
-```bash
-./mvnw spring-boot:run
-```
+4. Открыть в браузере ссылку
+- http://localhost:8080
 
 # 🧩 Что реализовано
 
