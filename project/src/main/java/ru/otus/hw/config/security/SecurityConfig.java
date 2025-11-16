@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,29 +34,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.
                 csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(
                         sm ->
                                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(pathConfig.getApiBasePath() + "/auth/**").permitAll()
-                        .requestMatchers(
-                                "/login/**",
-                                "/",
-                                "/favicon.ico",
-                                "/profile/**",
-                                "/admin/**",
-                                "/css/**",
-                                "/js/**").permitAll()
-                        .requestMatchers(
-                                pathConfig.getSwaggerUiPath() + "/**",
-                                pathConfig.getOpenApiDocsPath() + "/**"
-                        ).permitAll()
-                        .requestMatchers(pathConfig.getApiBasePath() + "/**").authenticated()
-                        .anyRequest().denyAll()
-                )
+                .authorizeHttpRequests(this::configureAuthorization)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(authenticationExceptionHandler)
                 )
@@ -65,6 +49,22 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private void configureAuthorization(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth
+    ) {
+        auth
+                .requestMatchers(pathConfig.getApiBasePath() + "/auth/**").permitAll()
+                .requestMatchers("/login/**", "/", "/favicon.ico", "/profile/**", "/admin/**",
+                        "/css/**",
+                        "/js/**").permitAll()
+                .requestMatchers(
+                        pathConfig.getSwaggerUiPath() + "/**",
+                        pathConfig.getOpenApiDocsPath() + "/**"
+                ).permitAll()
+                .requestMatchers(pathConfig.getApiBasePath() + "/**").authenticated()
+                .anyRequest().denyAll();
     }
 
     @Bean

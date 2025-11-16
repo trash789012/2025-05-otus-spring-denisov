@@ -78,7 +78,24 @@ public class UserConverter {
     }
 
     public UserWithRolesAndGroupsDto toUserWithRolesAndGroupsDto(User user) {
-        List<GroupWithMembersDto> userGroups = (user.getGroups() != null) ?
+        List<GroupWithMembersDto> userGroups = getUserGroups(user);
+
+        return new UserWithRolesAndGroupsDto(
+                user.getId(),
+                user.getName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getShortDescription(),
+                userGroups,
+                (user.getRoles()) != null
+                        ? user.getRoles().stream()
+                        .map(Enum::name)
+                        .toList() : List.of()
+        );
+    }
+
+    private static List<GroupWithMembersDto> getUserGroups(User user) {
+        return (user.getGroups() != null) ?
                 user.getGroups().stream()
                         .map(group -> new GroupWithMembersDto(
                                 group.getId(),
@@ -95,19 +112,6 @@ public class UserConverter {
                                                 )).toList() : null
                         ))
                         .toList() : null;
-
-        return new UserWithRolesAndGroupsDto(
-                user.getId(),
-                user.getName(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getShortDescription(),
-                userGroups,
-                (user.getRoles()) != null
-                        ? user.getRoles().stream()
-                        .map(Enum::name)
-                        .toList() : List.of()
-        );
     }
 
     public List<UserRole> toUserRoles(List<String> roleStrings) {

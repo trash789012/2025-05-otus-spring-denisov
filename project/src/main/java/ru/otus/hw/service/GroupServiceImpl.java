@@ -39,7 +39,7 @@ public class GroupServiceImpl implements GroupService {
 
     private final AclService aclService;
 
-    private record groupNestedObjects(List<User> members, List<Slot> slots) {
+    private record GroupNestedObjects(List<User> members, List<Slot> slots) {
 
     }
 
@@ -141,6 +141,53 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+    //    @Override
+//    @Transactional
+//    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurityMatcher.isMember(#groupId))")
+//    public GroupWithMembersDto addMembersToGroup(List<Long> memberIds, Long groupId) {
+//        if (memberIds.isEmpty()) {
+//            throw new IllegalArgumentException("ID участника null");
+//        }
+//
+//        var group = groupRepository.findById(groupId)
+//                .orElseThrow(
+//                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
+//                );
+//
+//        var newMembers = userRepository.findAllById(memberIds);
+//
+//        var foundMemberIds = newMembers.stream()
+//                .map(User::getId)
+//                .toList();
+//
+//        var notFoundMemberIds = memberIds.stream()
+//                .filter(id -> !foundMemberIds.contains(id))
+//                .toList();
+//
+//        if (!notFoundMemberIds.isEmpty()) {
+//            throw new IllegalArgumentException(
+//                    "Пользователи с ids %s не найдены".formatted(notFoundMemberIds)
+//            );
+//        }
+//
+//        var existingMembers = group.getMembers();
+//        var existingMemberIds = existingMembers.stream()
+//                .map(User::getId)
+//                .toList();
+//
+//        var membersToAdd = newMembers.stream()
+//                .filter(user -> !existingMemberIds.contains(user.getId()))
+//                .toList();
+//
+//        if (membersToAdd.isEmpty()) {
+//            throw new IllegalArgumentException(
+//                    "Все выбранные пользователи уже участники группы %s".formatted(groupId)
+//            );
+//        }
+//
+//        existingMembers.addAll(membersToAdd);
+//        return groupConverter.toWithMembersDto(groupRepository.save(group));
+//    }
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurityMatcher.isMember(#groupId))")
@@ -149,18 +196,34 @@ public class GroupServiceImpl implements GroupService {
             throw new IllegalArgumentException("ID участника null");
         }
 
+        Group group = findAndValidateGroup(groupId, memberIds);
+
+        return addValidatedMembersAndSave(group, memberIds);
+    }
+
+    private Group findAndValidateGroup(Long groupId, List<Long> memberIds) {
         var group = groupRepository.findById(groupId)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
                 );
 
         var newMembers = userRepository.findAllById(memberIds);
+        validateUsersExistence(memberIds, newMembers);
 
-        var foundMemberIds = newMembers.stream()
-                .map(User::getId)
-                .toList();
+        return group;
+    }
 
-        var notFoundMemberIds = memberIds.stream()
+    private GroupWithMembersDto addValidatedMembersAndSave(Group group, List<Long> memberIds) {
+        var newMembers = userRepository.findAllById(memberIds);
+        var membersToAdd = filterOutExistingMembers(group, newMembers);
+
+        group.getMembers().addAll(membersToAdd);
+        return groupConverter.toWithMembersDto(groupRepository.save(group));
+    }
+
+    private void validateUsersExistence(List<Long> requestedIds, List<User> foundUsers) {
+        var foundMemberIds = foundUsers.stream().map(User::getId).toList();
+        var notFoundMemberIds = requestedIds.stream()
                 .filter(id -> !foundMemberIds.contains(id))
                 .toList();
 
@@ -169,9 +232,10 @@ public class GroupServiceImpl implements GroupService {
                     "Пользователи с ids %s не найдены".formatted(notFoundMemberIds)
             );
         }
+    }
 
-        var existingMembers = group.getMembers();
-        var existingMemberIds = existingMembers.stream()
+    private List<User> filterOutExistingMembers(Group group, List<User> newMembers) {
+        var existingMemberIds = group.getMembers().stream()
                 .map(User::getId)
                 .toList();
 
@@ -181,12 +245,11 @@ public class GroupServiceImpl implements GroupService {
 
         if (membersToAdd.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Все выбранные пользователи уже участники группы %s".formatted(groupId)
+                    "Все выбранные пользователи уже участники группы %s".formatted(group.getId())
             );
         }
 
-        existingMembers.addAll(membersToAdd);
-        return groupConverter.toWithMembersDto(groupRepository.save(group));
+        return membersToAdd;
     }
 
     @Override
@@ -223,37 +286,36 @@ public class GroupServiceImpl implements GroupService {
         if (groupDto.id() != null && groupDto.id() != 0) {
             group = groupRepository.findById(groupDto.id())
                     .orElseThrow(() ->
-                            new EntityNotFoundException(
-                                    "Группа с ID %d не найдена".formatted(groupDto.id())
-                            )
+                            new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupDto.id()))
                     );
             isCreate = false;
         } else {
             group = new Group();
         }
-
-        groupNestedObjects nestedObjs = prepareNestedObjects(groupDto);
+        GroupNestedObjects nestedObjs = prepareNestedObjects(groupDto);
         if (nestedObjs.members() != null) {
             group.setMembers(nestedObjs.members());
         }
         if (nestedObjs.slots() != null) {
             group.setSlots(nestedObjs.slots());
         }
-
         group.setName(groupDto.name());
         group.setDescription(groupDto.description());
         var savedGroup = groupRepository.save(group);
+        createGroupPermissions(isCreate, savedGroup);
+        return savedGroup;
+    }
+
+    private void createGroupPermissions(boolean isCreate, Group savedGroup) {
         if (isCreate) {
             aclService.createPermission(savedGroup, BasePermission.WRITE);
             aclService.createPermission(savedGroup, BasePermission.DELETE);
             aclService.createAdminPermission(savedGroup);
             aclService.createRootPermission(savedGroup);
         }
-
-        return savedGroup;
     }
 
-    private groupNestedObjects prepareNestedObjects(GroupFormDto groupDto) {
+    private GroupNestedObjects prepareNestedObjects(GroupFormDto groupDto) {
         List<User> members = null;
         if (groupDto.memberIds() != null) {
             members = userRepository.findAllById(groupDto.memberIds());
@@ -273,7 +335,7 @@ public class GroupServiceImpl implements GroupService {
                 );
             }
         }
-        return new groupNestedObjects(members, slots);
+        return new GroupNestedObjects(members, slots);
     }
 
     private void validateBeforeSave(GroupFormDto groupDto) {

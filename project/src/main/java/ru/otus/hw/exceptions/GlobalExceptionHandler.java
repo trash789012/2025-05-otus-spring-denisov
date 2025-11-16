@@ -79,7 +79,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(io.jsonwebtoken.ExpiredJwtException.class)
     public ResponseEntity<Object> handleExpiredJwt(ExpiredJwtException ex, WebRequest request) {
-        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED,
+                ex.getMessage());
         var body = new AuthErrorResponseDto(
                 ex.getMessage(),
                 ex.getMessage(),
@@ -96,7 +97,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<Object> handleJwtException(JwtException ex, WebRequest request) {
-        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED,
+                ex.getMessage());
         var body = new AuthErrorResponseDto(
                 ex.getMessage(),
                 ex.getMessage(),
@@ -220,7 +222,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
     }
 
-    private static Map<String, Object> getMessageDetail(Exception ex, ServletWebRequest request, HttpStatus status, String message) {
+    private static Map<String, Object> getMessageDetail(Exception ex, ServletWebRequest request, HttpStatus status,
+                                                        String message) {
         Map<String, Object> body = Map.of(
                 "error", message,
                 "status", status.value(),

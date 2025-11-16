@@ -91,10 +91,9 @@ public class SlotServiceImpl implements SlotService {
         Slot slot;
         var isCreate = true;
         if (slotDto.id() != null && slotDto.id() != 0) {
-            slot = slotRepository.findById(slotDto.id())
-                    .orElseThrow(() ->
-                            new EntityNotFoundException("Слот с id %d не найден".formatted(slotDto.id()))
-                    );
+            slot = slotRepository.findById(slotDto.id()).orElseThrow(() ->
+                    new EntityNotFoundException("Слот с id %d не найден".formatted(slotDto.id()))
+            );
             isCreate = false;
         } else {
             slot = Slot.builder().
@@ -102,6 +101,24 @@ public class SlotServiceImpl implements SlotService {
                     build();
         }
 
+        setValuesToSlot(slotDto, slot);
+        var savedSlot = slotRepository.save(slot);
+        createSlotPermissions(isCreate, savedSlot);
+
+        return savedSlot;
+    }
+
+    private void createSlotPermissions(boolean isCreate, Slot savedSlot) {
+        if (isCreate) {
+            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE);
+            aclService.createAdminPermission(savedSlot);
+            aclService.createRootPermission(savedSlot);
+
+            aclService.flushAclCache();
+        }
+    }
+
+    private void setValuesToSlot(SlotFormDto slotDto, Slot slot) {
         slot.setStartTime(slotDto.startTime());
         slot.setEndTime(slotDto.endTime());
 
@@ -118,17 +135,6 @@ public class SlotServiceImpl implements SlotService {
             slot.setStatus(SlotStatus.FREE);
             slot.setBookedBy(null);
         }
-
-        var savedSlot = slotRepository.save(slot);
-        if (isCreate) {
-            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE);
-            aclService.createAdminPermission(savedSlot);
-            aclService.createRootPermission(savedSlot);
-
-            aclService.flushAclCache();
-        }
-
-        return savedSlot;
     }
 
     private void validateBeforeSave(SlotFormDto slotDto) {
