@@ -36,7 +36,7 @@ public class SlotServiceImpl implements SlotService {
         return slotRepository.findById(id)
                 .map(slotConverter::toDto)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Slot with id %d not found".formatted(id))
+                        new EntityNotFoundException("Слот с ID %d не найден".formatted(id))
                 );
     }
 
@@ -66,7 +66,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROOT') or @groupSecurity.isMember(#slotDto.groupId())")
+    @PreAuthorize("hasRole('ROOT') or @groupSecurityMatcher.isMember(#slotDto.groupId())")
     public SlotDto insert(SlotFormDto slotDto) {
         validateBeforeSave(slotDto);
         var savedSlot = prepareSlot(slotDto);
@@ -75,10 +75,10 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMemberTwoGroups(#slotDto.id(), #slotDto.groupId())")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurityMatcher.isMemberBoth(#slotDto.id(), #slotDto.groupId())")
     public SlotDto update(SlotFormDto slotDto) {
         if (slotDto.id() == null) {
-            throw new IllegalArgumentException("Slot id is null");
+            throw new IllegalArgumentException("ID слота is null");
         }
         validateBeforeSave(slotDto);
         var updatedSlot = prepareSlot(slotDto);
@@ -87,10 +87,10 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurity.isMember(#id)")
+    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurityMatcher.isMember(#id)")
     public void delete(Long id) {
         if (!slotRepository.existsById(id)) {
-            throw new EntityNotFoundException("Slot with id %d not found".formatted(id));
+            throw new EntityNotFoundException("Слот с %d не найден".formatted(id));
         }
         slotRepository.deleteById(id);
     }
@@ -101,7 +101,7 @@ public class SlotServiceImpl implements SlotService {
         if (slotDto.id() != null && slotDto.id() != 0) {
             slot = slotRepository.findById(slotDto.id())
                     .orElseThrow(() ->
-                            new EntityNotFoundException("Slot with id %d not found".formatted(slotDto.id()))
+                            new EntityNotFoundException("Слот с id %d не найден".formatted(slotDto.id()))
                     );
             isCreate = false;
         } else {
@@ -117,7 +117,7 @@ public class SlotServiceImpl implements SlotService {
         if (slotDto.groupId() != null) {
             bookedBy = groupRepository.findById(slotDto.groupId())
                     .orElseThrow(() ->
-                            new EntityNotFoundException("Group with id %d not found".formatted(slotDto.groupId()))
+                            new EntityNotFoundException("Группа с ID %d не найдена".formatted(slotDto.groupId()))
                     );
 
             slot.setBookedBy(bookedBy);
@@ -140,11 +140,26 @@ public class SlotServiceImpl implements SlotService {
 
     private void validateBeforeSave(SlotFormDto slotDto) {
         if (slotDto.startTime() == null || slotDto.endTime() == null) {
-            throw new IllegalArgumentException("Start time and end time must not be null");
+            throw new IllegalArgumentException("Время начала и время окончания не должны быть пустыми");
+        }
+
+        if (slotDto.startTime().isEqual(slotDto.endTime())) {
+            throw new IllegalArgumentException("Продолжительность не может быть равна нулю");
         }
 
         if (slotDto.startTime().isAfter(slotDto.endTime())) {
-            throw new IllegalArgumentException("Start time must be before end time");
+            throw new IllegalArgumentException("Время начала не может быть больше времени окончания");
+        }
+
+        //Проверка пересечения
+        var overlapping = slotRepository.findOverlappingSlots(
+                slotDto.startTime(),
+                slotDto.endTime(),
+                slotDto.id()
+        );
+
+        if (!overlapping.isEmpty()) {
+            throw new IllegalArgumentException("Слот пересекается с другим существующим слотом");
         }
     }
 }

@@ -166,7 +166,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
 
         logError(ex, request);
-        return handleError(ex, request, HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+        return handleError(ex, request, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @Override

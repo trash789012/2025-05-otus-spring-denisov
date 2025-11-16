@@ -7,11 +7,10 @@ import ru.otus.hw.domain.Group;
 import ru.otus.hw.domain.Slot;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;
-import ru.otus.hw.repositories.UserRepository;
 
 @Component
 @RequiredArgsConstructor
-public class GroupSecurity {
+public class GroupSecurityMatcher {
 
     private final GroupRepository groupRepository;
 
@@ -25,7 +24,7 @@ public class GroupSecurity {
         return groupRepository.existsMemberInGroup(groupID, username);
     }
 
-    public boolean isMemberTwoGroups(Long slotId, Long groupId) {
+    public boolean isMemberBoth(Long slotId, Long groupId) {
         if (groupId == null) return true;
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

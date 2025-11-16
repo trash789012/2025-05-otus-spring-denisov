@@ -31,7 +31,7 @@ export class Login {
 
             const response = await login(userName, password);
             if (!response.success) {
-                this.notifications.error("Ошибка входа. Неверный пользователь или пароль");
+                this.notifications.error("Ошибка входа. Неверный пользователь или пароль", false);
                 console.log(response.errors);
                 return;
             }

@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.otus.hw.domain.Group;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
@@ -15,9 +14,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @EntityGraph("group-members-graph")
     Optional<Group> findByName(String name);
-
-    List<Group> findByMembersId(Long userId);
-
 
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
             "FROM Group g JOIN g.members m " +

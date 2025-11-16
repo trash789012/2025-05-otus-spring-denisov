@@ -2,6 +2,7 @@ package ru.otus.hw.controllers.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -55,14 +56,14 @@ public class SlotRestController {
     @Operation(summary = "Создать новый слот")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SlotDto createSlot(@RequestBody SlotFormDto slotDto) {
+    public SlotDto createSlot(@RequestBody @Valid SlotFormDto slotDto) {
         return slotService.insert(slotDto);
     }
 
     @Operation(summary = "Обновить существующий слот")
     @PutMapping("/{id}")
     public SlotDto updateSlot(@PathVariable Long id,
-                              @RequestBody SlotFormDto slotDto) {
+                              @RequestBody @Valid SlotFormDto slotDto) {
         if (!id.equals(slotDto.id())) {
             throw new BadRequestException("Id in path and body must match");
         }

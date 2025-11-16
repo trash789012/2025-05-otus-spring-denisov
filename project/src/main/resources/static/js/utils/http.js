@@ -38,6 +38,19 @@ async function processResponse(response) {
     // Сначала пробуем получить данные ответа
     const data = await response.json().catch(() => null);
 
+    //обработка валидации
+    if (response.status === 400) {
+        let errorMessage = '';
+        if (Array.isArray(data) && data.length > 0) {
+            errorMessage = data
+                .filter(item => item && item.defaultMessage)
+                .map(item => item.defaultMessage)
+                .join(', ');
+
+            throw new Error(errorMessage);
+        }
+    }
+
     // Обработка аутентификации/авторизации
     if (response.status === 401 || response.status === 403) {
         if (handleAuthErrors(response.status, data)) {
@@ -52,7 +65,7 @@ async function processResponse(response) {
     }
 
     if (!response.ok) {
-        throw new Error(data?.message || `HTTP error! Status: ${response.status}`);
+        throw new Error(data?.message || data?.error || `HTTP error! Status: ${response.status}`);
     }
 
     // Обработка пустого ответа

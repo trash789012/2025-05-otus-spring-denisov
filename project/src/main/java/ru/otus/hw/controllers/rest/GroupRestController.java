@@ -2,6 +2,7 @@ package ru.otus.hw.controllers.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,14 +74,14 @@ public class GroupRestController {
     @Operation(summary = "Создать новую группу")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupDto createGroup(@RequestBody GroupFormDto groupFormDto) {
+    public GroupDto createGroup(@RequestBody @Valid GroupFormDto groupFormDto) {
         return groupService.insert(groupFormDto);
     }
 
     @Operation(summary = "Обновить существующую группу")
     @PutMapping("/{id}")
     public GroupDto updateGroup(@PathVariable Long id,
-                                @RequestBody GroupFormDto groupDto) {
+                                @RequestBody @Valid GroupFormDto groupDto) {
         if (!id.equals(groupDto.id())) {
             throw new BadRequestException("Id in path and body must match");
         }

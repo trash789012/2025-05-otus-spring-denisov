@@ -23,7 +23,7 @@ import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.BadRequestException;
-import ru.otus.hw.service.UserService;
+import ru.otus.hw.service.UserServiceImpl;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ import java.util.List;
 @Tag(name = "Users", description = "Операции с пользователями")
 public class UserRestController {
 
-    private final UserService userDetailsService;
+    private final UserServiceImpl userDetailsService;
 
     @Operation(summary = "Получить информацию по текущему авторизованному пользователю")
     @GetMapping("/self")
@@ -75,7 +75,7 @@ public class UserRestController {
     @Operation(summary = "Обновить основные данные о пользователе")
     @PutMapping("/{id}")
     public UserDto updateUser(@PathVariable Long id,
-                              @RequestBody UserInfoDto userDto,
+                              @RequestBody @Valid UserInfoDto userDto,
                               @AuthenticationPrincipal UserDetails userDetails
     ) {
         var userDb = userDetailsService.findIdByName(userDetails.getUsername());
@@ -90,12 +90,11 @@ public class UserRestController {
         return userDetailsService.updateUserInfo(userDto);
     }
 
-    //acl root
     @Operation(summary = "Обновить данные о пользователе и роли")
     @PutMapping("/{id}/roles")
     public UserDto updateUserRoles(
             @PathVariable Long id,
-            @RequestBody UserWithRolesDto userDto
+            @RequestBody @Valid UserWithRolesDto userDto
     ) {
 
         if (!id.equals(userDto.id())) {
@@ -104,7 +103,6 @@ public class UserRestController {
         return userDetailsService.updateUserWithRoles(userDto);
     }
 
-    //acl admin and root
     @Operation(summary = "Удаление пользователя по ID")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {

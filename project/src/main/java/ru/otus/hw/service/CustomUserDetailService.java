@@ -21,7 +21,7 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var dbUser = userRepository.findByName(username)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("User with name %s not found".formatted(username))
+                        () -> new EntityNotFoundException("Пользователь %s не найден".formatted(username))
                 );
 
         return new SecurityUserDetails(dbUser);

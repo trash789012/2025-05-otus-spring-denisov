@@ -23,7 +23,7 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(username, password)
             );
         } catch (Exception e) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new BadCredentialsException("Неправильное имя пользователя или пароль");
         }
 
         return jwtTokenProvider.generateToken(authentication);

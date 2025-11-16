@@ -50,7 +50,7 @@ public class GroupServiceImpl implements GroupService {
                 .map(groupConverter::toDto)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
-                                "Group with id %d not found".formatted(id)
+                                "Группа с ID %d не найдена".formatted(id)
                         )
                 );
     }
@@ -76,7 +76,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupWithMembersDto findGroupWithMembersById(Long id) {
         var group = groupRepository.findById(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Group with id %d not found".formatted(id))
+                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(id))
                 );
         return groupConverter.toWithMembersDto(group);
     }
@@ -86,7 +86,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupWithMembersAndSlotsDto findGroupWithMembersAndSlotsById(Long id) {
         var group = groupRepository.findById(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Group with id %d not found".formatted(id))
+                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(id))
                 );
         return groupConverter.toWithMembersAndSlotsDto(group);
 
@@ -94,22 +94,22 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurity.isMember(#groupId))")
+    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurityMatcher.isMember(#groupId))")
     public void deleteMemberFromGroup(Long memberId, Long groupId) {
         if (groupId == null) {
-            throw new IllegalArgumentException("Group id is null");
+            throw new IllegalArgumentException("ID группы null");
         }
         if (memberId == null) {
-            throw new IllegalArgumentException("Member id is null");
+            throw new IllegalArgumentException("ID участника null");
         }
 
         var group = groupRepository.findById(groupId)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Group with id %d not found".formatted(groupId))
+                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
                 );
         var member = userRepository.findById(memberId)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("User with id %d not found".formatted(memberId))
+                        () -> new EntityNotFoundException("Пользователь с ID %d не найден".formatted(memberId))
                 );
 
         group.getMembers().remove(member);
@@ -121,7 +121,7 @@ public class GroupServiceImpl implements GroupService {
     public List<UserInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm) {
         var group = groupRepository.findById(groupId)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Group with id %d not found".formatted(groupId))
+                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
                 );
 
         List<Long> existingMemberIds = group.getMembers().stream()
@@ -143,15 +143,15 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurity.isMember(#groupId))")
+    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurityMatcher.isMember(#groupId))")
     public GroupWithMembersDto addMembersToGroup(List<Long> memberIds, Long groupId) {
         if (memberIds.isEmpty()) {
-            throw new IllegalArgumentException("Member id is null");
+            throw new IllegalArgumentException("ID участника null");
         }
 
         var group = groupRepository.findById(groupId)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Group with id %d not found".formatted(groupId))
+                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
                 );
 
         var newMembers = userRepository.findAllById(memberIds);
@@ -166,7 +166,7 @@ public class GroupServiceImpl implements GroupService {
 
         if (!notFoundMemberIds.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Users with ids %s not found".formatted(notFoundMemberIds)
+                    "Пользователи с ids %s не найдены".formatted(notFoundMemberIds)
             );
         }
 
@@ -181,7 +181,7 @@ public class GroupServiceImpl implements GroupService {
 
         if (membersToAdd.isEmpty()) {
             throw new IllegalArgumentException(
-                    "All selected users are already members of this group %s".formatted(groupId)
+                    "Все выбранные пользователи уже участники группы %s".formatted(groupId)
             );
         }
 
@@ -200,7 +200,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROOT') or @groupSecurity.isMember(#groupDto.id())")
+    @PreAuthorize("hasRole('ROOT') or @groupSecurityMatcher.isMember(#groupDto.id())")
     public GroupDto update(GroupFormDto groupDto) {
         if (groupDto.id() == null) {
             throw new IllegalArgumentException("Group id is null");
@@ -212,7 +212,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurity.isMember(#id))")
+    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurityMatcher.isMember(#id))")
     public void deleteById(Long id) {
         groupRepository.deleteById(id);
     }
@@ -224,7 +224,7 @@ public class GroupServiceImpl implements GroupService {
             group = groupRepository.findById(groupDto.id())
                     .orElseThrow(() ->
                             new EntityNotFoundException(
-                                    "Group with id %d not found".formatted(groupDto.id())
+                                    "Группа с ID %d не найдена".formatted(groupDto.id())
                             )
                     );
             isCreate = false;
@@ -259,7 +259,7 @@ public class GroupServiceImpl implements GroupService {
             members = userRepository.findAllById(groupDto.memberIds());
             if (members.size() != groupDto.memberIds().size()) {
                 throw new EntityNotFoundException(
-                        "One or all members with ids %s not found".formatted(groupDto.memberIds())
+                        "Один или все участники с ids %s не найдены".formatted(groupDto.memberIds())
                 );
             }
         }
@@ -269,7 +269,7 @@ public class GroupServiceImpl implements GroupService {
             slots = slotRepository.findAllById(groupDto.slotIds());
             if (slots.size() != groupDto.slotIds().size()) {
                 throw new EntityNotFoundException(
-                        "One or all slots with ids %s not found".formatted(groupDto.slotIds())
+                        "Один или все слоты с ids %s не найдены".formatted(groupDto.slotIds())
                 );
             }
         }
@@ -278,7 +278,7 @@ public class GroupServiceImpl implements GroupService {
 
     private void validateBeforeSave(GroupFormDto groupDto) {
         if (groupDto.name().isEmpty()) {
-            throw new IllegalArgumentException("Group name is empty");
+            throw new IllegalArgumentException("Имя группы должно быть заполнено");
         }
     }
 }

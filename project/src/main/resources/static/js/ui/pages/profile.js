@@ -1,6 +1,7 @@
 import {getUserData, updateUser} from "../../api/userApi.js";
 import {ProfileTabs} from "../components/profileTabs.js";
 import {fetchGroupMembers} from "../../api/groupApi.js";
+import {Notification} from "../../utils/notifications.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const profilePage = new Profile();
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Profile {
     constructor() {
+        this.notifications = new Notification();
         this.view = new ProfileTabs({
             userName: 'userName',
             userLastName: 'userLastName',
@@ -26,6 +28,7 @@ export class Profile {
             this.loadGroups(user).catch(console.error);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -34,6 +37,7 @@ export class Profile {
             this.view.renderUserInfo(user);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -42,6 +46,7 @@ export class Profile {
             this.view.renderGroups(user.groups);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -51,6 +56,7 @@ export class Profile {
             this.view.showMembersModal(group.members);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -60,9 +66,13 @@ export class Profile {
             const result = await updateUser(userDto.id, userDto);
             if (result.success) {
                 this.init().catch(console.error);
+                this.notifications.success("Сохранено");
+            } else {
+                this.notifications.error(result.errors);
             }
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 }

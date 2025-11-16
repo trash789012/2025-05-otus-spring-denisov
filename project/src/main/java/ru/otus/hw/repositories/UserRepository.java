@@ -36,15 +36,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     List<User> findBySearchTermAndIdNotIn(@Param("term") String term, @Param("excludedIds") List<Long> excludedIds);
 
-    // Загрузка пользователя с группами
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.groups WHERE u.name = :username")
-    Optional<User> findByNameWithGroups(@Param("username") String username);
-
-    // Загрузка нескольких пользователей по ID с ролями (для участников групп)
-    @EntityGraph("user-roles-graph")
-    @Query("SELECT u FROM User u WHERE u.id IN :userIds")
-    List<User> findAllByIdsWithRoles(@Param("userIds") List<Long> userIds);
-
     @Override
     List<User> findAllById(Iterable<Long> longs);
 

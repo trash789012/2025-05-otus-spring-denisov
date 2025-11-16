@@ -236,3 +236,16 @@ footer p {
 body {
     padding-top: 70px; /* высота навбара */
 }
+
+/*#notification-container {*/
+/*    transform: translate(-80%, -50%);*/
+/*    top: 80%;*/
+/*    left: 50%;*/
+/*    pointer-events: none;*/
+/*}*/
+
+/*#notification-container .toast {*/
+/*    pointer-events: auto;*/
+/*    text-align: center;*/
+/*    min-width: 300px;*/
+/*}*/

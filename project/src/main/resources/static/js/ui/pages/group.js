@@ -63,9 +63,11 @@ export class Group {
             }
             if (!result.success) {
                 console.log(result.errors);
-                this.notifications(result.errors);
+                this.notifications.error(result.errors);
                 return null;
             }
+            this.notifications.success("Сохранено");
+
             this.groupId = result.result.id;
             if (!this.editMode) {
                 window.history.go(-1);
@@ -85,6 +87,8 @@ export class Group {
             if (result && result.result) {
                 this.groupTabView.removeMemberRow(memberId);
             }
+
+            this.notifications.success("Участник исключен из коллектива");
         } catch (e) {
             console.error(e);
             this.notifications.error(e.message);
@@ -125,12 +129,15 @@ export class Group {
                 this.groupTabView.closeAddMemberModal();
                 this.groupTabView.renderGroupInfo(response.result);
                 this.groupTabView.renderMembersTable(response.result.members);
+
+                this.notifications.success("Участники добавлены");
             }
         } catch (e) {
             console.error(e);
             this.notifications.error(e.message);
         }
     }
+
     setEditMode(groupId) {
         if (groupId == null || groupId === 'new') {
             this.groupId = 0;

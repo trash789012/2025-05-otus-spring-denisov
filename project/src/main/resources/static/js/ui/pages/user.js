@@ -59,6 +59,8 @@ export class User {
                 result = await createUser(userDto);
             }
             if (result.success) {
+                this.notifications.success("Сохранено");
+
                 this.userId = result.result?.id;
                 if (!this.editMode) {
                     window.history.go(-1);
@@ -66,6 +68,8 @@ export class User {
                 }
                 this.setEditMode(this.userId);
                 this.init().catch(console.error);
+            } else {
+                this.notifications.error(result.errors);
             }
         } catch (e) {
             console.error(e);
@@ -76,6 +80,8 @@ export class User {
     onDeleteUserBtnClick = async () => {
         try {
             await deleteUser(this.userId);
+            this.notifications.success("Удалено");
+
             window.history.go(-1);
         } catch (e) {
             console.error(e);

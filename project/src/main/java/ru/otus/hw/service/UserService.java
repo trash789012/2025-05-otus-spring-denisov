@@ -1,222 +1,109 @@
 package ru.otus.hw.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.UserConverter;
-import ru.otus.hw.domain.User;
-import ru.otus.hw.domain.enums.UserRole;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
 import ru.otus.hw.dto.user.UserInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
-import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.repositories.GroupRepository;
-import ru.otus.hw.repositories.UserRepository;
 
-import java.util.Arrays;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
-
-    private final UserRepository userRepository;
-
-    private final GroupRepository groupRepository;
-
-    private final UserConverter userConverter;
-
-    private final PasswordEncoder passwordEncoder;
-
-    private final AclService aclService;
+/**
+ * Сервис для управления пользователями
+ */
+public interface UserService {
 
     // -------------------------------------------------------------------------
     // ROLES
     // -------------------------------------------------------------------------
 
-    public List<String> findAllUserRoles() {
-        return Arrays.stream(UserRole.values())
-                .map(Enum::name)
-                .toList();
-    }
+    /**
+     * Получить все возможные роли пользователей
+     *
+     * @return список всех ролей
+     */
+    List<String> findAllUserRoles();
 
     // -------------------------------------------------------------------------
     // USER READ
     // -------------------------------------------------------------------------
 
-    @Transactional(readOnly = true)
-    public UserWithRolesAndGroupsDto findUserById(Long userId) {
-        return userConverter.toUserWithRolesAndGroupsDto(
-                getUserById(userId)
-        );
-    }
+    /**
+     * Найти пользователя по ID с ролями и группами
+     *
+     * @param userId ID пользователя
+     * @return пользователь с ролями и группами
+     */
+    UserWithRolesAndGroupsDto findUserById(Long userId);
 
-    @Transactional(readOnly = true)
-    public List<UserWithRolesDto> findAllUsersWithRoles() {
-        return userRepository.findAll().stream()
-                .map(userConverter::toUserWithRolesDto)
-                .toList();
-    }
+    /**
+     * Найти всех пользователей с ролями
+     *
+     * @return список пользователей с ролями
+     */
+    List<UserWithRolesDto> findAllUsersWithRoles();
 
-    @Transactional(readOnly = true)
-    public UserDto findByNameWithGroupsAndMembers(String username) {
-        var dbUser = userRepository.findByNameWithGroupsAndMembers(username)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User with name %s not found".formatted(username)
-                ));
-        return userConverter.toDto(dbUser);
-    }
+    /**
+     * Найти пользователя по имени с группами и участниками
+     *
+     * @param username имя пользователя
+     * @return пользователь с группами и участниками
+     */
+    UserDto findByNameWithGroupsAndMembers(String username);
 
-    @Transactional(readOnly = true)
-    public UserExistsDto findIdByName(String username) {
-        var dbUser = userRepository.findIdAndNameByName(username)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User with name %s not found".formatted(username)
-                ));
-        return userConverter.toExistsDto(dbUser);
-    }
+    /**
+     * Найти ID пользователя по имени
+     *
+     * @param username имя пользователя
+     * @return DTO с ID и именем пользователя
+     */
+    UserExistsDto findIdByName(String username);
 
     // -------------------------------------------------------------------------
     // USER UPDATE
     // -------------------------------------------------------------------------
-    @Transactional
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
-    public UserDto updateUserInfo(UserInfoDto userDto) {
-        var userDb = getUserById(userDto.id());
-        validateBasicUserFields(userDto.name(), userDto.firstName());
 
-        applyUserBasicData(userDb,
-                userDto.firstName(),
-                userDto.lastName(),
-                userDto.shortDescription()
-        );
+    /**
+     * Обновить основную информацию о пользователе
+     * Требует роли ROOT или ADMIN
+     *
+     * @param userDto DTO с информацией о пользователе
+     * @return обновленный пользователь
+     */
+    UserDto updateUserInfo(UserInfoDto userDto);
 
-        return userConverter.toDto(userRepository.save(userDb));
-    }
-
-    @Transactional
-    @PreAuthorize("hasRole('ROOT')")
-    public UserDto updateUserWithRoles(UserWithRolesDto userDto) {
-        var userDb = getUserById(userDto.id());
-        validateBasicUserFields(userDto.name(), userDto.firstName());
-
-        if (userDto.roles().isEmpty()) {
-            throw new IllegalArgumentException("Roles cannot be empty");
-        }
-
-        applyUserBasicData(userDb,
-                userDto.firstName(),
-                userDto.lastName(),
-                userDto.shortDescription()
-        );
-
-        userDb.setRoles(userConverter.toUserRoles(userDto.roles()));
-
-        return userConverter.toDto(userRepository.save(userDb));
-    }
+    /**
+     * Обновить пользователя с ролями
+     * Требует роль ROOT
+     *
+     * @param userDto DTO с пользователем и ролями
+     * @return обновленный пользователь
+     */
+    UserDto updateUserWithRoles(UserWithRolesDto userDto);
 
     // -------------------------------------------------------------------------
     // USER CREATE
     // -------------------------------------------------------------------------
 
-    @Transactional
-    @PreAuthorize("hasAnyRole('ROOT')")
-    public UserWithRolesDto createUser(UserWithRolesAndPasswordDto userDto) {
-
-        var roles = userConverter.toUserRoles(userDto.roles());
-
-        validateCreationFields(userDto.name(), userDto.password(), userDto.firstName(), roles);
-
-        var newUser = User.builder()
-                .name(userDto.name())
-                .password(passwordEncoder.encode(userDto.password()))
-                .firstName(userDto.firstName())
-                .lastName(userDto.lastName())
-                .shortDescription(userDto.shortDescription())
-                .roles(roles)
-                .build();
-
-        var savedUser = userRepository.save(newUser);
-
-        return userConverter.toUserWithRolesDto(savedUser);
-    }
+    /**
+     * Создать нового пользователя
+     * Требует роль ROOT
+     *
+     * @param userDto DTO с данными нового пользователя
+     * @return созданный пользователь с ролями
+     */
+    UserWithRolesDto createUser(UserWithRolesAndPasswordDto userDto);
 
     // -------------------------------------------------------------------------
     // USER DELETE
     // -------------------------------------------------------------------------
 
-    @Transactional
-    @PreAuthorize("hasAnyRole('ROOT')")
-    public void deleteUserById(Long id) {
-        var user = getUserById(id);
-
-        // Убираем участника из всех групп
-        user.getGroups().forEach(group -> group.getMembers().remove(user));
-        groupRepository.saveAll(user.getGroups());
-
-        // Теперь можно удалять пользователя
-        userRepository.delete(user);
-    }
-
-    // -------------------------------------------------------------------------
-    // PRIVATE HELPERS
-    // -------------------------------------------------------------------------
-
-    private void validateBasicUserFields(String username, String firstName) {
-        if (username == null) {
-            throw new IllegalArgumentException("Username is empty");
-        }
-        if (firstName == null) {
-            throw new IllegalArgumentException("Firstname is empty");
-        }
-    }
-
-    private void validateCreationFields(String username, String password,
-                                        String firstName, List<UserRole> roles) {
-        if (username == null) {
-            throw new IllegalArgumentException("Username is empty");
-        }
-        if (password == null) {
-            throw new IllegalArgumentException("Password is empty");
-        }
-        if (firstName == null) {
-            throw new IllegalArgumentException("Firstname is empty");
-        }
-        if (roles == null || roles.isEmpty()) {
-            throw new IllegalArgumentException("Roles cannot be empty");
-        }
-    }
-
-    private void applyUserBasicData(User user,
-                                    String firstName,
-                                    String lastName,
-                                    String shortDescription) {
-
-        if (firstName != null) {
-            user.setFirstName(firstName);
-        }
-        if (lastName != null) {
-            user.setLastName(lastName);
-        }
-        if (shortDescription != null) {
-            user.setShortDescription(shortDescription);
-        }
-    }
-
-    private User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("User not found %s".formatted(id)));
-    }
-
-    private User getUserByName(String username) {
-        return userRepository.findByName(username)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("User with name %s not found".formatted(username)));
-    }
+    /**
+     * Удалить пользователя по ID
+     * Требует роль ROOT
+     *
+     * @param id ID пользователя
+     */
+    void deleteUserById(Long id);
 }

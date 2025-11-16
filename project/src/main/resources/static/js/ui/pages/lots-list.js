@@ -119,16 +119,21 @@ export class Lots {
     }
 
     onSaveSlotBtnClick = async () => {
-        if (!this.slotModal.validateForm()) {
-            return null;
-        }
+        // if (!this.slotModal.validateForm()) {
+        //     return null;
+        // }
 
         try {
             const slotDto = this.slotModal.getSlotForApi();
+            let result;
             if (slotDto.id == null) {
-                await createSlot(slotDto);
+                result = await createSlot(slotDto);
             } else {
-                await updateSlot(slotDto.id, slotDto);
+                result = await updateSlot(slotDto.id, slotDto);
+            }
+            if (!result?.success) {
+                this.notifications.error(result?.errors);
+                return null;
             }
             //close modal
             this.slotModal.close();
@@ -136,7 +141,8 @@ export class Lots {
             this.loadLots().catch(console.error);
         } catch (e) {
             console.error(e);
-            this.notifications.error(e.message)
+            this.notifications.clearAll();
+            this.notifications.error(e.message, false)
         }
     }
 
@@ -148,7 +154,8 @@ export class Lots {
             this.loadLots().catch(console.error);
         } catch (e) {
             console.error(e);
-            this.notifications.error(e?.message);
+            this.notifications.clearAll();
+            this.notifications.error(e?.message, false);
         }
     }
 
@@ -187,6 +194,7 @@ export class Lots {
     }
 
     showSlotModal = async (timeSlot) => {
+        this.notifications.clearAll();
         try {
             const groups = await fetchAllGroups();
             if (timeSlot.dataset.id) {
