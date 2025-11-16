@@ -203,6 +203,28 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--    Build        -->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <from>
+                        <image>openjdk:17-jdk-slim</image>
+                    </from>
+                    <to>
+                        <image>library:latest</image>
+                    </to>
+                    <container>
+                        <mainClass>ru.otus.hw.JamTimeApplication</mainClass>
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                    </container>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
