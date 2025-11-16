@@ -1,5 +1,7 @@
 # JamTime Backend (Spring Boot + REST + JWT + ACL + PostgreSQL + Liquibase)
 
+![img.png](img.png)
+
 Серверная часть приложения **JamTime** — платформы для записи на музыкальные слоты, управления группами и распределения прав доступа через **Spring Security ACL**.
 
 Проект построен на современных технологиях:
