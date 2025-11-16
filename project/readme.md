@@ -4,7 +4,7 @@
 
 Проект построен на современных технологиях:
 - **Spring Boot 3**
-- **Spring Security 6 + JWT**
+- **Spring Security + JWT**
 - **Spring Security ACL (REST ACL)**
 - **PostgreSQL**
 - **Liquibase**
