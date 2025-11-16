@@ -7,7 +7,7 @@ import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 
@@ -45,12 +45,12 @@ public class UserConverter {
         return new UserExistsDto(user.getId(), user.getName());
     }
 
-    public UserInfoDto toInfoDto(User user) {
+    public UserFormInfoDto toInfoDto(User user) {
         if (user == null) {
             return null;
         }
 
-        return new UserInfoDto(
+        return new UserFormInfoDto(
                 user.getId(),
                 user.getName(),
                 user.getFirstName(),
@@ -103,7 +103,7 @@ public class UserConverter {
                                 group.getDescription(),
                                 (group.getMembers() != null) ?
                                         group.getMembers().stream()
-                                                .map(userDto -> new UserInfoDto(
+                                                .map(userDto -> new UserFormInfoDto(
                                                         userDto.getId(),
                                                         userDto.getName(),
                                                         userDto.getFirstName(),

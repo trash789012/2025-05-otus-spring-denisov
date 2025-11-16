@@ -11,9 +11,9 @@ import ru.otus.hw.domain.User;
 import ru.otus.hw.domain.enums.UserRole;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
-import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
+import ru.otus.hw.dto.user.UserFormWithRolesAndPasswordDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
-    public UserDto updateUserInfo(UserInfoDto userDto) {
+    public UserDto updateUserInfo(UserFormInfoDto userDto) {
         var userDb = getUserById(userDto.id());
         validateBasicUserFields(userDto.name(), userDto.firstName());
 
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ROOT')")
-    public UserWithRolesDto createUser(UserWithRolesAndPasswordDto userDto) {
+    public UserWithRolesDto createUser(UserFormWithRolesAndPasswordDto userDto) {
 
         var roles = userConverter.toUserRoles(userDto.roles());
 

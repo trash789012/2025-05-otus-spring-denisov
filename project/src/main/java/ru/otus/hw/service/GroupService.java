@@ -5,7 +5,7 @@ import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
 import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 
 import java.util.List;
@@ -25,12 +25,6 @@ public interface GroupService {
      */
     GroupDto findById(long id);
 
-    /**
-     * Получить все группы
-     *
-     * @return список всех групп с основной информацией
-     */
-    List<GroupDto> findAll();
 
     /**
      * Получить все группы без вложенных данных (участников и слотов)
@@ -76,7 +70,7 @@ public interface GroupService {
      * @param searchTerm поисковый запрос (имя, фамилия, username)
      * @return список пользователей, подходящих под критерии поиска
      */
-    List<UserInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm);
+    List<UserFormInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm);
 
     /**
      * Добавить участников в группу

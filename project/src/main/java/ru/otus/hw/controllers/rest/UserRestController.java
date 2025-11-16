@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.config.security.SecurityUserDetails;
 import ru.otus.hw.dto.user.UserDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
-import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
+import ru.otus.hw.dto.user.UserFormWithRolesAndPasswordDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.UserServiceImpl;
@@ -68,14 +68,14 @@ public class UserRestController {
     @Operation(summary = "Создать нового пользователя")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserWithRolesDto createUser(@RequestBody @Valid UserWithRolesAndPasswordDto userDto) {
+    public UserWithRolesDto createUser(@RequestBody @Valid UserFormWithRolesAndPasswordDto userDto) {
         return userDetailsService.createUser(userDto);
     }
 
     @Operation(summary = "Обновить основные данные о пользователе")
     @PutMapping("/{id}")
     public UserDto updateUser(@PathVariable Long id,
-                              @RequestBody @Valid UserInfoDto userDto,
+                              @RequestBody @Valid UserFormInfoDto userDto,
                               @AuthenticationPrincipal UserDetails userDetails
     ) {
         var userDb = userDetailsService.findIdByName(userDetails.getUsername());

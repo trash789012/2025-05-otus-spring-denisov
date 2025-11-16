@@ -2,9 +2,9 @@ package ru.otus.hw.service;
 
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
-import ru.otus.hw.dto.user.UserWithRolesAndPasswordDto;
+import ru.otus.hw.dto.user.UserFormWithRolesAndPasswordDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public interface UserService {
      * @param userDto DTO с информацией о пользователе
      * @return обновленный пользователь
      */
-    UserDto updateUserInfo(UserInfoDto userDto);
+    UserDto updateUserInfo(UserFormInfoDto userDto);
 
     /**
      * Обновить пользователя с ролями
@@ -77,7 +77,7 @@ public interface UserService {
      * @param userDto DTO с данными нового пользователя
      * @return созданный пользователь с ролями
      */
-    UserWithRolesDto createUser(UserWithRolesAndPasswordDto userDto);
+    UserWithRolesDto createUser(UserFormWithRolesAndPasswordDto userDto);
 
     /**
      * Удалить пользователя по ID

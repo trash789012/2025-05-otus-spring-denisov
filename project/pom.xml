@@ -83,13 +83,6 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
-        <!--    Shell    -->
-        <dependency>
-            <groupId>org.springframework.shell</groupId>
-            <artifactId>spring-shell-starter</artifactId>
-            <version>${spring.shell.version}</version>
-        </dependency>
-
         <!--   Security  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

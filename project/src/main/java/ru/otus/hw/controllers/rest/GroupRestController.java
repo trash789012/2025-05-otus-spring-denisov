@@ -21,7 +21,7 @@ import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
 import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.exceptions.BadRequestException;
 import ru.otus.hw.service.GroupService;
 
@@ -64,7 +64,7 @@ public class GroupRestController {
 
     @Operation(summary = "Поиск пользователей по неявному условию (логин/имя/фамилия")
     @GetMapping("/{groupId}/candidates")
-    public List<UserInfoDto> getUsersBySearchTerm(
+    public List<UserFormInfoDto> getUsersBySearchTerm(
             @PathVariable Long groupId,
             @RequestParam String searchTerm
     ) {

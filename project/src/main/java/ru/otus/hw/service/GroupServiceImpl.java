@@ -15,7 +15,7 @@ import ru.otus.hw.dto.group.GroupFormDto;
 import ru.otus.hw.dto.group.GroupInfoDto;
 import ru.otus.hw.dto.group.GroupWithMembersAndSlotsDto;
 import ru.otus.hw.dto.group.GroupWithMembersDto;
-import ru.otus.hw.dto.user.UserInfoDto;
+import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;
@@ -53,14 +53,6 @@ public class GroupServiceImpl implements GroupService {
                                 "Группа с ID %d не найдена".formatted(id)
                         )
                 );
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<GroupDto> findAll() {
-        return groupRepository.findAll().stream()
-                .map(groupConverter::toDto)
-                .toList();
     }
 
     @Override
@@ -118,7 +110,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm) {
+    public List<UserFormInfoDto> findUsersForGroupBySearchTerm(Long groupId, String searchTerm) {
         var group = groupRepository.findById(groupId)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
@@ -141,53 +133,6 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
-    //    @Override
-//    @Transactional
-//    @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurityMatcher.isMember(#groupId))")
-//    public GroupWithMembersDto addMembersToGroup(List<Long> memberIds, Long groupId) {
-//        if (memberIds.isEmpty()) {
-//            throw new IllegalArgumentException("ID участника null");
-//        }
-//
-//        var group = groupRepository.findById(groupId)
-//                .orElseThrow(
-//                        () -> new EntityNotFoundException("Группа с ID %d не найдена".formatted(groupId))
-//                );
-//
-//        var newMembers = userRepository.findAllById(memberIds);
-//
-//        var foundMemberIds = newMembers.stream()
-//                .map(User::getId)
-//                .toList();
-//
-//        var notFoundMemberIds = memberIds.stream()
-//                .filter(id -> !foundMemberIds.contains(id))
-//                .toList();
-//
-//        if (!notFoundMemberIds.isEmpty()) {
-//            throw new IllegalArgumentException(
-//                    "Пользователи с ids %s не найдены".formatted(notFoundMemberIds)
-//            );
-//        }
-//
-//        var existingMembers = group.getMembers();
-//        var existingMemberIds = existingMembers.stream()
-//                .map(User::getId)
-//                .toList();
-//
-//        var membersToAdd = newMembers.stream()
-//                .filter(user -> !existingMemberIds.contains(user.getId()))
-//                .toList();
-//
-//        if (membersToAdd.isEmpty()) {
-//            throw new IllegalArgumentException(
-//                    "Все выбранные пользователи уже участники группы %s".formatted(groupId)
-//            );
-//        }
-//
-//        existingMembers.addAll(membersToAdd);
-//        return groupConverter.toWithMembersDto(groupRepository.save(group));
-//    }
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROOT') or (hasRole('ADMIN') and @groupSecurityMatcher.isMember(#groupId))")

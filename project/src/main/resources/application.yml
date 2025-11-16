@@ -13,8 +13,9 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
 
   liquibase:
     enabled: true
@@ -24,10 +25,6 @@ spring:
   output:
     ansi:
       enabled: always
-  shell:
-    interactive:
-      enabled: true
-
 springdoc:
   api-docs:
     path: /api-docs
@@ -45,4 +42,3 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    sql: debug
