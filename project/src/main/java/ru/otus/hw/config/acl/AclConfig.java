@@ -58,6 +58,7 @@ public class AclConfig {
 
     @Bean
     public LookupStrategy lookupStrategy() {
+
         return new BasicLookupStrategy(
                 dataSource,
                 aclCache(),
@@ -70,5 +71,4 @@ public class AclConfig {
     public JdbcMutableAclService aclService() {
         return new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
     }
-
 }

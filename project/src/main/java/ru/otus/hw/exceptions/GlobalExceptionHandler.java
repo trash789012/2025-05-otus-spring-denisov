@@ -40,7 +40,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadCredentials(BadCredentialsException ex,
                                                        WebRequest request) {
-        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+        Map<String, Object> detail = getMessageDetail(ex,
+                (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage()
+        );
         var body = new AuthErrorResponseDto(
                 ex.getMessage(),
                 ex.getMessage(),
@@ -57,8 +59,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Object> handleInvalidCredentials(InvalidCredentialsException ex,
-                                                       WebRequest request) {
-        Map<String, Object> detail = getMessageDetail(ex, (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage());
+                                                           WebRequest request) {
+        Map<String, Object> detail = getMessageDetail(ex,
+                (ServletWebRequest) request, HttpStatus.UNAUTHORIZED, ex.getMessage()
+        );
         var body = new AuthErrorResponseDto(
                 ex.getMessage(),
                 ex.getMessage(),

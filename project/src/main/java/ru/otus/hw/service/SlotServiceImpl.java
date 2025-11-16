@@ -121,10 +121,11 @@ public class SlotServiceImpl implements SlotService {
 
         var savedSlot = slotRepository.save(slot);
         if (isCreate) {
-            aclService.createSlotPermission(savedSlot, BasePermission.WRITE);
-            aclService.createSlotPermission(savedSlot, BasePermission.DELETE);
+            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE);
             aclService.createAdminPermission(savedSlot);
             aclService.createRootPermission(savedSlot);
+
+            aclService.flushAclCache();
         }
 
         return savedSlot;

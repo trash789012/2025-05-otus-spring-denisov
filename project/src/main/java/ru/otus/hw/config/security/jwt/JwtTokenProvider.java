@@ -17,6 +17,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final Key key;
+
     private final long validityInMs;
 
     public JwtTokenProvider(

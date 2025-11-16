@@ -6,19 +6,24 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mongodb
+      - postgres
     environment:
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jamtime
+      - SPRING_DATASOURCE_USERNAME=jamuser
+      - SPRING_DATASOURCE_PASSWORD=jampass
+  #      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
 
-  mongodb:
-    image: mongo:6
+  postgres:
+    image: postgres:16
     restart: always
     ports:
-      - "27015:27017"
+        - "5432:5432"
+    volumes:
+        - postgres_data:/var/lib/postgresql/data
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      POSTGRES_DB: jamtime
+      POSTGRES_USER: jamuser
+      POSTGRES_PASSWORD: jampass
+
+volumes:
+  jamTime_data:

@@ -1,0 +1,201 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-recreate-acl-with-sequences
+      author: denisovNA
+      changes:
+        # Создаем sequences вручную
+        - createSequence:
+            sequenceName: acl_sid_id_seq
+            startValue: 1
+            incrementBy: 1
+
+        - createSequence:
+            sequenceName: acl_class_id_seq
+            startValue: 1
+            incrementBy: 1
+
+        - createSequence:
+            sequenceName: acl_object_identity_id_seq
+            startValue: 1
+            incrementBy: 1
+
+        - createSequence:
+            sequenceName: acl_entry_id_seq
+            startValue: 1
+            incrementBy: 1
+
+        # Создаем таблицы с явным указанием sequence
+        - createTable:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  defaultValueComputed: "nextval('acl_sid_id_seq')"
+              - column:
+                  name: principal
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sid
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: acl_class
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  defaultValueComputed: "nextval('acl_class_id_seq')"
+              - column:
+                  name: class
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: acl_object_identity
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  defaultValueComputed: "nextval('acl_object_identity_id_seq')"
+              - column:
+                  name: object_id_class
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: object_id_identity
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_object
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: owner_sid
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: entries_inheriting
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: acl_entry
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  defaultValueComputed: "nextval('acl_entry_id_seq')"
+              - column:
+                  name: acl_object_identity
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ace_order
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sid
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mask
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: granting
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: audit_success
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: audit_failure
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+
+        # ... остальные constraints и индексы
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: object_id_class
+            referencedTableName: acl_class
+            referencedColumnNames: id
+            constraintName: fk_acl_obj_class
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: owner_sid
+            referencedTableName: acl_sid
+            referencedColumnNames: id
+            constraintName: fk_acl_obj_owner
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: parent_object
+            referencedTableName: acl_object_identity
+            referencedColumnNames: id
+            constraintName: fk_acl_obj_parent
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_entry
+            baseColumnNames: acl_object_identity
+            referencedTableName: acl_object_identity
+            referencedColumnNames: id
+            constraintName: fk_acl_entry_object
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_entry
+            baseColumnNames: sid
+            referencedTableName: acl_sid
+            referencedColumnNames: id
+            constraintName: fk_acl_entry_sid
+
+        - addUniqueConstraint:
+            tableName: acl_sid
+            columnNames: sid, principal
+            constraintName: uk_acl_sid
+
+        - addUniqueConstraint:
+            tableName: acl_class
+            columnNames: class
+            constraintName: uk_acl_class
+
+        - addUniqueConstraint:
+            tableName: acl_object_identity
+            columnNames: object_id_class, object_id_identity
+            constraintName: uk_acl_object_identity
+
+        - addUniqueConstraint:
+            tableName: acl_entry
+            columnNames: acl_object_identity, ace_order
+            constraintName: uk_acl_entry

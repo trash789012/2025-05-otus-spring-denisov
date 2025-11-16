@@ -25,7 +25,9 @@ public class GroupSecurityMatcher {
     }
 
     public boolean isMemberBoth(Long slotId, Long groupId) {
-        if (groupId == null) return true;
+        if (groupId == null) {
+            return true;
+        }
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Long currentGroupId = slotRepository.findById(slotId)

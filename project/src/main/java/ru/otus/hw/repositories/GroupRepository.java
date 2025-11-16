@@ -12,11 +12,9 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @EntityGraph("group-members-graph")
     Optional<Group> findById(Long id);
 
-    @EntityGraph("group-members-graph")
-    Optional<Group> findByName(String name);
-
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
             "FROM Group g JOIN g.members m " +
             "WHERE g.id = :groupId " +
             "AND m.name = :name")
-    boolean existsMemberInGroup(@Param("groupId") Long groupId, @Param("name") String name);}
+    boolean existsMemberInGroup(@Param("groupId") Long groupId, @Param("name") String name);
+}

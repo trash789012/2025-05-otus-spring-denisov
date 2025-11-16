@@ -1,8 +1,10 @@
 import {GroupTabs} from "../components/groupTabs.js";
 import {
-    addMembersToGroup, createGroup,
+    addMembersToGroup,
+    createGroup,
     deleteGroup,
-    deleteMemberFromGroup, fetchGroupMembers,
+    deleteMemberFromGroup,
+    fetchGroupMembers,
     getUsersBySearchTerm,
     updateGroupInfo
 } from "../../api/groupApi.js";

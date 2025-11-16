@@ -1,7 +1,6 @@
 package ru.otus.hw.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +40,6 @@ public class SecurityConfig {
                         sm ->
                                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers(pathConfig.getApiBasePath() + "/auth/**").permitAll()
                         .requestMatchers(
                                 "/login/**",
@@ -60,7 +58,6 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(authenticationExceptionHandler)
-//                        .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .headers(headers -> headers.frameOptions(
                         HeadersConfigurer.FrameOptionsConfig::sameOrigin)

@@ -22,9 +22,14 @@ public interface AclService {
      * Создать разрешение на слот с дополнительным присвоением динамических ролей на группы
      *
      * @param object слот - временной интервал для бронирования
-     * @param permission уровень доступа (обычно READ или WRITE)
      */
-    void createSlotPermission(Slot object, Permission permission);
+    void createSlotPermissions(Slot object, Permission... permissions);
+
+    /**
+     * Flush накопленных изменений
+     *
+     */
+    void flushAclCache();
 
     /**
      * Создать права администратора на объект.

@@ -1,5 +1,4 @@
 import {GroupSelector} from "./groupSelector.js";
-import {isRoles} from "../../utils/util.js";
 
 export class SlotModal {
     constructor(parameters = {}) {

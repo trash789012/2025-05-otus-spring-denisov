@@ -1,4 +1,4 @@
-import {get, del, put, post} from "../utils/http.js";
+import {del, get, post, put} from "../utils/http.js";
 
 export async function fetchAllGroups() {
     return get(`/group`);
