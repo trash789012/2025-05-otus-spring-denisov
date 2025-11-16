@@ -1,7 +1,6 @@
 services:
   app:
-    #    build: . #через dockerfile
-    image: jamtime:latest #через jib
+    image: jamtime:latest
     restart: unless-stopped
     ports:
       - "8080:8080"
