@@ -111,17 +111,19 @@ export class Lots {
     onPrevSelectorClick = async () => {
         this.currentOffset--;
         await this.initCalendar(this.currentView, this.currentOffset);
+        await this.loadLots();
     }
 
     onNextSelectorClick = async () => {
         this.currentOffset++;
         await this.initCalendar(this.currentView, this.currentOffset);
+        await this.loadLots();
     }
 
     onSaveSlotBtnClick = async () => {
-        // if (!this.slotModal.validateForm()) {
-        //     return null;
-        // }
+        if (!this.slotModal.validateForm()) {
+            return null;
+        }
 
         try {
             const slotDto = this.slotModal.getSlotForApi();
