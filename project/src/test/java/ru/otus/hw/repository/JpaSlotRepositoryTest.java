@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Репозиторий JPA для работы со слотами времени")
 @DataJpaTest
 @Testcontainers
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JpaSlotRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
@@ -37,14 +37,13 @@ public class JpaSlotRepositoryTest extends AbstractRepositoryTest {
     private Slot testSlot;
     private Slot testSlot2;
     private Group testGroup;
-    private User testUser;
 
     @BeforeEach
     void setUp() {
         List<UserRole> userRoles = new ArrayList<>();
         userRoles.add(UserRole.USER);
 
-        testUser = User.builder()
+        User testUser = User.builder()
                 .name("testuser")
                 .password("password123")
                 .firstName("Test")
