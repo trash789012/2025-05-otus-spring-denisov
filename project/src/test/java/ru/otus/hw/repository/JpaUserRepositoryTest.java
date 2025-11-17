@@ -7,10 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.domain.User;
@@ -27,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class JpaUserRepositoryTest {
+public class JpaUserRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     private TestEntityManager em;
@@ -37,21 +33,6 @@ public class JpaUserRepositoryTest {
 
     private User testUser;
     private User testUser2;
-    private Group testGroup;
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
-    }
 
     @BeforeEach
     void setUp() {
@@ -83,7 +64,7 @@ public class JpaUserRepositoryTest {
         testUser = em.persistAndFlush(testUser);
         testUser2 = em.persistAndFlush(testUser2);
 
-        testGroup = Group.builder()
+        Group testGroup = Group.builder()
                 .name("testgroup")
                 .description("Test group description")
                 .members(List.of(testUser, testUser2))
