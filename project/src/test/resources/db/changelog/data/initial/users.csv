@@ -1,0 +1,7 @@
+name;password;first_name;last_name;short_description
+admin;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2;Nikolay;Denisov;Root Admin
+user;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2;Тракторина;Белоусова;Играю на клавишах
+user2;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2;Владислав;Лаптев;Барабанщик
+user3;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2;Иван;Кривошеев;Гитара
+user4;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2;Олег;Моськин;Бас
+user5;$2a$10$7fA6hybWZcxcWg.Ut2dTHewhDYPjD.CI1bc16kbsp1QeGnlBHLzL2;Алеся;Матвеева;Скрипка
