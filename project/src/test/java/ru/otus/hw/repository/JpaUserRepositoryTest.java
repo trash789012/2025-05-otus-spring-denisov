@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -28,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-//@Import(UserRepository.class)
 public class JpaUserRepositoryTest {
 
     @Autowired
@@ -151,6 +149,220 @@ public class JpaUserRepositoryTest {
         assertThat(group.getMembers())
                 .extracting(User::getName)
                 .containsExactlyInAnyOrder("testuser", "anotheruser");
+    }
+
+    @Test
+    @DisplayName("Должен найти ID и имя пользователя по имени")
+    void shouldFindIdAndNameByName() {
+        // When
+        Optional<User> result = userRepository.findIdAndNameByName("testuser");
+
+        // Then
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(testUser.getId());
+        assertThat(result.get().getName()).isEqualTo("testuser");
+    }
+
+    @Test
+    @DisplayName("Должен найти пользователей по поисковому термину (case insensitive)")
+    void shouldFindBySearchTermCaseInsensitive() {
+        // When
+        List<User> users = userRepository.findBySearchTerm("TEST");
+
+        // Then
+        assertThat(users).hasSize(1);
+        assertThat(users.get(0).getName()).isEqualTo("testuser");
+    }
+
+    @Test
+    @DisplayName("Должен найти пользователей по поисковому термину в имени")
+    void shouldFindBySearchTermInName() {
+        // When
+        List<User> users = userRepository.findBySearchTerm("another");
+
+        // Then
+        assertThat(users).hasSize(1);
+        assertThat(users.get(0).getName()).isEqualTo("anotheruser");
+    }
+
+    @Test
+    @DisplayName("Должен найти пользователей по поисковому термину в фамилии")
+    void shouldFindBySearchTermInLastName() {
+        // When
+        List<User> users = userRepository.findBySearchTerm("User");
+
+        // Then
+        assertThat(users).hasSize(2);
+        assertThat(users)
+                .extracting(User::getName)
+                .containsExactlyInAnyOrder("testuser", "anotheruser");
+    }
+
+    @Test
+    @DisplayName("Должен найти пользователей по поисковому термину в имени")
+    void shouldFindBySearchTermInFirstName() {
+        // When
+        List<User> users = userRepository.findBySearchTerm("Test");
+
+        // Then
+        assertThat(users).hasSize(1);
+        assertThat(users.get(0).getName()).isEqualTo("testuser");
+    }
+
+    @Test
+    @DisplayName("Должен найти пользователей по поисковому термину с исключением ID")
+    void shouldFindBySearchTermAndIdNotIn() {
+        // Given
+        List<Long> excludedIds = List.of(testUser.getId());
+
+        // When
+        List<User> users = userRepository.findBySearchTermAndIdNotIn("User", excludedIds);
+
+        // Then
+        assertThat(users).hasSize(1);
+        assertThat(users.get(0).getName()).isEqualTo("anotheruser");
+        assertThat(users.get(0).getId()).isEqualTo(testUser2.getId());
+    }
+
+    @Test
+    @DisplayName("Должен вернуть пустой список при поиске с исключением всех ID")
+    void shouldReturnEmptyWhenAllIdsExcluded() {
+        // Given
+        List<Long> excludedIds = List.of(testUser.getId(), testUser2.getId());
+
+        // When
+        List<User> users = userRepository.findBySearchTermAndIdNotIn("User", excludedIds);
+
+        // Then
+        assertThat(users).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Должен найти всех пользователей по списку ID")
+    void shouldFindAllById() {
+        // Given
+        List<Long> ids = List.of(testUser.getId(), testUser2.getId());
+
+        // When
+        List<User> users = userRepository.findAllById(ids);
+
+        // Then
+        assertThat(users).hasSize(2);
+        assertThat(users)
+                .extracting(User::getName)
+                .containsExactlyInAnyOrder("testuser", "anotheruser");
+    }
+
+    @Test
+    @DisplayName("Должен вернуть пустой список при поиске по несуществующим ID")
+    void shouldReturnEmptyWhenFindByNonExistentIds() {
+        // Given
+        List<Long> nonExistentIds = List.of(999L, 1000L);
+
+        // When
+        List<User> users = userRepository.findAllById(nonExistentIds);
+
+        // Then
+        assertThat(users).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Должен сохранить нового пользователя с ролями")
+    void shouldSaveNewUserWithRoles() {
+        // Given
+        User newUser = User.builder()
+                .name("newuser")
+                .password("newpass")
+                .firstName("New")
+                .lastName("User")
+                .shortDescription("New user description")
+                .roles(List.of(UserRole.USER, UserRole.ADMIN))
+                .build();
+
+        // When
+        User savedUser = userRepository.save(newUser);
+        em.flush();
+        em.clear();
+
+        // Then
+        User foundUser = userRepository.findByName("newuser").orElseThrow();
+        assertThat(foundUser.getName()).isEqualTo("newuser");
+        assertThat(foundUser.getFirstName()).isEqualTo("New");
+        assertThat(foundUser.getLastName()).isEqualTo("User");
+        assertThat(foundUser.getRoles())
+                .containsExactlyInAnyOrder(UserRole.USER, UserRole.ADMIN);
+    }
+
+    @Test
+    @DisplayName("Должен обновить существующего пользователя")
+    void shouldUpdateExistingUser() {
+        // Given
+        User userToUpdate = userRepository.findByName("testuser").orElseThrow();
+        userToUpdate.setFirstName("Updated");
+        userToUpdate.setLastName("Name");
+        userToUpdate.setShortDescription("Updated description");
+
+        // When
+        User updatedUser = userRepository.save(userToUpdate);
+        em.flush();
+        em.clear();
+
+        // Then
+        User foundUser = userRepository.findByName("testuser").orElseThrow();
+        assertThat(foundUser.getFirstName()).isEqualTo("Updated");
+        assertThat(foundUser.getLastName()).isEqualTo("Name");
+        assertThat(foundUser.getShortDescription()).isEqualTo("Updated description");
+    }
+
+    @Test
+    @DisplayName("Должен удалить пользователя")
+    void shouldDeleteUser() {
+        // Given
+        Long userId = testUser.getId();
+
+        // Сначала разрываем связи пользователя с группами
+        User userToDelete = userRepository.findById(userId).orElseThrow();
+        for (Group group : userToDelete.getGroups()) {
+            group.getMembers().remove(userToDelete);
+        }
+        userToDelete.getGroups().clear();
+        userRepository.save(userToDelete);
+        em.flush();
+        em.clear();
+
+        // When
+        userRepository.deleteById(userId);
+        em.flush();
+        em.clear();
+
+        // Then
+        Optional<User> foundUser = userRepository.findById(userId);
+        assertThat(foundUser).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Должен проверить уникальность имени пользователя")
+    void shouldEnforceUsernameUniqueness() {
+        // Given
+        User duplicateUser = User.builder()
+                .name("testuser") // Такое же имя как у testUser
+                .password("password")
+                .firstName("Duplicate")
+                .lastName("User")
+                .roles(List.of(UserRole.USER))
+                .build();
+
+        // When & Then
+        // При сохранении пользователя с существующим именем должна быть ошибка уникальности
+        try {
+            userRepository.save(duplicateUser);
+            em.flush();
+            // Если дошли сюда, значит ограничение уникальности не сработало
+            throw new AssertionError("Expected constraint violation for duplicate username");
+        } catch (Exception e) {
+            // Ожидаемое поведение - исключение из-за нарушения уникальности
+            assertThat(e).isNotNull();
+        }
     }
 
 }
