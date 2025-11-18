@@ -2,21 +2,17 @@ package ru.otus.hw.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import ru.otus.hw.config.acl.AclConfig;
-import ru.otus.hw.config.acl.CacheConfig;
+import ru.otus.hw.config.PathConfig;
+import ru.otus.hw.config.security.SecurityConfig;
+import ru.otus.hw.config.security.jwt.JwtAuthenticationFilter;
+import ru.otus.hw.config.security.jwt.JwtTokenProvider;
 import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.domain.User;
@@ -38,22 +34,19 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.will;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DataJpaTest()
+@SpringBootTest
 @DisplayName("Тесты для сервиса пользователей")
-@EnableMethodSecurity
 @Import({
-        UserServiceImpl.class,
-        UserConverter.class,
-        PasswordEncoder.class,
-        AclConfig.class,
-        CacheConfig.class,
-        AclServiceImpl.class
+        PathConfig.class,
+        SecurityConfig.class,
+        JwtAuthenticationFilter.class,
+        JwtTokenProvider.class,
+        SecurityConfig.class
 })
 public class UserServiceImplTest {
 
@@ -403,8 +396,6 @@ public class UserServiceImplTest {
     @WithMockUser(username = "admin", roles = {"ROOT"})
     void shouldDeleteUserById() {
         // Given
-//        setupRootSecurityContext();
-
         Long userId = 1L;
         User user = createTestUser();
 

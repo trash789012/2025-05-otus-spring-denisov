@@ -12,3 +12,15 @@ spring:
       hibernate:
         format_sql: false
         show_sql: false
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+jwt:
+  secret: SuperSecretJamKeyTest2025!jabjbedjahwdjahwbdjhwbdjahbjwdbh
+  expiration: 3600000
