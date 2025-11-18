@@ -56,8 +56,8 @@ import static org.mockito.Mockito.when;
         SecurityConfig.class
 })
 @EnableMethodSecurity
-@DisplayName("Тесты для сервиса групп")
 @Import({SecurityConfigTest.class})
+@DisplayName("Тесты для сервиса групп")
 public class GroupServiceImplTest {
 
     @MockBean

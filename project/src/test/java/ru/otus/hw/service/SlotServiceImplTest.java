@@ -2,6 +2,7 @@ package ru.otus.hw.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -9,6 +10,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.hw.config.PathConfig;
 import ru.otus.hw.config.security.SecurityConfig;
 import ru.otus.hw.config.security.jwt.JwtAuthenticationFilter;
@@ -37,15 +40,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@DisplayName("Тесты для сервиса слотов времени")
-@Import({
-        PathConfig.class,
+@ExtendWith(SpringExtension.class)
+@Import({SecurityConfigTest.class})
+@ContextConfiguration(classes = {
+        SlotServiceImpl.class,
         SecurityConfig.class,
-        JwtAuthenticationFilter.class,
-        JwtTokenProvider.class
 })
+@DisplayName("Тесты для сервиса слотов времени")
 public class SlotServiceImplTest {
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private SecurityConfig securityConfig;
+
+    @MockBean
+    private PathConfig pathConfig;
+
     @MockBean
     private SlotRepository slotRepository;
 
@@ -62,7 +77,7 @@ public class SlotServiceImplTest {
     private GroupSecurityMatcher groupSecurityMatcherImpl;
 
     @Autowired
-    private SlotServiceImpl slotService;
+    private SlotService slotService;
 
     @Test
     @DisplayName("Должен найти слот по ID")
