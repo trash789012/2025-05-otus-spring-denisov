@@ -79,7 +79,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or @groupSecurityMatcher.isMember(#id)")
+    @PreAuthorize("hasAnyRole('ROOT') or hasPermission(#id, 'ru.otus.hw.domain.Slot', 'DELETE')")
     public void delete(Long id) {
         if (!slotRepository.existsById(id)) {
             throw new EntityNotFoundException("Слот с %d не найден".formatted(id));
@@ -110,7 +110,7 @@ public class SlotServiceImpl implements SlotService {
 
     private void createSlotPermissions(boolean isCreate, Slot savedSlot) {
         if (isCreate) {
-            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE);
+            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE, BasePermission.DELETE);
             aclService.createAdminPermission(savedSlot);
             aclService.createRootPermission(savedSlot);
 

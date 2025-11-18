@@ -204,7 +204,7 @@ public class SlotServiceImplTest {
         verify(groupRepository).findById(1L);
         verify(slotRepository).findOverlappingSlots(startTime, endTime, null);
         verify(slotRepository).save(any(Slot.class));
-        verify(aclService).createSlotPermissions(savedSlot, BasePermission.WRITE);
+        verify(aclService).createSlotPermissions(savedSlot, BasePermission.WRITE, BasePermission.DELETE);
         verify(aclService).createAdminPermission(savedSlot);
         verify(aclService).createRootPermission(savedSlot);
         verify(aclService).flushAclCache();
@@ -407,7 +407,7 @@ public class SlotServiceImplTest {
 
     @Test
     @DisplayName("Должен удалить слот")
-    @WithMockUser(username = "user")
+    @WithMockUser(username = "user", roles = {"ROOT"})
     void shouldDeleteSlot() {
         // Given
         Long slotId = 1L;
@@ -424,7 +424,7 @@ public class SlotServiceImplTest {
 
     @Test
     @DisplayName("Должен выбросить исключение при удалении несуществующего слота")
-    @WithMockUser(username = "user")
+    @WithMockUser(username = "user", roles = {"ROOT"})
     void shouldThrowExceptionWhenDeleteNonExistentSlot() {
         // Given
         Long slotId = 999L;
