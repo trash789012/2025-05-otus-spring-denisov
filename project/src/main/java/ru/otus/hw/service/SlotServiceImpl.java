@@ -58,7 +58,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-//    @PreAuthorize("hasRole('ROOT') or @groupSecurityMatcher.isMember(#slotDto.groupId())")
+    @PreAuthorize("hasRole('ROOT') or @groupSecurityMatcher.isMember(#slotDto.groupId())")
     public SlotDto insert(SlotFormDto slotDto) {
         validateBeforeSave(slotDto);
         var savedSlot = prepareSlot(slotDto);
