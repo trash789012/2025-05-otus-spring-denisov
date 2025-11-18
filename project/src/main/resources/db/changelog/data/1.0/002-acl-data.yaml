@@ -43,6 +43,15 @@ databaseChangeLog:
               - column:
                   name: sid
                   value: user
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: user2
 #       sid ролей
         - insert:
             tableName: acl_sid

@@ -43,8 +43,7 @@ import static org.mockito.Mockito.when;
         PathConfig.class,
         SecurityConfig.class,
         JwtAuthenticationFilter.class,
-        JwtTokenProvider.class,
-        SecurityConfig.class
+        JwtTokenProvider.class
 })
 public class SlotServiceImplTest {
     @MockBean
@@ -60,7 +59,7 @@ public class SlotServiceImplTest {
     private AclService aclService;
 
     @MockBean
-    private GroupSecurityMatcher groupSecurityMatcher;
+    private GroupSecurityMatcher groupSecurityMatcherImpl;
 
     @Autowired
     private SlotServiceImpl slotService;
@@ -176,7 +175,7 @@ public class SlotServiceImplTest {
         Slot savedSlot = createTestSlot();
         SlotDto expectedDto = createSlotDto();
 
-        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
         when(slotRepository.findOverlappingSlots(startTime, endTime, null)).thenReturn(List.of());
         when(slotRepository.save(any(Slot.class))).thenReturn(savedSlot);
@@ -253,7 +252,7 @@ public class SlotServiceImplTest {
         updatedSlot.setEndTime(endTime);
         SlotDto expectedDto = createSlotDto();
 
-        when(groupSecurityMatcher.isMemberBoth(1L, 1L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMemberBoth(1L, 1L)).thenReturn(true);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(existingSlot));
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
         when(slotRepository.findOverlappingSlots(startTime, endTime, 1L)).thenReturn(List.of());
@@ -295,7 +294,7 @@ public class SlotServiceImplTest {
         LocalDateTime endTime = LocalDateTime.now().plusHours(2);
         SlotFormDto slotDto = new SlotFormDto(null, null, endTime, null, 1L);
 
-        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -311,7 +310,7 @@ public class SlotServiceImplTest {
         LocalDateTime startTime = LocalDateTime.now().plusHours(1);
         SlotFormDto slotDto = new SlotFormDto(null, startTime, null, null, 1L);
 
-        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -327,7 +326,7 @@ public class SlotServiceImplTest {
         LocalDateTime time = LocalDateTime.now().plusHours(1);
         SlotFormDto slotDto = new SlotFormDto(null, time, time, null, 1L);
 
-        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -344,7 +343,7 @@ public class SlotServiceImplTest {
         LocalDateTime endTime = LocalDateTime.now().plusHours(1);
         SlotFormDto slotDto = new SlotFormDto(null, startTime, endTime, null, 1L);
 
-        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -362,7 +361,7 @@ public class SlotServiceImplTest {
         SlotFormDto slotDto = new SlotFormDto(null, startTime, endTime, null, 1L);
         Slot overlappingSlot = createTestSlot();
 
-        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
         when(slotRepository.findOverlappingSlots(startTime, endTime, null))
                 .thenReturn(List.of(overlappingSlot));
 
@@ -381,7 +380,7 @@ public class SlotServiceImplTest {
         LocalDateTime endTime = startTime.plusHours(2);
         SlotFormDto slotDto = new SlotFormDto(null, startTime, endTime, null, 999L);
 
-        when(groupSecurityMatcher.isMember(999L)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(999L)).thenReturn(true);
         when(slotRepository.findOverlappingSlots(startTime, endTime, null)).thenReturn(List.of());
         when(groupRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -398,7 +397,7 @@ public class SlotServiceImplTest {
         // Given
         Long slotId = 1L;
 
-        when(groupSecurityMatcher.isMember(slotId)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(slotId)).thenReturn(true);
         when(slotRepository.existsById(slotId)).thenReturn(true);
 
         // When
@@ -415,7 +414,7 @@ public class SlotServiceImplTest {
         // Given
         Long slotId = 999L;
 
-        when(groupSecurityMatcher.isMember(slotId)).thenReturn(true);
+        when(groupSecurityMatcherImpl.isMember(slotId)).thenReturn(true);
         when(slotRepository.existsById(slotId)).thenReturn(false);
 
         // When & Then

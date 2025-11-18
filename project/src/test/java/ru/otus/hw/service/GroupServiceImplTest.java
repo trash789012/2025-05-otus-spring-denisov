@@ -2,13 +2,17 @@ package ru.otus.hw.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.hw.config.PathConfig;
 import ru.otus.hw.config.security.SecurityConfig;
 import ru.otus.hw.config.security.jwt.JwtAuthenticationFilter;
@@ -46,16 +50,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@DisplayName("Тесты для сервиса групп")
-@Import({
-        PathConfig.class,
-        SecurityConfig.class,
-        JwtAuthenticationFilter.class,
-        JwtTokenProvider.class,
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {
+        GroupServiceImpl.class,
         SecurityConfig.class
 })
+@EnableMethodSecurity
+@DisplayName("Тесты для сервиса групп")
+@Import({SecurityConfigTest.class})
 public class GroupServiceImplTest {
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private SecurityConfig securityConfig;
+
+    @MockBean
+    private PathConfig pathConfig;
 
     @MockBean
     private GroupRepository groupRepository;
@@ -75,11 +90,19 @@ public class GroupServiceImplTest {
     @MockBean
     private AclService aclService;
 
-    @MockBean
+    @SpyBean
     private GroupSecurityMatcher groupSecurityMatcher;
 
     @Autowired
-    private GroupServiceImpl groupService;
+    private GroupService groupService;
+
+//    @Configuration
+//    static class TestConfig {
+//        @Bean
+//        public GroupSecurityMatcher groupSecurityMatcher() {
+//            return new GroupSecurityMatcher(null, null);
+//        }
+//    }
 
     @Test
     @DisplayName("Должен найти группу по ID")
@@ -584,3 +607,4 @@ public class GroupServiceImplTest {
     }
 
 }
+
