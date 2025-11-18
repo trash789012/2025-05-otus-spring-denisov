@@ -30,7 +30,6 @@ public class AclServiceImpl implements AclService {
 
     private final Map<ObjectIdentity, MutableAcl> aclCache = new ConcurrentHashMap<>();
 
-
     @Override
     public void createPermission(Object object, Permission permission) {
         ObjectIdentity oid = new ObjectIdentityImpl(object);
