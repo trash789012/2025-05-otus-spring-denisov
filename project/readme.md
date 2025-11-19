@@ -111,7 +111,7 @@ mvn compile jib:dockerBuild
 SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jamtimeexample
 POSTGRES_USERNAME=youdbusername
 POSTGRES_PASSWORD=youdbpassword
-POSTGRES_DB=jamtime
+POSTGRES_DB=jamtimeexample
 JWT_SECRET=yousecdetjwt
 JWT_EXPIRATION=3600000
 ```
