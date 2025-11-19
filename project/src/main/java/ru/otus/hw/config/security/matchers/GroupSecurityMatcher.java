@@ -40,4 +40,18 @@ public class GroupSecurityMatcher {
         return newGroup && currentGroup;
     }
 
+    public boolean isMemberBySlotId(Long slotId) {
+        if (slotId == null) {
+            return true;
+        }
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long currentGroupId = slotRepository.findById(slotId)
+                .map(Slot::getBookedBy)
+                .map(Group::getId)
+                .orElse(null);
+
+        return groupRepository.existsMemberInGroup(currentGroupId, username);
+    }
+
 }

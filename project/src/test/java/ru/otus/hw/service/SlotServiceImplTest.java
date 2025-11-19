@@ -4,10 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,6 +35,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -74,7 +75,10 @@ public class SlotServiceImplTest {
     private AclService aclService;
 
     @MockBean
-    private GroupSecurityMatcher groupSecurityMatcherImpl;
+    private PermissionEvaluator permissionEvaluator;
+
+    @MockBean
+    private GroupSecurityMatcher groupSecurityMatcher;
 
     @Autowired
     private SlotService slotService;
@@ -190,7 +194,7 @@ public class SlotServiceImplTest {
         Slot savedSlot = createTestSlot();
         SlotDto expectedDto = createSlotDto();
 
-        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
         when(slotRepository.findOverlappingSlots(startTime, endTime, null)).thenReturn(List.of());
         when(slotRepository.save(any(Slot.class))).thenReturn(savedSlot);
@@ -267,7 +271,7 @@ public class SlotServiceImplTest {
         updatedSlot.setEndTime(endTime);
         SlotDto expectedDto = createSlotDto();
 
-        when(groupSecurityMatcherImpl.isMemberBoth(1L, 1L)).thenReturn(true);
+        when(groupSecurityMatcher.isMemberBoth(1L, 1L)).thenReturn(true);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(existingSlot));
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
         when(slotRepository.findOverlappingSlots(startTime, endTime, 1L)).thenReturn(List.of());
@@ -309,7 +313,7 @@ public class SlotServiceImplTest {
         LocalDateTime endTime = LocalDateTime.now().plusHours(2);
         SlotFormDto slotDto = new SlotFormDto(null, null, endTime, null, 1L);
 
-        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -325,7 +329,7 @@ public class SlotServiceImplTest {
         LocalDateTime startTime = LocalDateTime.now().plusHours(1);
         SlotFormDto slotDto = new SlotFormDto(null, startTime, null, null, 1L);
 
-        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -341,7 +345,7 @@ public class SlotServiceImplTest {
         LocalDateTime time = LocalDateTime.now().plusHours(1);
         SlotFormDto slotDto = new SlotFormDto(null, time, time, null, 1L);
 
-        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -358,7 +362,7 @@ public class SlotServiceImplTest {
         LocalDateTime endTime = LocalDateTime.now().plusHours(1);
         SlotFormDto slotDto = new SlotFormDto(null, startTime, endTime, null, 1L);
 
-        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> slotService.insert(slotDto))
@@ -376,7 +380,7 @@ public class SlotServiceImplTest {
         SlotFormDto slotDto = new SlotFormDto(null, startTime, endTime, null, 1L);
         Slot overlappingSlot = createTestSlot();
 
-        when(groupSecurityMatcherImpl.isMember(1L)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(1L)).thenReturn(true);
         when(slotRepository.findOverlappingSlots(startTime, endTime, null))
                 .thenReturn(List.of(overlappingSlot));
 
@@ -395,7 +399,7 @@ public class SlotServiceImplTest {
         LocalDateTime endTime = startTime.plusHours(2);
         SlotFormDto slotDto = new SlotFormDto(null, startTime, endTime, null, 999L);
 
-        when(groupSecurityMatcherImpl.isMember(999L)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(999L)).thenReturn(true);
         when(slotRepository.findOverlappingSlots(startTime, endTime, null)).thenReturn(List.of());
         when(groupRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -412,7 +416,7 @@ public class SlotServiceImplTest {
         // Given
         Long slotId = 1L;
 
-        when(groupSecurityMatcherImpl.isMember(slotId)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(slotId)).thenReturn(true);
         when(slotRepository.existsById(slotId)).thenReturn(true);
 
         // When
@@ -429,7 +433,7 @@ public class SlotServiceImplTest {
         // Given
         Long slotId = 999L;
 
-        when(groupSecurityMatcherImpl.isMember(slotId)).thenReturn(true);
+        when(groupSecurityMatcher.isMember(slotId)).thenReturn(true);
         when(slotRepository.existsById(slotId)).thenReturn(false);
 
         // When & Then
@@ -477,6 +481,99 @@ public class SlotServiceImplTest {
         assertThatThrownBy(() -> slotService.delete(slotId))
                 .isInstanceOf(AccessDeniedException.class);
     }
+
+    @Test
+    @DisplayName("Должен удалить слот с правами ADMIN и членством в группе")
+    @WithMockUser(username = "user", roles = {"ADMIN"})
+    void shouldDeleteSlotWithAdminRoleAndGroupMembership() {
+        // Given
+        Long slotId = 1L;
+
+        when(groupSecurityMatcher.isMemberBySlotId(slotId)).thenReturn(true);
+        when(slotRepository.existsById(slotId)).thenReturn(true);
+
+        // When
+        slotService.delete(slotId);
+
+        // Then
+        verify(slotRepository).deleteById(slotId);
+        verify(groupSecurityMatcher).isMemberBySlotId(slotId);
+    }
+
+    @Test
+    @DisplayName("Должен удалить слот с DELETE permission и членством в группе")
+    @WithMockUser(username = "user")
+    void shouldDeleteSlotWithDeletePermissionAndGroupMembership() {
+        // Given
+        Long slotId = 1L;
+
+        when(groupSecurityMatcher.isMemberBySlotId(slotId)).thenReturn(true);
+        when(slotRepository.existsById(slotId)).thenReturn(true);
+        when(permissionEvaluator.hasPermission(any(), eq(slotId), eq("ru.otus.hw.domain.Slot"), eq("DELETE")))
+                .thenReturn(true);
+
+        // When
+        slotService.delete(slotId);
+
+        // Then
+        verify(slotRepository).deleteById(slotId);
+        verify(groupSecurityMatcher).isMemberBySlotId(slotId);
+    }
+
+    @Test
+    @DisplayName("Должен выбросить AccessDeniedException при удалении с ADMIN без членства в группе")
+    @WithMockUser(username = "user", roles = {"ADMIN"})
+    void shouldThrowAccessDeniedWhenAdminWithoutGroupMembership() {
+        // Given
+        Long slotId = 1L;
+
+        when(groupSecurityMatcher.isMemberBySlotId(slotId)).thenReturn(false);
+
+        // When & Then
+        assertThatThrownBy(() -> slotService.delete(slotId))
+                .isInstanceOf(AccessDeniedException.class);
+
+        verify(slotRepository, never()).existsById(any());
+        verify(slotRepository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("Должен выбросить AccessDeniedException при удалении с DELETE permission без членства в группе")
+    @WithMockUser(username = "user")
+    void shouldThrowAccessDeniedWhenDeletePermissionWithoutGroupMembership() {
+        // Given
+        Long slotId = 1L;
+
+        when(groupSecurityMatcher.isMemberBySlotId(slotId)).thenReturn(false);
+        when(permissionEvaluator.hasPermission(any(), eq(slotId), eq("ru.otus.hw.domain.Slot"), eq("DELETE")))
+                .thenReturn(true);
+
+        // When & Then
+        assertThatThrownBy(() -> slotService.delete(slotId))
+                .isInstanceOf(AccessDeniedException.class);
+
+        verify(slotRepository, never()).existsById(any());
+        verify(slotRepository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("Должен выбросить AccessDeniedException при удалении с USER без прав")
+    @WithMockUser(username = "user")
+    void shouldThrowAccessDeniedWhenUserWithoutPermissions() {
+        // Given
+        Long slotId = 1L;
+
+        // When & Then
+        assertThatThrownBy(() -> slotService.delete(slotId))
+                .isInstanceOf(AccessDeniedException.class);
+        when(permissionEvaluator.hasPermission(any(), eq(slotId), eq("ru.otus.hw.domain.Slot"), eq("DELETE")))
+                .thenReturn(false);
+
+        verify(groupSecurityMatcher, never()).isMemberBySlotId(any());
+        verify(slotRepository, never()).existsById(any());
+        verify(slotRepository, never()).deleteById(any());
+    }
+
 
     // -------------------------------------------------------------------------
     // PRIVATE HELPER METHODS

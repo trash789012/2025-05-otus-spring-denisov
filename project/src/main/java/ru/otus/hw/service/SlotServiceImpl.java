@@ -79,7 +79,12 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT') or hasPermission(#id, 'ru.otus.hw.domain.Slot', 'DELETE')")
+    @PreAuthorize("""
+                    hasRole('ROOT') or 
+                    (hasRole('ADMIN') and @groupSecurityMatcher.isMemberBySlotId(#id)) or
+                    (hasPermission(#id, 'ru.otus.hw.domain.Slot', 'DELETE') and 
+                     @groupSecurityMatcher.isMemberBySlotId(#id)) 
+            """)
     public void delete(Long id) {
         if (!slotRepository.existsById(id)) {
             throw new EntityNotFoundException("Слот с %d не найден".formatted(id));
