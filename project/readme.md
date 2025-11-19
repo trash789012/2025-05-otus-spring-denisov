@@ -116,6 +116,18 @@ JWT_SECRET=yousecdetjwt
 JWT_EXPIRATION=3600000
 ```
 
+jwt secret можно сгенерировать через командную строку
+
+### macos/linux
+```bash
+openssl rand -base64 48
+```
+
+### windows (power shell)
+```bash
+[Convert]::ToBase64String((1..48 | % { [byte](Get-Random -Maximum 256) }))
+```
+
 Выполнить команду в терминале
 ```bash
 docker compose up -d
