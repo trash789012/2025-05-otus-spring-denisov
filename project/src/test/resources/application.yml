@@ -1,18 +1,3 @@
-spring:
-  liquibase:
-    change-log: classpath:/db/changelog/db.changelog-test-master.yaml
-    contexts: test
-    enabled: false
-#  jpa:
-#    generate-ddl: false
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: false
-#    properties:
-#      hibernate:
-#        format_sql: false
-#        show_sql: false
-
 springdoc:
   api-docs:
     path: /api-docs

@@ -3,8 +3,8 @@ package ru.otus.hw.service;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
 import ru.otus.hw.dto.user.UserFormInfoDto;
-import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserFormWithRolesAndPasswordDto;
+import ru.otus.hw.dto.user.UserWithRolesAndGroupsDto;
 import ru.otus.hw.dto.user.UserWithRolesDto;
 
 import java.util.List;

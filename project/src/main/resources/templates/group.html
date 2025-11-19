@@ -18,15 +18,8 @@
         <div class="row mb-4">
             <div class="col-md-8">
                 <h1 class="fw-bold text-primary mb-2" id="groupTitle">Название коллектива</h1>
-<!--                <p class="text-muted mb-0" id="groupDescription">Описание коллектива</p>-->
             </div>
             <div class="col-md-4 text-end">
-<!--                <button class="btn btn-outline-danger me-2" id="deleteGroupBtn">-->
-<!--                    <i class="bi bi-trash me-1"></i>Удалить коллектив-->
-<!--                </button>-->
-<!--                <button class="btn btn-primary" id="saveGroupBtn">-->
-<!--                    <i class="bi bi-check-circle me-1"></i>Сохранить изменения-->
-<!--                </button>-->
             </div>
         </div>
 
@@ -242,126 +235,5 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="../static/js/ui/pages/group.js" th:src="@{/js/ui/pages/group.js}"></script>
 
-<!--<script>-->
-<!--    // Инициализация страницы-->
-<!--    document.addEventListener('DOMContentLoaded', function() {-->
-<!--        // Загрузка данных коллектива-->
-<!--        loadGroupData();-->
-
-<!--        // Обработчики событий-->
-<!--        document.getElementById('saveGroupBtn').addEventListener('click', saveGroupInfo);-->
-<!--        // document.getElementById('deleteGroupBtn').addEventListener('click', showDeleteConfirm);-->
-<!--        // document.getElementById('confirmDeleteGro=up').addEventListener('click', deleteGroup);-->
-<!--        document.getElementById('addMemberBtn').addEventListener('click', showAddMemberModal);-->
-<!--        document.getElementById('searchUserBtn').addEventListener('click', searchUsers);-->
-<!--    });-->
-
-<!--    function loadGroupData() {-->
-<!--        // Загрузка данных с сервера-->
-<!--        // Пример данных-->
-<!--        const groupData = {-->
-<!--            id: 1,-->
-<!--            name: "The Estimators",-->
-<!--            description: "Рок-группа, играем каверы и собственные композиции",-->
-<!--            genre: "rock",-->
-<!--            members: [-->
-<!--                { id: 1, name: "Алексей Иванов", role: "Гитара", status: "active" },-->
-<!--                { id: 2, name: "Мария Петрова", role: "Вокал", status: "active" },-->
-<!--                { id: 3, name: "Дмитрий Сидоров", role: "Барабаны", status: "pending" }-->
-<!--            ]-->
-<!--        };-->
-
-<!--        // Заполнение формы-->
-<!--        document.getElementById('groupTitle').textContent = groupData.name;-->
-<!--        // document.getElementById('groupBreadcrumb').textContent = groupData.name;-->
-<!--        document.getElementById('groupName').value = groupData.name;-->
-<!--        // document.getElementById('groupDescription').value = groupData.description;-->
-<!--        document.getElementById('groupGenre').value = groupData.genre;-->
-<!--        document.getElementById('deleteGroupName').textContent = groupData.name;-->
-
-<!--        // Обновление участников-->
-<!--        updateMembersTable(groupData.members);-->
-<!--    }-->
-
-<!--    function updateMembersTable(members) {-->
-<!--        const tbody = document.getElementById('membersTable');-->
-
-<!--        if (members.length === 0) {-->
-<!--            tbody.innerHTML = `-->
-<!--                <tr>-->
-<!--                    <td colspan="4" class="text-center text-muted py-4">-->
-<!--                        <i class="bi bi-people display-4 d-block mb-2"></i>-->
-<!--                        В коллективе пока нет участников-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--            `;-->
-<!--            return;-->
-<!--        }-->
-
-<!--        tbody.innerHTML = members.map(member => `-->
-<!--            <tr>-->
-<!--                <td>-->
-<!--                    <div class="d-flex align-items-center">-->
-<!--                        <i class="bi bi-person-circle text-primary fs-4 me-3"></i>-->
-<!--                        <div>-->
-<!--                            <div class="fw-bold">${member.name}</div>-->
-<!--                            <small class="text-muted">ID: ${member.id}</small>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </td>-->
-<!--                <td>${member.role || 'Не указана'}</td>-->
-<!--                <td>-->
-<!--                    <span class="badge ${member.status === 'active' ? 'bg-success' : 'bg-warning'}">-->
-<!--                        ${member.status === 'active' ? 'Активный' : 'Ожидание'}-->
-<!--                    </span>-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <button class="btn btn-sm btn-outline-danger remove-member" data-member-id="${member.id}">-->
-<!--                        <i class="bi bi-person-dash"></i>-->
-<!--                    </button>-->
-<!--                </td>-->
-<!--            </tr>-->
-<!--        `).join('');-->
-
-<!--        // Обновление статистики-->
-<!--        updateMembersStats(members);-->
-<!--    }-->
-
-<!--    function updateMembersStats(members) {-->
-<!--        const total = members.length;-->
-<!--        const active = members.filter(m => m.status === 'active').length;-->
-<!--        const pending = members.filter(m => m.status === 'pending').length;-->
-
-<!--        document.getElementById('membersCount').textContent = total;-->
-<!--        document.getElementById('totalMembers').textContent = total;-->
-<!--        document.getElementById('activeMembers').textContent = active;-->
-<!--        document.getElementById('pendingMembers').textContent = pending;-->
-<!--    }-->
-
-<!--    function saveGroupInfo() {-->
-<!--        // Сохранение данных коллектива-->
-<!--        console.log('Сохранение данных коллектива');-->
-<!--    }-->
-
-<!--    function showDeleteConfirm() {-->
-<!--        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));-->
-<!--        modal.show();-->
-<!--    }-->
-
-<!--    function deleteGroup() {-->
-<!--        // Удаление коллектива-->
-<!--        console.log('Удаление коллектива');-->
-<!--    }-->
-
-<!--    function showAddMemberModal() {-->
-<!--        const modal = new bootstrap.Modal(document.getElementById('addMemberModal'));-->
-<!--        modal.show();-->
-<!--    }-->
-
-<!--    function searchUsers() {-->
-<!--        // Поиск пользователей-->
-<!--        console.log('Поиск пользователей');-->
-<!--    }-->
-<!--</script>-->
 </body>
 </html>

@@ -190,16 +190,6 @@
                         </select>
                         <div class="form-text">Зажмите Ctrl для выбора нескольких ролей</div>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="userStatus" class="form-label">Статус</label>
-                        <select class="form-select" id="userStatus">
-                            <option value="active" selected>Активен</option>
-                            <option value="inactive">Неактивен</option>
-                            <option value="banned">Заблокирован</option>
-                            <option value="pending">Ожидает подтверждения</option>
-                        </select>
-                    </div>
                 </form>
 
                 <div class="form-actions">
@@ -219,27 +209,6 @@
                 </h5>
 
                 <div class="group-list" id="userGroupList">
-                    <!-- Группа 1 -->
-<!--                    <div class="group-item">-->
-<!--                        <div>-->
-<!--                            <div class="group-name">The Estimators</div>-->
-<!--                            <div class="group-meta">Рок • 5 участников</div>-->
-<!--                        </div>-->
-<!--                        <div class="text-end">-->
-<!--                            <div class="text-muted small">Гитара</div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; Группа 2 &ndash;&gt;-->
-<!--                    <div class="group-item">-->
-<!--                        <div>-->
-<!--                            <div class="group-name">Кузьмич Band</div>-->
-<!--                            <div class="group-meta">Блюз • 3 участника</div>-->
-<!--                        </div>-->
-<!--                        <div class="text-end">-->
-<!--                            <div class="text-muted small">Вокал</div>-->
-<!--                        </div>-->
-<!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -249,7 +218,6 @@
 <!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script type="module" src="../static/js/ui/pages/user.js" th:src="@{/js/ui/pages/user.js}"></script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

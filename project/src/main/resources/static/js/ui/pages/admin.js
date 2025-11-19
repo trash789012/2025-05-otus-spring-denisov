@@ -1,6 +1,7 @@
 import {AdminTabs} from "../components/adminTabs.js";
 import {deleteUser, fetchAllUsersWithRoles} from "../../api/userApi.js";
 import {deleteGroup, fetchAllGroups} from "../../api/groupApi.js";
+import {Notification} from "../../utils/notifications.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const adminPage = new Admin();
@@ -9,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Admin {
     constructor() {
+        this.notifications = new Notification();
+
         this.adminView = new AdminTabs({
             onUserDelete: this.onUserDelete,
             onGroupDelete: this.onGroupDelete,
@@ -59,6 +62,7 @@ export class Admin {
             this.adminView.renderUsersCards(allUsers);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -68,6 +72,7 @@ export class Admin {
             this.adminView.renderGroups(allGroups);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -77,6 +82,7 @@ export class Admin {
             this.adminView.removeUserCard(userId);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 
@@ -98,6 +104,7 @@ export class Admin {
             this.adminView.removeGroupCard(groupId);
         } catch (e) {
             console.error(e);
+            this.notifications.error(e.message);
         }
     }
 }

@@ -2,11 +2,9 @@ package ru.otus.hw.service;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import ru.otus.hw.config.security.matchers.GroupSecurityMatcher;
 import ru.otus.hw.repositories.GroupRepository;
 import ru.otus.hw.repositories.SlotRepository;

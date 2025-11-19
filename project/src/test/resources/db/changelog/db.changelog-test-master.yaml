@@ -1,7 +1,0 @@
-databaseChangeLog:
-  - include: #Схема основная
-      file: classpath:/db/changelog/db.changelog-master.yaml
-
-  - includeAll: #Данные в контексте теста
-      path: db/changelog/data/1.0/
-      context: test
