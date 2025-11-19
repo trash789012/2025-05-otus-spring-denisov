@@ -12,8 +12,8 @@ public class AbstractRepositoryTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("testdb")
             .withUsername("test")
-            .withPassword("test")
-            .withReuse(true);
+            .withPassword("test");
+//            .withReuse(true);
 
 
     @DynamicPropertySource

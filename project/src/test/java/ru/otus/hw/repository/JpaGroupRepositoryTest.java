@@ -4,8 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.otus.hw.domain.Group;
 import ru.otus.hw.domain.Slot;
@@ -23,7 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий JPA для работы с группами")
 @DataJpaTest
-@Testcontainers
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class JpaGroupRepositoryTest extends AbstractRepositoryTest {
     @Autowired
     private TestEntityManager em;
@@ -34,8 +37,6 @@ public class JpaGroupRepositoryTest extends AbstractRepositoryTest {
     private Group testGroup;
     private Group testGroup2;
     private User testUser;
-    private User testUser2;
-    private Slot testSlot;
 
     @BeforeEach
     void setUp() {
@@ -50,7 +51,7 @@ public class JpaGroupRepositoryTest extends AbstractRepositoryTest {
                 .roles(userRoles)
                 .build();
 
-        testUser2 = User.builder()
+        User testUser2 = User.builder()
                 .name("anotheruser")
                 .password("password456")
                 .firstName("Another")
@@ -85,7 +86,7 @@ public class JpaGroupRepositoryTest extends AbstractRepositoryTest {
         testGroup2 = em.persistAndFlush(testGroup2);
 
         LocalDateTime now = LocalDateTime.now();
-        testSlot = Slot.builder()
+        Slot testSlot = Slot.builder()
                 .startTime(now.plusHours(1))
                 .endTime(now.plusHours(2))
                 .status(SlotStatus.FREE)
