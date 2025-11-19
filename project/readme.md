@@ -74,6 +74,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
 
   postgres:
     container_name: postgresdb
@@ -105,10 +106,21 @@ Swagger доступен по адресу:
 mvn compile jib:dockerBuild
 ```
 3. Перейти в директорию файла docker-compose.yml и выполнить в командной строке
+Создать .env файл и заполнить его 
+```dotenv
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jamtimeexample
+POSTGRES_USERNAME=youdbusername
+POSTGRES_PASSWORD=youdbpassword
+POSTGRES_DB=jamtime
+JWT_SECRET=yousecdetjwt
+JWT_EXPIRATION=3600000
+```
+
+выполнить команду в терминале
 ```bash
 docker compose up -d
 ```
-4. Открыть в браузере ссылку
+4. После запуска контейнеров, открыть в браузере ссылку (initial credentials admin:admin)
 - http://localhost:8080
 
 # 🧩 Что реализовано
