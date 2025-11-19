@@ -101,12 +101,12 @@ Swagger доступен по адресу:
 
 # ▶️ Как запустить проект
 1. Убедиться что установлен docker
-2. Собрать образ jamtime через jib
+2. Собрать образ jamtime через jib (в корне проекта, там где docker-compose.yml)
 ```bash
 mvn compile jib:dockerBuild
 ```
-3. Перейти в директорию файла docker-compose.yml и выполнить в командной строке
-Создать .env файл и заполнить его 
+3. Перейти в директорию файла docker-compose.yml.
+Создать .env файл и заполнить его своими данными.
 ```dotenv
 SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jamtimeexample
 POSTGRES_USERNAME=youdbusername
@@ -116,7 +116,7 @@ JWT_SECRET=yousecdetjwt
 JWT_EXPIRATION=3600000
 ```
 
-выполнить команду в терминале
+Выполнить команду в терминале
 ```bash
 docker compose up -d
 ```
