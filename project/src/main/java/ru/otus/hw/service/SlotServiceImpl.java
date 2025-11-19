@@ -81,9 +81,9 @@ public class SlotServiceImpl implements SlotService {
     @Transactional
     @PreAuthorize("""
                     hasRole('ROOT') or 
-                    (hasRole('ADMIN') and @groupSecurityMatcher.isMemberBySlotId(#id)) or
+                    (hasAnyRole('ADMIN', 'USER') and @groupSecurityMatcher.isMemberBySlotId(#id)) or
                     (hasPermission(#id, 'ru.otus.hw.domain.Slot', 'DELETE') and 
-                     @groupSecurityMatcher.isMemberBySlotId(#id)) 
+                      @groupSecurityMatcher.isMemberBySlotId(#id))
             """)
     public void delete(Long id) {
         if (!slotRepository.existsById(id)) {

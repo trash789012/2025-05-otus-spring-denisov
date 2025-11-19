@@ -569,7 +569,7 @@ public class SlotServiceImplTest {
         when(permissionEvaluator.hasPermission(any(), eq(slotId), eq("ru.otus.hw.domain.Slot"), eq("DELETE")))
                 .thenReturn(false);
 
-        verify(groupSecurityMatcher, never()).isMemberBySlotId(any());
+        verify(groupSecurityMatcher, times(1)).isMemberBySlotId(any());
         verify(slotRepository, never()).existsById(any());
         verify(slotRepository, never()).deleteById(any());
     }
