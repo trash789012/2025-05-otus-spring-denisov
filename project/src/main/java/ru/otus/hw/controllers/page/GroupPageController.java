@@ -4,13 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.stream.Stream;
+
 @Controller
 public class GroupPageController {
-
-    @GetMapping("/groups")
-    public String listPage() {
-        return "groups-list";
-    }
 
     @GetMapping({"/profile/group/{id}", "/admin/group/{id}", "/admin/group/new"})
     public String editPage(@PathVariable(required = false) Long id) {
