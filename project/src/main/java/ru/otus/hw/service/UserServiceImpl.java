@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'USER')")
     public UserDto updateUserInfo(UserFormInfoDto userDto) {
         var userDb = getUserById(userDto.id());
         validateBasicUserFields(userDto.name(), userDto.firstName());
