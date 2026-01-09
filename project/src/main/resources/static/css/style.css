@@ -21,24 +21,33 @@ body {
     border-color: #0a58ca;
 }
 .time-slot {
-    height: 50px;
+    /*height: 50px;*/
     position: relative;
     border: 1px solid #dee2e6;
     transition: all 0.2s;
-    min-width: 40px;
+    /*min-width: 40px;*/
     background-color: white;
-    padding: 2px;
+    /*padding: 2px;*/
+
+    min-width: 35px !important; /* Уже */
+    height: 45px; /* Ниже */
+    padding: 3px !important; /* Меньше паддинга */
 }
+
 /* Make header and first column sticky */
 .table-responsive {
     position: relative;
     overflow: auto;
     max-height: 80vh;
+    max-width: 100%; /* Ограничить ширину */
+}
+.table-bordered {
+    min-width: fit-content !important; /* Вместо 1500px */
 }
 .sticky-header {
     position: sticky;
     top: 0;
-    background-color: white;
+    /*background-color: white;*/
     z-index: 10;
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
     background-color: #f8f9fa;
@@ -86,13 +95,14 @@ body {
     border-right: 2px solid #dee2e6;
 }
 table {
-    border-collapse: separate;
+    /*border-collapse: separate;*/
     border-spacing: 0;
 }
 
 table th, table td {
     border: 1px solid #dee2e6;
     padding: 8px;
+    font-size: 0.95rem;
 }
 
 table thead th {
@@ -167,18 +177,22 @@ footer p {
 .table th {
     font-weight: 600;
     color: #495057;
-    font-size: 0.8rem;
-    padding: 8px 4px;
+    /*font-size: 0.8rem;*/
+    /*padding: 8px 4px;*/
     background-color: #f8f9fa;
+    font-size: 0.75rem;
+    padding: 6px 3px;
 }
 /* Month view styles */
 .month-day {
-    height: 100px;
+    /*height: 100px;*/
     vertical-align: top;
-    padding: 5px;
+    /*padding: 5px;*/
     border: 1px solid #dee2e6;
     position: relative;
     background-color: white;
+    height: 80px; /* было 100px */
+    padding: 3px;
 }
 .month-day:hover {
     background-color: #f8f9fa;
