@@ -114,13 +114,14 @@ public class SlotServiceImpl implements SlotService {
     }
 
     private void createSlotPermissions(boolean isCreate, Slot savedSlot) {
-        if (isCreate) {
-            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE, BasePermission.DELETE);
-            aclService.createAdminPermission(savedSlot);
-            aclService.createRootPermission(savedSlot);
-
-            aclService.flushAclCache();
-        }
+        return;
+//        if (isCreate) {
+//            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE, BasePermission.DELETE);
+//            aclService.createAdminPermission(savedSlot);
+//            aclService.createRootPermission(savedSlot);
+//
+//            aclService.flushAclCache();
+//        }
     }
 
     private void setValuesToSlot(SlotFormDto slotDto, Slot slot) {

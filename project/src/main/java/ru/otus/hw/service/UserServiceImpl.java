@@ -3,8 +3,10 @@ package ru.otus.hw.service;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.User;
@@ -33,6 +35,8 @@ public class UserServiceImpl implements UserService {
     private final UserConverter userConverter;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final AclService aclService;
 
     @Override
     public List<String> findAllUserRoles() {

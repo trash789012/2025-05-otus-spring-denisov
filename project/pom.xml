@@ -222,7 +222,7 @@
                         <image>eclipse-temurin:17-jre</image>
                     </from>
                     <to>
-                        <image>jamtime:latest</image>
+                        <image>denials45/jamtime:latest</image>
                     </to>
                     <container>
                         <mainClass>ru.otus.hw.JamTimeApplication</mainClass>

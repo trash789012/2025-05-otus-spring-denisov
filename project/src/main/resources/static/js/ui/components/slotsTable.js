@@ -23,8 +23,8 @@ export class SlotsTable {
 
         // Заголовки времени
         const emptyTimeSlots = [];
-        for (let hour = 8; hour <= 23; hour++) {
-            for (let minute = 0; minute < 60; minute += 30) {
+        for (let hour = 16; hour <= 23; hour++) {
+            for (let minute = 0; minute < 60; minute += 60) {
                 const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
                 emptyTimeSlots.push(time);
                 const th = document.createElement('th');
@@ -67,7 +67,7 @@ export class SlotsTable {
                     const start = new Date(foundSlot.startTime);
                     const end = new Date(foundSlot.endTime);
                     const durationMinutes = (end - start) / 60000;
-                    const durationSlots = durationMinutes / 30;
+                    const durationSlots = durationMinutes / 30 / 2;
 
                     // timeCell.colSpan = durationSlots + 1;
                     timeCell.colSpan = durationSlots;

@@ -71,12 +71,12 @@ export class SlotModal {
 
         //продолжительность
         if (!this.slotId) {
-            this.slotDuration.value = 120; //по дефолту
+            this.slotDuration.value = 2; //по дефолту
         } else {
             if (timeSlotDb) {
                 const endDateTime = new Date(timeSlotDb.endTime);
                 const durationMinutes = (endDateTime - startDateTime) / 60000;
-                this.slotDuration.value = durationMinutes;
+                this.slotDuration.value = durationMinutes / 60;
             } else {
                 this.slotDuration.value = timeSlotCell.dataset.duration * 30 - 30;
             }
@@ -87,7 +87,7 @@ export class SlotModal {
     }
 
     getSlotForApi() {
-        const duration = this.slotDuration.value;
+        const duration = this.slotDuration.value * 60;
         const startTime = `${this.slotDate.value}T${this.slotTime.value}:00`
         const endTime = this.calculateEndTime(startTime, duration);
         const groupId = this.groupSelector.getValue();
