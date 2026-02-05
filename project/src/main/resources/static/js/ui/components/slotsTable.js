@@ -124,7 +124,7 @@ export class SlotsTable {
             timeSpan.textContent = `${startTime} - ${endTime}`;
 
             const noteSpan = document.createElement('span');
-            noteSpan.className = 'slot-time d-block';
+            noteSpan.className = 'slot-description d-block';
             if (slot.description) {
                 let note = '— ' + slot.description;
                 if (note.length >= 15) {

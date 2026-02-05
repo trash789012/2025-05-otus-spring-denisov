@@ -29,6 +29,12 @@
                         <i class="bi bi-vinyl-fill me-1"></i>Мои группы
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#chgpass"
+                            type="button" role="tab">
+                        <i class="bi bi-shield-check me-1"></i>Сменить пароль
+                    </button>
+                </li>
             </ul>
         </div>
 
@@ -90,6 +96,25 @@
                     </div>
 
                 </div>
+            </div>
+
+            <!-- Сменить пароль -->
+            <div class="tab-pane fade show active" id="chgpass" role="tabpanel">
+                <form id="passwordForm" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="newPass" class="form-label">Новый пароль</label>
+                        <input type="password" class="form-control" id="newPass" required>
+                        <div class="invalid-feedback">Введите новый пароль</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPass2" class="form-label">Новый пароль еще раз</label>
+                        <input type="password" class="form-control" id="newPass2" required>
+                        <div class="invalid-feedback">Введите новый пароль еще раз</div>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="savePassBtn">Сохранить</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

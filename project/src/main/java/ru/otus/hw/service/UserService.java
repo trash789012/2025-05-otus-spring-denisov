@@ -1,5 +1,6 @@
 package ru.otus.hw.service;
 
+import ru.otus.hw.dto.user.UserCredentialsDto;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
 import ru.otus.hw.dto.user.UserFormInfoDto;
@@ -60,6 +61,13 @@ public interface UserService {
      * @return обновленный пользователь
      */
     UserDto updateUserInfo(UserFormInfoDto userDto);
+
+    /**
+     * Обновить пароль
+     *
+     * @param credentialsDto данные для обновления
+     */
+    void changePassword(UserCredentialsDto credentialsDto);
 
     /**
      * Обновить пользователя с ролями

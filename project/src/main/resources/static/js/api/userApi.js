@@ -16,6 +16,14 @@ export async function updateUser(id, user) {
     );
 }
 
+export async function updateUserPassword(id, user) {
+    return put(`/user/${id}/password`, user,
+        {
+            headers: {'Content-Type': 'application/json'},
+        }
+    );
+}
+
 export async function updateUserAndRoles(id, user) {
     return put(`/user/${id}/roles`, user,
         {

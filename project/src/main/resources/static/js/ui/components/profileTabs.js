@@ -3,11 +3,20 @@ export class ProfileTabs {
         this.firstName = document.getElementById(params.userName);
         this.lastName = document.getElementById(params.userLastName);
         this.shortDescription = document.getElementById(params.userDescription);
+        this.newPass = document.getElementById(params.newPass);
+        this.newPass2 = document.getElementById(params.newPass2);
 
         this.saveProfileBtn = document.getElementById(params.saveProfileBtn);
+        this.savePassBtn = document.getElementById(params.savePassBtn);
+
+        this.passwordForm = document.getElementById(params.passwordForm);
+
 
         this.saveProfileBtn.onclick = () => {
             params.saveBtnEvent();
+        }
+        this.savePassBtn.onclick = () => {
+            params.savePasEvent();
         }
 
         this.viewGroupMembersEvt = params.viewGroupMembersEvt;
@@ -94,7 +103,7 @@ export class ProfileTabs {
 
             // Добавляем обработчик события
             let that = this;
-            viewButton.addEventListener('click', function() {
+            viewButton.addEventListener('click', function () {
                 let groupId = this.getAttribute('data-group-id');
                 that.viewGroupMembersEvt(groupId);
             });
@@ -166,10 +175,32 @@ export class ProfileTabs {
         };
     }
 
+    prepareUserCredentialsApi() {
+        return {
+            id: this.id,
+            newPassword: this.newPass.value,
+        }
+    }
+
+    validatePasswords() {
+        if (!this.passwordForm.checkValidity()) {
+            this.passwordForm.classList.add('was-validated');
+            return false;
+        }
+
+        if (this.newPass.value !== this.newPass2.value) {
+            throw {
+                message: 'Пароли не совпадают',
+            };
+        }
+
+        return true;
+    }
+
     showMembersModal(members = []) {
         const modal = new bootstrap.Modal(document.getElementById('groupMembersModal'));
 
-        this.renderGroupMembers(members)
+        this.renderGroupMembers(members);
 
         modal.show();
     }

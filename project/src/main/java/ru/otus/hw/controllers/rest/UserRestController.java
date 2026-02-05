@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.config.security.SecurityUserDetails;
+import ru.otus.hw.dto.user.UserCredentialsDto;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserFormInfoDto;
 import ru.otus.hw.dto.user.UserFormWithRolesAndPasswordDto;
@@ -88,6 +89,23 @@ public class UserRestController {
         }
 
         return userDetailsService.updateUserInfo(userDto);
+    }
+
+    @Operation(summary = "Обновить пароль пользователя")
+    @PutMapping("/{id}/password")
+    public void updateUserPassword(@PathVariable Long id,
+                                   @RequestBody @Valid UserCredentialsDto credentialsDto,
+                                   @AuthenticationPrincipal UserDetails userDetails) {
+        var userDb = userDetailsService.findIdByName(userDetails.getUsername());
+        if (!id.equals(userDb.id())) {
+            throw new BadRequestException("Id in path and principal must match");
+        }
+
+        if (!id.equals(credentialsDto.id())) {
+            throw new BadRequestException("Id in path and body must match");
+        }
+
+        userDetailsService.changePassword(credentialsDto);
     }
 
     @Operation(summary = "Обновить данные о пользователе и роли")

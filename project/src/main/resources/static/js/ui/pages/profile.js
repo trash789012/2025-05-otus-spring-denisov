@@ -1,4 +1,4 @@
-import {getUserData, updateUser} from "../../api/userApi.js";
+import {getUserData, updateUser, updateUserPassword} from "../../api/userApi.js";
 import {ProfileTabs} from "../components/profileTabs.js";
 import {fetchGroupMembers} from "../../api/groupApi.js";
 import {Notification} from "../../utils/notifications.js";
@@ -16,7 +16,12 @@ export class Profile {
             userLastName: 'userLastName',
             userDescription: 'userDescription',
             saveProfileBtn: 'saveProfileBtn',
+            savePassBtn: 'savePassBtn',
+            newPass: 'newPass',
+            newPass2: 'newPass2',
+            passwordForm: 'passwordForm',
             saveBtnEvent: this.onSaveProfileBtnClick,
+            savePasEvent: this.onSavePassBtnClick,
             viewGroupMembersEvt: this.onViewGroupMembers
         });
     }
@@ -74,5 +79,26 @@ export class Profile {
             console.error(e);
             this.notifications.error(e.message);
         }
+    }
+
+    onSavePassBtnClick = async () => {
+        try {
+            if (!this.view.validatePasswords()) {
+                return null;
+            }
+
+            const credentialsDto = this.view.prepareUserCredentialsApi();
+            const result = await updateUserPassword(credentialsDto.id, credentialsDto);
+            if (result.success) {
+                this.init().catch(console.error);
+                this.notifications.success("Сохранено");
+            } else {
+                this.notifications.error(result.errors);
+            }
+        } catch (e) {
+            console.error(e);
+            this.notifications.error(e.message);
+        }
+
     }
 }

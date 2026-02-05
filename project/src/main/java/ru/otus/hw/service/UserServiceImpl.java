@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.UserConverter;
 import ru.otus.hw.domain.User;
 import ru.otus.hw.domain.enums.UserRole;
+import ru.otus.hw.dto.user.UserCredentialsDto;
 import ru.otus.hw.dto.user.UserDto;
 import ru.otus.hw.dto.user.UserExistsDto;
 import ru.otus.hw.dto.user.UserFormInfoDto;
@@ -99,6 +100,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void changePassword(UserCredentialsDto credentialsDto) {
+        var userDb = getUserById(credentialsDto.id());
+        validateUserCredentials(credentialsDto);
+        userDb.setPassword(passwordEncoder.encode(credentialsDto.newPassword()));
+        userRepository.save(userDb);
+    }
+
+    @Override
+    @Transactional
     @PreAuthorize("hasRole('ROOT')")
     public UserDto updateUserWithRoles(UserWithRolesDto userDto) {
         var userDb = getUserById(userDto.id());
@@ -159,6 +169,12 @@ public class UserServiceImpl implements UserService {
     // -------------------------------------------------------------------------
     // PRIVATE HELPERS
     // -------------------------------------------------------------------------
+
+    private void validateUserCredentials(UserCredentialsDto credentialsDto) {
+        if (credentialsDto.newPassword() == null || credentialsDto.newPassword().isEmpty()) {
+            throw new IllegalArgumentException("Пароль не может быть пустым");
+        }
+    }
 
     private void validateBasicUserFields(String username, String firstName) {
         if (username == null) {
