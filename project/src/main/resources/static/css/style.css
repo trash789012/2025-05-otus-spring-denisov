@@ -1,6 +1,8 @@
 :root {
     --primary-color: #0d6efd;
     --secondary-color: #6c757d;
+    --dark-primary: #064298;
+    --darker-primary: #4f5253;
 }
 
 body {
@@ -85,6 +87,14 @@ body {
     box-shadow: 2px 0 2px -1px rgba(0, 0, 0, 0.1);
     border-right: 2px solid #dee2e6;
 }
+/* Если нужно выделить текущий день */
+.sticky-column-today {
+    background-color: #0d6efd !important;
+    color: white !important;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 2px #0a58ca;
+}
+
 /* First column sticky in month view */
 .month-view .sticky-column {
     position: sticky;

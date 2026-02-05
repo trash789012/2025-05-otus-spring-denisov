@@ -185,7 +185,7 @@ export class Lots {
     updateDateRange = async (view = 'week', offset = 0) => {
         if (view === 'week') {
             const range = this.lotsTable.getWeekRange(offset);
-            const options = {day: 'numeric', month: 'long'};
+            const options = {day: 'numeric', month: 'short'};
             const startDate = range.startOfWeek.toLocaleDateString('ru-RU', options);
             const endDate = range.endOfWeek.toLocaleDateString('ru-RU', options);
             this.currentDateRange.textContent = `с ${startDate} по ${endDate}`;

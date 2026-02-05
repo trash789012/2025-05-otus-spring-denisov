@@ -5,10 +5,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export class Menu {
     constructor() {
-        this.adminPoint = document.getElementById('adminPoint');
+        this.logoutBtn = document.getElementById('logoutBtn');
+
+        this.logoutBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        })
     }
 
     init = async () => {
-
     }
 }

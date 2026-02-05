@@ -48,6 +48,17 @@ export class SlotsTable {
             dayCell.className = 'text-center align-middle fw-bold sticky-column';
             dayCell.textContent = '' + weekRange.startOfWeek.toLocaleDateString('ru-RU', options);
             dayCell.textContent += ' (' + daysOfWeek[day] + ')';
+
+            // Сравниваем день, месяц и год
+            const currentDate = weekRange.startOfWeek;
+            const today = new Date();
+            const isToday = currentDate.getDate() === today.getDate() &&
+                currentDate.getMonth() === today.getMonth() &&
+                currentDate.getFullYear() === today.getFullYear();
+            if (isToday) {
+                dayCell.classList.add('sticky-column-today'); // Добавляем класс для сегодняшней даты
+            }
+
             row.appendChild(dayCell);
 
             // Генерация строк времени
@@ -92,7 +103,7 @@ export class SlotsTable {
         const timeCell = document.createElement('td');
         timeCell.className = 'time-slot position-relative';
 
-        if  (dateTime && !slot) {
+        if (dateTime && !slot) {
             //по дефолту
             timeCell.dataset.start = dateTime;
             timeCell.dataset.end = null;
