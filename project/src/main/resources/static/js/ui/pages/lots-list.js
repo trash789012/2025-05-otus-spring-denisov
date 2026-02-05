@@ -45,6 +45,7 @@ export class Lots {
             dateSelector: 'slotDate',
             timeSelector: 'slotTimeStart',
             slotDuration: 'slotDuration',
+            slotComment: 'slotComment',
             groupSelector: 'slotGroup',
             saveSlotBtn: 'saveSlotBtn',
             deleteSlotBtn: 'deleteSlotBtn',

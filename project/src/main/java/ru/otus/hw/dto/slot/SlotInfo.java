@@ -7,5 +7,6 @@ import java.time.LocalDateTime;
 public record SlotInfo(Long id,
                        LocalDateTime startTime,
                        LocalDateTime endTime,
+                       String description,
                        SlotStatus status) {
 }

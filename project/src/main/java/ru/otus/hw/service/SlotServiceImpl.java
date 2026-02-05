@@ -2,7 +2,6 @@ package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.converters.SlotConverter;
@@ -107,26 +106,13 @@ public class SlotServiceImpl implements SlotService {
         }
 
         setValuesToSlot(slotDto, slot);
-        var savedSlot = slotRepository.save(slot);
-        createSlotPermissions(isCreate, savedSlot);
-
-        return savedSlot;
-    }
-
-    private void createSlotPermissions(boolean isCreate, Slot savedSlot) {
-        return;
-//        if (isCreate) {
-//            aclService.createSlotPermissions(savedSlot, BasePermission.WRITE, BasePermission.DELETE);
-//            aclService.createAdminPermission(savedSlot);
-//            aclService.createRootPermission(savedSlot);
-//
-//            aclService.flushAclCache();
-//        }
+        return slotRepository.save(slot);
     }
 
     private void setValuesToSlot(SlotFormDto slotDto, Slot slot) {
         slot.setStartTime(slotDto.startTime());
         slot.setEndTime(slotDto.endTime());
+        slot.setDescription(slotDto.description());
 
         Group bookedBy;
         if (slotDto.groupId() != null) {

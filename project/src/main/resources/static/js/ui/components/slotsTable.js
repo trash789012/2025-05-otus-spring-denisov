@@ -93,6 +93,7 @@ export class SlotsTable {
         timeCell.className = 'time-slot position-relative';
 
         if  (dateTime && !slot) {
+            //по дефолту
             timeCell.dataset.start = dateTime;
             timeCell.dataset.end = null;
             timeCell.dataset.duration = 1;
@@ -122,6 +123,16 @@ export class SlotsTable {
             timeSpan.className = 'slot-time d-block';
             timeSpan.textContent = `${startTime} - ${endTime}`;
 
+            const noteSpan = document.createElement('span');
+            noteSpan.className = 'slot-time d-block';
+            if (slot.description) {
+                let note = '— ' + slot.description;
+                if (note.length >= 15) {
+                    note = note.substring(0, 15) + '...';
+                }
+                noteSpan.textContent = note;
+            }
+
             //duration
             const start = new Date(slot.startTime);
             const end = new Date(slot.endTime);
@@ -135,10 +146,12 @@ export class SlotsTable {
             timeCell.dataset.duration = timeCell.colSpan;
             timeCell.dataset.id = slot.id;
             timeCell.dataset.groupId = slot.group?.id;
+            timeCell.dataset.description = slot.description;
 
             //append cell elements
             slotInfo.appendChild(groupSpan);
             slotInfo.appendChild(timeSpan);
+            slotInfo.appendChild(noteSpan);
 
             timeCell.appendChild(slotInfo);
         }

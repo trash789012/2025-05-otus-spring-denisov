@@ -45,6 +45,9 @@ public class Slot {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    @Column
+    private String description;
+
     @ToString.Exclude
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

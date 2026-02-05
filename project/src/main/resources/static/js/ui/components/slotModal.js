@@ -10,6 +10,7 @@ export class SlotModal {
         this.slotDate = document.getElementById(parameters.dateSelector);
         this.slotTime = document.getElementById(parameters.timeSelector);
         this.slotDuration = document.getElementById(parameters.slotDuration);
+        this.slotComment = document.getElementById(parameters.slotComment);
         this.saveSlotBtn = document.getElementById(parameters.saveSlotBtn);
 
         this.deleteSlotBtn = document.getElementById(parameters.deleteSlotBtn);
@@ -82,6 +83,11 @@ export class SlotModal {
             }
         }
 
+        //коммент
+        if (timeSlotDb) {
+            this.slotComment.value = timeSlotDb.description;
+        }
+
         //показываем
         this.modal.show();
     }
@@ -91,12 +97,14 @@ export class SlotModal {
         const startTime = `${this.slotDate.value}T${this.slotTime.value}:00`
         const endTime = this.calculateEndTime(startTime, duration);
         const groupId = this.groupSelector.getValue();
+        const note = this.slotComment.value;
 
         return {
             id: this.slotId,
             startTime: startTime,
             endTime: endTime,
             status: null,
+            description: note,
             groupId: groupId,
         };
     }

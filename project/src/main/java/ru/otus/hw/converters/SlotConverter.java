@@ -20,6 +20,7 @@ public class SlotConverter {
                 slot.getId(),
                 slot.getStartTime(),
                 slot.getEndTime(),
+                slot.getDescription(),
                 slot.getStatus(),
                 ((slot.getBookedBy()) != null ? new GroupInfoDto(
                         slot.getBookedBy().getId(),
@@ -38,6 +39,7 @@ public class SlotConverter {
                 slot.getId(),
                 slot.getStartTime(),
                 slot.getEndTime(),
+                slot.getDescription(),
                 slot.getStatus()
         );
     }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public record SlotDto(Long id,
                       LocalDateTime startTime,
                       LocalDateTime endTime,
+                      String description,
                       SlotStatus status,
                       GroupInfoDto group) {
 }

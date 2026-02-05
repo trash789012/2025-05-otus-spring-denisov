@@ -10,6 +10,7 @@ public record SlotFormDto(Long id,
                           LocalDateTime startTime,
                           @NotNull(message = "Время окончания может быть пустым")
                           LocalDateTime endTime,
+                          String description,
                           SlotStatus status,
                           Long groupId) {
 }
