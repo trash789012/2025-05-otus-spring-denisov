@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-add-slots-indexes
+      author: denisovNA
+      changes:
+        - createIndex:
+            indexName: idx_slots_time_range
+            tableName: slots
+            columns:
+              - column:
+                  name: start_time
+              - column:
+                  name: end_time
+        - createIndex:
+            indexName: idx_slots_start_time
+            tableName: slots
+            columns:
+              - column:
+                  name: start_time
+        - createIndex:
+            indexName: idx_slots_booked_by
+            tableName: slots
+            columns:
+              - column:
+                  name: group_id

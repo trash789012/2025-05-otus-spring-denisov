@@ -1,0 +1,45 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/jamtime}
+    driverClassName: org.postgresql.Driver
+    username: ${POSTGRES_USERNAME:jamuser}
+    password: ${POSTGRES_PASSWORD:jampass}
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+
+  liquibase:
+    enabled: true
+    parameters:
+      csv.allowQuotedData: true
+    contexts: dev
+  output:
+    ansi:
+      enabled: always
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000}  # 1 час по умолчанию
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    root: warn

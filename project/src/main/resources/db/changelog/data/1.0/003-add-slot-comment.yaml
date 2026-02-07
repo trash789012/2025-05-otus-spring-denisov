@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05022026-add-slot-comment
+      author: denisovNA
+      context: dev
+      runOnChange: true
+      changes:
+        - addColumn:
+            tableName: slots
+            columns:
+              - column:
+                  name: description
+                  type: text

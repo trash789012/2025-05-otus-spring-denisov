@@ -1,0 +1,154 @@
+# JamTime Backend (Spring Boot + REST + JWT + ACL + PostgreSQL + Liquibase)
+
+![img.png](img.png)
+
+Серверная часть приложения **JamTime** — платформы для записи на музыкальные репетиции (бронирование слотов), управления группами и распределения прав доступа через **Spring Security ACL**.
+
+Проект построен на современных технологиях:
+- **Spring Boot**
+- **Spring Security + JWT**
+- **Spring Security ACL (REST ACL)**
+- **PostgreSQL**
+- **Liquibase**
+- **Docker Compose**
+- **JPA/Hibernate**
+- **OpenAPI 3 / Swagger UI**
+
+---
+
+# ⚙️ Архитектура проекта
+
+## Основные модули:
+### **1. Domain (сущности)**
+- `User`
+- `Group`
+- `Slot`
+
+Все ID — `Long`.
+
+### **2. Авторизация**
+Используется JWT:
+- вход по email + password
+- токен хранится на клиенте (LocalStorage)
+- Spring Security читает токен и устанавливает Authentication
+
+### **3. ACL (Access Control List)**
+Используется Spring Security ACL для *гранулированного уровня доступа*:
+
+Каждый объект доменной модели имеет:
+- записи в `acl_class`
+- записи владельца и иерархии в `acl_object_identity`
+- ACL записи в `acl_entry`
+
+Права:  
+`READ`, `WRITE`, `DELETE`, `ADMINISTRATION`.
+
+Реализованы:
+- права владельца над объектом
+- права "ADMIN"
+- кастомные SIDs:
+    - `ROLE_ROOT` - пользователь без ограничений по доступу
+
+## Принципы ACL:
+- Слот при создании получает ACL-права:
+    - владельца
+- ADMIN получает полный доступ к своим объектам и объектам своей группы
+- ROOT имеет доступ к любой сущности и любым операциям
+---
+
+# 🛢 Запуск через Docker
+
+Сборка из двух образов (приложение + DB)
+## docker-compose.yml
+```yaml
+services:
+  app:
+    image: jamtime:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+
+  postgres:
+    container_name: postgresdb
+    image: postgres:16
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+volumes:
+  postgres_data:
+```
+
+# 📡 REST API
+
+Swagger доступен по адресу:
+
+➡️ /swagger-ui
+
+# ▶️ Как запустить проект
+1. Убедиться что установлен docker
+2. Собрать образ jamtime через jib (в корне проекта, там где docker-compose.yml)
+```bash
+mvn compile jib:dockerBuild
+```
+3. Перейти в директорию файла docker-compose.yml.
+Создать .env файл и заполнить его своими данными.
+```dotenv
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jamtimeexample
+POSTGRES_USERNAME=youdbusername
+POSTGRES_PASSWORD=youdbpassword
+POSTGRES_DB=jamtimeexample
+JWT_SECRET=yousecdetjwt
+JWT_EXPIRATION=3600000
+```
+
+jwt secret можно сгенерировать через командную строку
+
+### macos/linux
+```bash
+openssl rand -base64 48
+```
+
+### windows (power shell)
+```bash
+[Convert]::ToBase64String((1..48 | % { [byte](Get-Random -Maximum 256) }))
+```
+
+Выполнить команду в терминале
+```bash
+docker compose up -d
+```
+4. После запуска контейнеров, открыть в браузере ссылку (initial credentials admin:admin)
+- http://localhost:8080
+
+# 🧩 Что реализовано
+
+- Полный REST backend
+- JWT авторизация с хранением токена клиентом
+- Гранулированная ACL модель
+- Сквозная транзакционная модель
+- Поддержка PostgreSQL
+- Полная миграция через Liquibase
+
+# 🚀 Планы на будущее
+- Обогащение новыми сущностями (жанры, статусы, и т.д.)
+- Интеграция с Google calendar
+- Рассылка уведомлений через телеграм бота
+- WebSocket live-обновления слотов
+
+# 🎸 Автор
+Николай Денисов
